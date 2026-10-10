@@ -1,0 +1,209 @@
+{
+  "platform": "atari",
+  "collected_on": "2026-10-09",
+  "reference_file_count": 12,
+  "documents": [
+    {
+      "path": "atari/manuals/Atari_Technical_Reference_Notes_1982.pdf",
+      "url": "https://bitsavers.trailing-edge.com/pdf/atari/400_800/CO16555_Atari_Home_Computer_Technical_Reference_Notes_1982.pdf",
+      "title": "Atari Home Computer System Technical Reference Notes (1982)",
+      "author": "Atari",
+      "use": "400/800 OS user's manual, OS source listing and hardware manual; CIO/SIO and hardware programming.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "aa6fa84297d59cb6c6e12ad18f39e1b170da9e843867a4a8a55502f30bb0cdf2",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 537,
+      "bytes": 20170986,
+      "sha256": "aa6fa84297d59cb6c6e12ad18f39e1b170da9e843867a4a8a55502f30bb0cdf2"
+    },
+    {
+      "path": "atari/manuals/Altirra_Hardware_Reference_Manual.pdf",
+      "url": "https://www.virtualdub.org/downloads/Altirra%20Hardware%20Reference%20Manual.pdf",
+      "title": "Altirra Hardware Reference Manual (2026-01-02 edition)",
+      "author": "Avery Lee",
+      "use": "Detailed Atari hardware behavior, ANTIC, GTIA, POKEY, memory and timing; includes later machines.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "1909927618a7f4a6771d2dc7ef1785ba9b13453edba57122165f57c1504d1c89",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 527,
+      "bytes": 2246568,
+      "sha256": "1909927618a7f4a6771d2dc7ef1785ba9b13453edba57122165f57c1504d1c89"
+    },
+    {
+      "path": "atari/disk/Atari_DOS_Reference_Manual.pdf",
+      "url": "https://www.atarimania.com/documents/Disk_Operating_System_Reference_Manual.pdf",
+      "title": "Atari Disk Operating System Reference Manual",
+      "author": "Atari",
+      "use": "Disk commands and file operations; consult the PDF title/version before applying to a particular DOS.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "5bc6aadc9b85a154e93ae5473c651f46a4369d8e0987a2c6ace8fb76ef2a570b",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 77,
+      "bytes": 11501221,
+      "sha256": "5bc6aadc9b85a154e93ae5473c651f46a4369d8e0987a2c6ace8fb76ef2a570b"
+    },
+    {
+      "path": "atari/manuals/De_Re_Atari.pdf",
+      "url": "https://seriouscomputerist.atariverse.com/media/pdf/book/De%20Re%20Atari.pdf",
+      "title": "De Re Atari",
+      "author": "Atari / Atari Program Exchange",
+      "use": "Practical display lists, scrolling, interrupts, player/missile graphics, sound and OS techniques.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "7412761d808339006cbc641b6bd2812fe2c0e247b60d7399460ef0b1745f4aa4",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 244,
+      "bytes": 81232506,
+      "sha256": "7412761d808339006cbc641b6bd2812fe2c0e247b60d7399460ef0b1745f4aa4"
+    },
+    {
+      "path": "atari/manuals/Mapping_the_Atari.pdf",
+      "url": "https://seriouscomputerist.atariverse.com/media/pdf/book/Mapping%20the%20Atari.pdf",
+      "title": "Mapping the Atari, Revised Edition (1985)",
+      "author": "Ian Chadwick",
+      "use": "Address-by-address OS and hardware memory map, including XL/XE appendices.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "9150b1956a89236255bb0e3f85295211f5c62c41936dc8c64b76c32d73a5ba8e",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 305,
+      "bytes": 20546264,
+      "sha256": "9150b1956a89236255bb0e3f85295211f5c62c41936dc8c64b76c32d73a5ba8e"
+    },
+    {
+      "path": "atari/disk/Inside_Atari_DOS.pdf",
+      "url": "https://seriouscomputerist.atariverse.com/media/pdf/book/Inside%20Atari%20DOS.pdf",
+      "title": "Inside Atari DOS",
+      "author": "Bill Wilkinson, Kathleen O\u2019Brien and Paul Laughton",
+      "use": "DOS internals and disk file management for a loader or save-game implementation.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "fd36f6dbe52714845e6fe29a1571e0529deff5bfd5e056a6a920d922dc5b402e",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 130,
+      "bytes": 10312103,
+      "sha256": "fd36f6dbe52714845e6fe29a1571e0529deff5bfd5e056a6a920d922dc5b402e"
+    },
+    {
+      "path": "atari/manuals/Atari_XL_Operating_System_Addendum.pdf",
+      "url": "https://seriouscomputerist.atariverse.com/media/pdf/book/Atari%20XL%20Addendum%20-%20Operating%20System%20Manual.pdf",
+      "title": "Atari XL Addendum \u2014 Operating System Manual",
+      "author": "Atari",
+      "use": "XL memory/OS changes; supplement to the 400/800 reference.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "33f28e0b0e0b982f46e3e1e545109a6e4cf2b72896464789b6959978c3e4e90a",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 447,
+      "bytes": 15813426,
+      "sha256": "33f28e0b0e0b982f46e3e1e545109a6e4cf2b72896464789b6959978c3e4e90a"
+    },
+    {
+      "path": "atari/tools/MADS_English_Manual.html",
+      "url": "https://mads.atari8.info/mads_eng.html",
+      "title": "MADS English manual (1.9.5)",
+      "author": "Tebe / Madteam; translation by Phaeron",
+      "use": "Atari-focused assembler syntax, macros, banking and executable formats; historical manual version.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "ee21f0a6651e7ad3d96a131aa102fcd7e0a228d644cd1eece13cc8cc34ea39a5",
+      "local_changes": "HTML href/src URLs repaired: included documents/assets use local paths; other relative URLs point to their original website. Document body unchanged.",
+      "bytes": 200046,
+      "sha256": "ee21f0a6651e7ad3d96a131aa102fcd7e0a228d644cd1eece13cc8cc34ea39a5"
+    },
+    {
+      "path": "atari/disk/ATR_Image_Format_and_Tools.md",
+      "url": "https://raw.githubusercontent.com/jhallen/atari-tools/master/readme.md",
+      "title": "Atari disk tools and ATR format notes",
+      "author": "Joseph H. Allen",
+      "use": "ATR headers, sector sizing and disk-image conversion notes.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "17e92b16df93cae6cf21fcd79d706ff127966367e191b33eef0b949537df83d2",
+      "local_changes": "None; original downloaded bytes.",
+      "bytes": 15058,
+      "sha256": "17e92b16df93cae6cf21fcd79d706ff127966367e191b33eef0b949537df83d2"
+    },
+    {
+      "path": "atari/tools/atari.html",
+      "url": "https://cc65.github.io/doc/atari.html",
+      "title": "cc65 atari target reference",
+      "author": "cc65 project",
+      "use": "Target memory layout, binary formats, library support and platform-specific conventions.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "189e5e3adeac5c2f1bb53b33e486f6457616a9856f1f6c1788875082f0f9674d",
+      "local_changes": "HTML href/src URLs repaired: included documents/assets use local paths; other relative URLs point to their original website. Document body unchanged. The ca65 link points to the shared copy in common/tools/.",
+      "bytes": 56595,
+      "sha256": "0e4d37cee7fdae13752953e4235d0ba89fb576764eeee6cc42ca36c873ab9fd9"
+    },
+    {
+      "path": "atari/tools/Atari800_README.txt",
+      "url": "https://raw.githubusercontent.com/atari800/atari800/master/DOC/README",
+      "title": "Atari800 emulator documentation",
+      "author": "Atari800 development team",
+      "use": "Portable emulator configuration and operation; useful for a Linux development host.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "a613eb4c1c54e88a448165d44554ca0033cc4f13b5dc888b008616d101d6f6ca",
+      "local_changes": "None; original downloaded bytes.",
+      "bytes": 5966,
+      "sha256": "a613eb4c1c54e88a448165d44554ca0033cc4f13b5dc888b008616d101d6f6ca"
+    },
+    {
+      "path": "atari/tools/Altirra_Overview.html",
+      "url": "https://www.virtualdub.org/altirra.html",
+      "title": "Altirra emulator overview and documentation links",
+      "author": "Avery Lee",
+      "use": "Debugger and machine-configuration overview; the hardware reference is saved separately.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "d0ac189e73844691b3ea33d903afdc07be95b097527c66316c4f85ea79b6703e",
+      "local_changes": "HTML href/src URLs repaired: included documents/assets use local paths; other relative URLs point to their original website. Document body unchanged.",
+      "bytes": 72391,
+      "sha256": "e2d182c12d7e17890dc2070b270208343f155ebc3139c9aa1ca9fd8ff4f576cd"
+    }
+  ],
+  "supporting_assets": [
+    {
+      "path": "atari/tools/doc.css",
+      "url": "https://cc65.github.io/doc/doc.css",
+      "bytes": 869,
+      "sha256": "d46c259753a3fe12aafa988cd927e6894c67a41a9084a8e86889a6d32cb08d24",
+      "retrieved_on": "2026-10-09"
+    },
+    {
+      "path": "atari/tools/assets/layout.css",
+      "url": "https://www.virtualdub.org/layout.css",
+      "bytes": 4032,
+      "sha256": "240bc1944db1816f3acd9480de10075e11b035f5f873b788dcaea6e30899efca",
+      "retrieved_on": "2026-10-09"
+    },
+    {
+      "path": "atari/tools/assets/altirra-15-thumb.jpeg",
+      "url": "https://www.virtualdub.org/pics/altirra-15-thumb.jpeg",
+      "bytes": 8680,
+      "sha256": "1720d79acac92ab83c36b962e65acfa8f925c761d8725d0891f97808c377630e",
+      "retrieved_on": "2026-10-09"
+    },
+    {
+      "path": "atari/tools/assets/altirra-16-thumb.jpeg",
+      "url": "https://www.virtualdub.org/pics/altirra-16-thumb.jpeg",
+      "bytes": 12581,
+      "sha256": "e4a0486809cdc8ef32497c4c75ca4980cffb82b5262002eaddc955c146161c5e",
+      "retrieved_on": "2026-10-09"
+    },
+    {
+      "path": "atari/tools/assets/altirra-13-thumb.jpeg",
+      "url": "https://www.virtualdub.org/pics/altirra-13-thumb.jpeg",
+      "bytes": 23440,
+      "sha256": "cb02437310cca35978c2fdf0440f9405557144528c482b53e57e728d01cecc9b",
+      "retrieved_on": "2026-10-09"
+    },
+    {
+      "path": "atari/tools/assets/altirra-10-thumb.jpeg",
+      "url": "https://www.virtualdub.org/pics/altirra-10-thumb.jpeg",
+      "bytes": 10624,
+      "sha256": "3691594a70de9717e70a60cf185fe03ef22e6c26b4eb279ec872356f739a79fa",
+      "retrieved_on": "2026-10-09"
+    },
+    {
+      "path": "atari/tools/assets/altirra-11-thumb.jpeg",
+      "url": "https://www.virtualdub.org/pics/altirra-11-thumb.jpeg",
+      "bytes": 15006,
+      "sha256": "3517485b3640dccf31f8eaa9224c6baf90ecdc67bca8bfc0cb83180bf869da75",
+      "retrieved_on": "2026-10-09"
+    }
+  ]
+}

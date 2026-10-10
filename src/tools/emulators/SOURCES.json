@@ -1,0 +1,235 @@
+{
+  "installed_on": "2026-10-09",
+  "platform": "Ubuntu 24.04 amd64 / WSL2",
+  "versions": {
+    "vice": "3.7.1+dfsg1-2build3",
+    "atari800": "7.2.1",
+    "apple_web_snapshot": "1.8.3",
+    "vice_mcp": "1.0.1",
+    "appleii_agent": "1.3.0"
+  },
+  "sources": {
+    "vice_package": "https://archive.ubuntu.com/ubuntu/pool/multiverse/v/vice/vice_3.7.1+dfsg1-2build3_amd64.deb",
+    "vice_rom_base": "https://raw.githubusercontent.com/VICE-Team/svn-mirror/main/vice/data/",
+    "atari800_source": "https://github.com/atari800/atari800/releases/download/ATARI800_7_2_1/atari800-7.2.1-src.tgz",
+    "apple_web_snapshot": "https://web-a2e.retrotech71.co.uk/"
+  },
+  "repositories": {
+    "vice-mcp": {
+      "url": "https://github.com/simen/vice-mcp.git",
+      "commit": "d06d2ef71d31e7b5cb4876cdb2c8e6e28c665aeb"
+    },
+    "appleii-agent-git": {
+      "url": "https://github.com/mikedaley/appleii-agent.git",
+      "commit": "43ca787fedf377557c3e0a12c0968ad4c2564f0f"
+    },
+    "web-a2e": {
+      "url": "https://github.com/mikedaley/web-a2e.git",
+      "commit": "a8f8430a82603f0544a0f784256e5cef58e2035d"
+    },
+    "applem-core": {
+      "url": "https://github.com/mikedaley/applem-core.git",
+      "commit": "cbe8ddb7fc373576d6274e41581aa113a83ff106"
+    }
+  },
+  "local_patches": [
+    "config/appleii-loopback.patch"
+  ],
+  "files": [
+    {
+      "path": "downloads/vice.deb",
+      "bytes": 7802356,
+      "sha256": "21160cfb83a9da4dc20ec9ca6791b761c61e352639d1c3a4832208807a0e09d3"
+    },
+    {
+      "path": "downloads/atari800-src.tgz",
+      "bytes": 2020043,
+      "sha256": "b05b7b0932a19754eef42839aa0f04aa8a5ec1e55f51054ef3f802d83c7362f7"
+    },
+    {
+      "path": "local/bin/atari800",
+      "bytes": 2685888,
+      "sha256": "9774ca3b9c374bfc60fca6ea25ce281b799a19de75e6c35689c02b06bf22a934"
+    },
+    {
+      "path": "src/vice-mcp/dist/index.js",
+      "bytes": 79430,
+      "sha256": "572ad4fd047ce4bc21d1711c6ce2f82c3d68d0c4fbcb53e920e5af9c75c1b1e2"
+    },
+    {
+      "path": "local/web-a2e/a2e.js",
+      "bytes": 47731,
+      "sha256": "53c31f0c7d0f4cc5a539e17646ccbe0e6ee8d18f30db2da3b4d098ef1cbca868"
+    },
+    {
+      "path": "local/web-a2e/a2e.wasm",
+      "bytes": 1161711,
+      "sha256": "98aacbcc6993ef2790f3e6cf35d16d8b591d399299f688e80682254692370699"
+    },
+    {
+      "path": "local/web-a2e/assets/apple-logo.png",
+      "bytes": 131591,
+      "sha256": "3c9c5ad34b58f97b616bad3ab2bdf0bbe6495e6c5a75b1bd0bb273d8c3fc0d0b"
+    },
+    {
+      "path": "local/web-a2e/assets/applem-logo.png",
+      "bytes": 78632,
+      "sha256": "dd7312840e8ccede032df36436e1cb4105ae4844dd8e88310fd6579c689fd61f"
+    },
+    {
+      "path": "local/web-a2e/assets/core-DU1N0NwH.js",
+      "bytes": 1623,
+      "sha256": "21e92cefbea97f1bcba42608bc9a3ddd15638cffed39ad48898bf426b9aa0c78"
+    },
+    {
+      "path": "local/web-a2e/assets/debug-BYuWLNtM.js",
+      "bytes": 362873,
+      "sha256": "ce54435388d48c8f6d39da8b15fd0b602800bd790a31ac233f9620f85189b82b"
+    },
+    {
+      "path": "local/web-a2e/assets/disk-manager-DbNPAyV4.js",
+      "bytes": 35298,
+      "sha256": "c65596cef4b2f2c0a2b472758926a9468ea707813cadbea4134327fff5366b44"
+    },
+    {
+      "path": "local/web-a2e/assets/display-BTgf8GG3.js",
+      "bytes": 48638,
+      "sha256": "896b93d18261b5c398abbe142a0a53f94a3a6271e733ea1c0d92b9037e83773d"
+    },
+    {
+      "path": "local/web-a2e/assets/drive-closed-light-on.png",
+      "bytes": 636361,
+      "sha256": "13358f237da403d3d819b8d1147d7fe96623cc5dedc03ad1eff82efcf711408f"
+    },
+    {
+      "path": "local/web-a2e/assets/drive-closed.png",
+      "bytes": 721990,
+      "sha256": "c988941da2858ddff697a4a5ff16c126a278a287abee1a6decfb3879acb1d6c7"
+    },
+    {
+      "path": "local/web-a2e/assets/drive-open-light-on.png",
+      "bytes": 645939,
+      "sha256": "d2f471844a34c5e472ed75838a43c50dba149900573dd5cf1dfc9b8d2da36a1c"
+    },
+    {
+      "path": "local/web-a2e/assets/drive-open.png",
+      "bytes": 732101,
+      "sha256": "ac5d7cc8441a232024472c46fccc2d20b1e6f7994bc8e0d5002e556e38fe58ca"
+    },
+    {
+      "path": "local/web-a2e/assets/file-explorer-DcMmYMN3.js",
+      "bytes": 37624,
+      "sha256": "a1c6f8af0cfd82059ddeef87c9631e90d9ef1ebd6472deb57f03472fa9748fdb"
+    },
+    {
+      "path": "local/web-a2e/assets/image-0q67cLrS.js",
+      "bytes": 2554,
+      "sha256": "92242469d5889cdbd468f1cdd9d8a5937e5ef57a8e3070325a3c2612bf06f482"
+    },
+    {
+      "path": "local/web-a2e/assets/index-CHrl0RkO.js",
+      "bytes": 127,
+      "sha256": "61931e4d98637fc9e13fb152a53639dabb3b86eb320f1679ae30536a1ca49d34"
+    },
+    {
+      "path": "local/web-a2e/assets/main-D4y6D_8U.css",
+      "bytes": 237969,
+      "sha256": "355e3b6a3d48c9c19b062a610de8d2f0f8eb5f2848add42749a8d84a416a7505"
+    },
+    {
+      "path": "local/web-a2e/assets/main-DNoBSMT3.js",
+      "bytes": 679659,
+      "sha256": "a4e5a579f1ce34a2cbfbc1093008108234858bf0d855e1042512a63f75e47fac"
+    },
+    {
+      "path": "local/web-a2e/assets/menu-CCayhitL.js",
+      "bytes": 8672,
+      "sha256": "32e8ca90ba76d674af74e0a057ad31f2e0b6ffc4bac88e919a78a4cbd8804ca1"
+    },
+    {
+      "path": "local/web-a2e/assets/window-C7mcr_Qj.js",
+      "bytes": 12130,
+      "sha256": "a41edd5f7e99653ebeb721de8fe8c8d539fa39e264dcdaac87fa314a7832ddba"
+    },
+    {
+      "path": "local/web-a2e/audio-worklet.js",
+      "bytes": 8042,
+      "sha256": "a442a2af297415a4e258197434e4b74db1075db1666eeadb1b172804ad463c0d"
+    },
+    {
+      "path": "local/web-a2e/disks/library.json",
+      "bytes": 872,
+      "sha256": "201cd4d8294b9d94e999b32a2512597c941f6a325265da1843ded4193c6699c6"
+    },
+    {
+      "path": "local/web-a2e/emulator-worker.js",
+      "bytes": 17679,
+      "sha256": "8cc458407adee1aa239b68fa418b0d4091f5c582567dc3ee65043b1b15e1c854"
+    },
+    {
+      "path": "local/web-a2e/icons/apple-touch-icon.png",
+      "bytes": 12907,
+      "sha256": "cb042afdc7c9b5231c73b93d66da1222f3cadbe827e359c99446c65aa16628fa"
+    },
+    {
+      "path": "local/web-a2e/icons/icon-192.png",
+      "bytes": 13514,
+      "sha256": "805425fb1d4e9a6f1810ae6fc182dccd871a08b5f47c6e8bbbcd4d67364d5009"
+    },
+    {
+      "path": "local/web-a2e/index.html",
+      "bytes": 43373,
+      "sha256": "88fc0d27ce4dddde255913824bee641185fa2ae538a15556ee6a03384ef2a415"
+    },
+    {
+      "path": "local/web-a2e/manifest.json",
+      "bytes": 698,
+      "sha256": "e31065c01d65a9854f549df744aa6ac6e4af4c3caa0589271759aa67b55a5fd7"
+    },
+    {
+      "path": "local/web-a2e/shaders/burnin.glsl",
+      "bytes": 2491,
+      "sha256": "10240c2c1d928262d5801330936abd65962f401020a9bb0b709a31017c661ee4"
+    },
+    {
+      "path": "local/web-a2e/shaders/crt.glsl",
+      "bytes": 29196,
+      "sha256": "7fdbee887e1e3c7f337a4cb75f7cba9f07d391cc198a024c5d4aeaf889d88b3a"
+    },
+    {
+      "path": "local/web-a2e/shaders/edge.glsl",
+      "bytes": 4506,
+      "sha256": "ad748d81fbb21731e833ea7a76d404d68c5e1b5d8a356c1b4f61839e7fd5e01a"
+    },
+    {
+      "path": "local/web-a2e/shaders/vertex.glsl",
+      "bytes": 171,
+      "sha256": "b0f6ce4f84070f8ff839c5222a302c593ebb9e900fe8dbad395170bfc4107723"
+    },
+    {
+      "path": "local/web-a2e/sw.js",
+      "bytes": 9281,
+      "sha256": "a54cdb4c058d18e23c5dbb1a359009fde54685c674ba9d259816bf5b8abaf9b3"
+    },
+    {
+      "path": "local/usr/share/vice/C64/basic-901226-01.bin",
+      "bytes": 8192,
+      "sha256": "89878cea0a268734696de11c4bae593eaaa506465d2029d619c0e0cbccdfa62d"
+    },
+    {
+      "path": "local/usr/share/vice/C64/chargen-901225-01.bin",
+      "bytes": 4096,
+      "sha256": "fd0d53b8480e86163ac98998976c72cc58d5dd8eb824ed7b829774e74213b420"
+    },
+    {
+      "path": "local/usr/share/vice/C64/kernal-901227-03.bin",
+      "bytes": 8192,
+      "sha256": "83c60d47047d7beab8e5b7bf6f67f80daa088b7a6a27de0d7e016f6484042721"
+    },
+    {
+      "path": "local/usr/share/vice/DRIVES/dos1541-325302-01+901229-05.bin",
+      "bytes": 16384,
+      "sha256": "d1d45afb46fd4e2b48d93ca367b889d75654a3b7acf73044e51f6d880c09369e"
+    }
+  ]
+}

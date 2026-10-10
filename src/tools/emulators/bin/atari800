@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+source "$(dirname -- "$0")/common.sh"
+extra=()
+if [[ "${1:-}" == --headless ]]; then
+    export SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy
+    extra+=(-nosound)
+    shift
+fi
+exec "$RETRO_TOOLS/local/bin/atari800" \
+    -config "$RETRO_TOOLS/config/atari800.cfg" -no-autosave-config \
+    -xl -ntsc -nobasic -xl-rev altirra -no-kbdjoy0 -no-kbdjoy1 -windowed "${extra[@]}" "$@"

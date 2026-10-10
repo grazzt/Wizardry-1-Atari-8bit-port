@@ -1,0 +1,10 @@
+# Keep reference documents and disk images byte-for-byte intact.
+*.pdf binary
+*.dsk binary
+*.d64 binary
+*.atr binary
+*.png binary
+*.jpeg binary
+*.DSK binary
+# Ewers's listings are CRLF text; keep their downloaded bytes exactly.
+appleII/source/ewers_wizardry_i/**/*.txt -text

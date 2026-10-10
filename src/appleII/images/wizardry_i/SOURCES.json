@@ -1,0 +1,62 @@
+{
+  "title": "Wizardry I: Proving Grounds of the Mad Overlord",
+  "platform": "appleII",
+  "downloaded_on": "2026-10-09",
+  "emulator_boot_tested": true,
+  "files": [
+    {
+      "file": "wizardry_i_boot.dsk",
+      "url": "https://mirrors.apple2.org.za/ftp.apple.asimov.net/images/games/rpg/wizardry/wizardry_I/wizardry_i_boot.dsk",
+      "retrieved_on": "2026-10-09",
+      "bytes": 143360,
+      "sha256": "99a982c2a711adc545d6e17a71df7350ff9b2336c3013e131f3b4bdc741d0229",
+      "local_changes": "None",
+      "format": "Apple II sector image; 35 tracks; 16 sectors per track; 256 bytes per sector",
+      "validation": "143360-byte geometry and embedded Wizardry/Pascal filenames checked; no upstream digest available; byte-identical to the archive's Wizardry-Proving-Grounds-Original-Boot.dsk. SYSTEM.STARTUP's Disk II nibble check (WIZBOOT segment) is patched out compared with Ewers's rebuilt SYSTEM.STARTUP, so this is a deprotected image. WIZARDRY.CODE segments are byte-identical to Ewers's build."
+    },
+    {
+      "file": "wizardry_i_scenario.dsk",
+      "url": "https://mirrors.apple2.org.za/ftp.apple.asimov.net/images/games/rpg/wizardry/wizardry_I/wizardry_i_scenario.dsk",
+      "retrieved_on": "2026-10-09",
+      "bytes": 143360,
+      "sha256": "9629120fb37bdcd416a93ff6b1bb3d442fe321703e1e77cdc593c5e470dd598e",
+      "local_changes": "None",
+      "format": "Apple II sector image; 35 tracks; 16 sectors per track; 256 bytes per sector",
+      "validation": "143360-byte geometry and embedded Wizardry/Pascal filenames checked; no upstream digest available; a played disk: SCENARIO.DATA holds 20 named characters. Compared with snafaru_restored_scenario.dsk, it differs only in the roster, 2 bytes of maze level 6 and 1 byte of Boltac's stock (record 62)."
+    },
+    {
+      "file": "wizardry_1.readme",
+      "url": "https://mirrors.apple2.org.za/ftp.apple.asimov.net/images/games/rpg/wizardry/wizardry_I/wizardry_1.readme",
+      "retrieved_on": "2026-10-09",
+      "bytes": 106,
+      "sha256": "cc6a61278bcf6433bbe71ffbc55792f32392f1773549e02a03791e42b41b3c29",
+      "local_changes": "None"
+    },
+    {
+      "file": "WizardryiSource.asm.txt",
+      "url": "https://mirrors.apple2.org.za/ftp.apple.asimov.net/images/games/rpg/wizardry/wizardry_I/WizardryiSource.asm.txt",
+      "retrieved_on": "2026-10-09",
+      "bytes": 3042,
+      "sha256": "1d2bd07fc77802fa0d8a5863bcd02a270b1b71bdb02a67aa718062942cbefab6",
+      "local_changes": "None"
+    },
+    {
+      "file": "snafaru_restored_scenario.dsk",
+      "url": "https://mirrors.apple2.org.za/ftp.apple.asimov.net/images/games/rpg/wizardry/wizardry_I/Wizardry-Proving-Grounds-Original-Scenario.dsk",
+      "retrieved_on": "2026-10-09",
+      "bytes": 143360,
+      "sha256": "527d6f43ae0b51a19a8323d12ac303324a3c0770326d654211e2bf0bd3fe63aa",
+      "local_changes": "Renamed from Wizardry-Proving-Grounds-Original-Scenario.dsk; bytes unchanged.",
+      "format": "Apple II sector image; 35 tracks; 16 sectors per track; 256 bytes per sector",
+      "validation": "Clean roster (20 placeholder LOST characters). Prepared by Snafaru: Boltac inventory reset, empty roster, level-6 message restored; see snafaru_restored_readme.txt. A reconstruction of a factory disk, not a verified retail dump."
+    },
+    {
+      "file": "snafaru_restored_readme.txt",
+      "url": "https://mirrors.apple2.org.za/ftp.apple.asimov.net/images/games/rpg/wizardry/wizardry_I/Wizardry-Proving-Grounds-Original-Read-Me.txt",
+      "retrieved_on": "2026-10-09",
+      "bytes": 627,
+      "sha256": "d0147802857048fd989ef8e7878fe648cd40a807c7b38e6f91bc533f50a938df",
+      "local_changes": "Renamed from Wizardry-Proving-Grounds-Original-Read-Me.txt; bytes unchanged."
+    }
+  ]
+}

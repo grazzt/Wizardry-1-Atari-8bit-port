@@ -1,0 +1,65 @@
+# Local tooling state and generated Python caches
+__pycache__/
+*.py[cod]
+/.codex/
+/.agents/
+/.aws/
+
+# Raw framebuffer dump; the corresponding PNG is the review artifact.
+/test-artifacts/emulators/*.rgba
+
+# Recovery bundle generated when workspace Git metadata is read-only.
+/wizardry_1.git.bundle
+
+# Reference PDFs are large and immutable; tools/fetch_refs.py restores them
+# from the URLs and hashes in each library's SOURCES.json.
+*.pdf
+
+# The NES version's music (NSF rips): copyrighted, used locally by the Atari build.
+/nes/
+
+# Personal shortcut to resume the Claude Code session.
+/resume.sh
+
+# The PC Engine version's monster sprites: copyrighted, used locally by the Atari
+# build (port/atari/pictures.py --fetch).
+/art/
+
+# Local development environments and editor/session state.
+/.venv/
+/venv/
+/.claude/
+/.idea/
+/.vscode/
+.DS_Store
+*.swp
+
+# Generated playable disks, videos and local save copies.
+*.atr
+*.mp4
+
+# Local credentials and private keys.
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+*.p12
+*.pfx
+.netrc
+.npmrc
+/.ssh/
+id_rsa
+id_ed25519
+
+# External game/source disk images and book transcriptions are not distributed.
+*.[dD][sS][kK]
+*.[dD]64
+*.[aA][tT][rR]
+*.[dD][oO]
+*.[pP][oO]
+*.[iI][mM][gG]
+*.[iI][sS][oO]
+/c64/manuals/Commodore_64_Programmers_Reference_Guide.txt
+/c64/manuals/Mapping_the_Commodore_64.txt

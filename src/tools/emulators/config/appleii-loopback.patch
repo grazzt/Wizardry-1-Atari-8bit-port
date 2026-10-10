@@ -1,0 +1,13 @@
+diff --git a/src/http-server.js b/src/http-server.js
+index 16059f8..f62b664 100644
+--- a/src/http-server.js
++++ b/src/http-server.js
+@@ -115,7 +115,7 @@ export class HttpServer {
+         this.server = http.createServer(requestHandler);
+       }
+ 
+-      this.server.listen(this.port, () => {
++      this.server.listen(this.port, "127.0.0.1", () => {
+         this.portInUse = false;
+         this.externallyShutdown = false;
+         if (this.debug) {

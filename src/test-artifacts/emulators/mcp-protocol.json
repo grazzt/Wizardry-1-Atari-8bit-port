@@ -1,0 +1,78 @@
+[
+  {
+    "name": "vice",
+    "server": {
+      "name": "vice-mcp",
+      "version": "1.0.1"
+    },
+    "tools": [
+      "status",
+      "connect",
+      "disconnect",
+      "readMemory",
+      "writeMemory",
+      "getRegisters",
+      "continue",
+      "step",
+      "reset",
+      "setBreakpoint",
+      "deleteBreakpoint",
+      "listBreakpoints",
+      "toggleBreakpoint",
+      "setWatchpoint",
+      "listWatchpoints",
+      "runTo",
+      "disassemble",
+      "saveSnapshot",
+      "loadSnapshot",
+      "loadProgram",
+      "readScreen",
+      "readColorRam",
+      "readVicState",
+      "readSprites",
+      "screenshot",
+      "renderScreen"
+    ],
+    "status": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"connected\": false,\n  \"running\": true,\n  \"hint\": \"Not connected. Use connect() to establish connection to VICE.\",\n  \"_meta\": {\n    \"connected\": false,\n    \"running\": true\n  }\n}"
+        }
+      ]
+    }
+  },
+  {
+    "name": "apple2-protocol-only",
+    "server": {
+      "name": "appleii-agent",
+      "version": "1.3.0"
+    },
+    "tools": [
+      "server_control",
+      "set_https",
+      "set_debug",
+      "get_state",
+      "get_version",
+      "reload_sandbox",
+      "disconnect_clients",
+      "shutdown_remote_server",
+      "emma_command",
+      "load_disk_image",
+      "load_smartport_image",
+      "load_file",
+      "get_screenshot",
+      "save_to",
+      "set_default_emulator",
+      "list_connections"
+    ],
+    "status": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"running\": false,\n  \"https\": false,\n  \"debug\": true,\n  \"port\": 3033,\n  \"clients\": 0,\n  \"emulators\": [],\n  \"defaultEmulator\": null,\n  \"protocol\": \"http\",\n  \"url\": \"http://localhost:3033\",\n  \"emulatorDomain\": null,\n  \"llmsTxtUrl\": null,\n  \"portInUse\": false,\n  \"externallyShutdown\": false\n}"
+        }
+      ]
+    }
+  }
+]

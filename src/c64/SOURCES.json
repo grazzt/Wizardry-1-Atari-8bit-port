@@ -1,0 +1,121 @@
+{
+  "platform": "c64",
+  "collected_on": "2026-10-09",
+  "reference_file_count": 8,
+  "documents": [
+    {
+      "path": "c64/manuals/Commodore_64_Programmers_Reference_Guide.pdf",
+      "url": "https://www.zimmers.net/anonftp/pub/cbm/c64/manuals/C64_Programmers_Reference_Guide.pdf",
+      "title": "Commodore 64 Programmer\u2019s Reference Guide",
+      "author": "Commodore",
+      "use": "Memory map, VIC-II graphics, SID sound, KERNAL calls, 6510 assembly and I/O.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "2443142849c62022d1b6c67dc87fdf71997541810f7139a477993fe617d7693d",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 508,
+      "bytes": 14184132,
+      "sha256": "2443142849c62022d1b6c67dc87fdf71997541810f7139a477993fe617d7693d"
+    },
+    {
+      "path": "c64/manuals/Commodore_64_Programmers_Reference_Guide.txt",
+      "url": "https://www.zimmers.net/anonftp/pub/cbm/c64/manuals/c64-programmers-reference-guide.txt",
+      "title": "Commodore 64 Programmer\u2019s Reference Guide (searchable transcription)",
+      "author": "Commodore; Project 64 transcription",
+      "use": "Searchable companion to the original manual.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "85973a693b90b31fd44850c4e23e314da467484bcac2d40c5441241a3062ca1a",
+      "local_changes": "None; original downloaded bytes.",
+      "bytes": 978760,
+      "sha256": "85973a693b90b31fd44850c4e23e314da467484bcac2d40c5441241a3062ca1a"
+    },
+    {
+      "path": "c64/manuals/Mapping_the_Commodore_64.txt",
+      "url": "https://www.zimmers.net/anonftp/pub/cbm/c64/manuals/mapping-c64.txt",
+      "title": "Mapping the Commodore 64",
+      "author": "Sheldon Leemon; Project 64 transcription",
+      "use": "Address-by-address memory and ROM reference for tracing the source platform.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "59082a30bb177cda3f0fa88dbfe3d5e5efdfbd32cefe27bebe497800f0c551cc",
+      "local_changes": "None; original downloaded bytes.",
+      "bytes": 538659,
+      "sha256": "59082a30bb177cda3f0fa88dbfe3d5e5efdfbd32cefe27bebe497800f0c551cc"
+    },
+    {
+      "path": "c64/programming/VIC_II_Reference.txt",
+      "url": "https://www.cebix.net/VIC-Article.txt",
+      "title": "The MOS 6567/6569 video controller (VIC-II) and its application in the Commodore 64",
+      "author": "Christian Bauer",
+      "use": "Detailed VIC-II register, display and timing research.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "ed558b2480638b153d0ead4726b8b675e4a0b945f2ab4d37c17a3d892cf00828",
+      "local_changes": "None; original downloaded bytes.",
+      "bytes": 132055,
+      "sha256": "ed558b2480638b153d0ead4726b8b675e4a0b945f2ab4d37c17a3d892cf00828"
+    },
+    {
+      "path": "c64/disk/Commodore_1541_Users_Guide.pdf",
+      "url": "https://www.zimmers.net/anonftp/pub/cbm/manuals/drives/1541_Users_Guide.pdf",
+      "title": "Commodore 1541 User\u2019s Guide",
+      "author": "Commodore",
+      "use": "Drive command channel, sequential/relative files, direct-access commands and error handling.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "b1892f9ec9a0e42056d901c19a6198e47e5c70a2e13b49d2301a07fc0f1611c1",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 78,
+      "bytes": 4423763,
+      "sha256": "b1892f9ec9a0e42056d901c19a6198e47e5c70a2e13b49d2301a07fc0f1611c1"
+    },
+    {
+      "path": "c64/tools/VICE_Monitor.html",
+      "url": "https://vice-emu.sourceforge.io/vice_12.html",
+      "title": "VICE monitor documentation",
+      "author": "VICE team",
+      "use": "VICE monitor commands for disassembly, breakpoints, watchpoints and memory inspection (chapter 12).",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "01ed1b441e4c72864af6e0b99a7346a1d6afcbab63e995cc87f5e942def74949",
+      "local_changes": "HTML href/src URLs repaired: included documents/assets use local paths; other relative URLs point to their original website. Document body unchanged.",
+      "bytes": 32301,
+      "sha256": "6a911550c532f1c8be6d88f97c6cfee09a9b714cc126ab27e57d7842e6feca7b"
+    },
+    {
+      "path": "c64/tools/c64.html",
+      "url": "https://cc65.github.io/doc/c64.html",
+      "title": "cc65 c64 target reference",
+      "author": "cc65 project",
+      "use": "Target memory layout, binary formats, library support and platform-specific conventions.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "39349628001250dabfdac3a0bbbf3e6fb25b7a6c822a2280617d519e69556ec4",
+      "local_changes": "HTML href/src URLs repaired: included documents/assets use local paths; other relative URLs point to their original website. Document body unchanged. The ca65 link points to the shared copy in common/tools/.",
+      "bytes": 21419,
+      "sha256": "c238875b93521047c5e49abd04504537f94152cb0ff1afa6c7691dc0bbffe51e"
+    },
+    {
+      "path": "c64/disk/D64_Format.txt",
+      "url": "https://ist.uwaterloo.ca/~schepers/formats/D64.TXT",
+      "title": "D64 file format specification",
+      "author": "Peter Schepers",
+      "use": "Disk-image geometry, BAM, directory entries, file chains and error bytes.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "f15cec6f4c7f3761d824c634edcd84770d667ab4a27896e0586d76f7d8ce7ef9",
+      "local_changes": "None; original downloaded bytes.",
+      "bytes": 34230,
+      "sha256": "f15cec6f4c7f3761d824c634edcd84770d667ab4a27896e0586d76f7d8ce7ef9"
+    }
+  ],
+  "supporting_assets": [
+    {
+      "path": "c64/tools/doc.css",
+      "url": "https://cc65.github.io/doc/doc.css",
+      "bytes": 869,
+      "sha256": "d46c259753a3fe12aafa988cd927e6894c67a41a9084a8e86889a6d32cb08d24",
+      "retrieved_on": "2026-10-09"
+    },
+    {
+      "path": "c64/tools/vice.css",
+      "url": "https://vice-emu.sourceforge.io/vice.css",
+      "bytes": 3090,
+      "sha256": "1ef559a99947da7618d195f1a61ad820fcdd9eda1bcd1cfe5700a0c16943d950",
+      "retrieved_on": "2026-10-09"
+    }
+  ]
+}

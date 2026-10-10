@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+source "$(dirname -- "$0")/common.sh"
+prepare_disks c64 d64
+extra=()
+console=()
+monitor=(-binarymonitor -binarymonitoraddress ip4://127.0.0.1:6502)
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --headless) console=(-console); extra+=(+sound); shift ;;
+        --no-mcp) monitor=(+binarymonitor); shift ;;
+        *) break ;;
+    esac
+done
+exec "$RETRO_TOOLS/local/usr/bin/x64sc" "${console[@]}" -default "${extra[@]}" \
+    -directory "$RETRO_TOOLS/local/usr/share/vice" \
+    -kernal "$RETRO_TOOLS/local/usr/share/vice/C64/kernal-901227-03.bin" \
+    -basic "$RETRO_TOOLS/local/usr/share/vice/C64/basic-901226-01.bin" \
+    -chargen "$RETRO_TOOLS/local/usr/share/vice/C64/chargen-901225-01.bin" \
+    -dos1541 "$RETRO_TOOLS/local/usr/share/vice/DRIVES/dos1541-325302-01+901229-05.bin" \
+    -drive8type 1541 -drive8truedrive -ntsc \
+    "${monitor[@]}" \
+    -autostart "$RETRO_TOOLS/state/c64-disks/wizardry_i_side_a.d64" "$@"

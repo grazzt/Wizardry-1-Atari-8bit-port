@@ -1,0 +1,231 @@
+{
+  "platform": "appleII",
+  "collected_on": "2026-10-09",
+  "reference_file_count": 16,
+  "documents": [
+    {
+      "path": "appleII/manuals/Apple_II_Reference_Manual_1978.pdf",
+      "url": "https://bitsavers.trailing-edge.com/pdf/apple/apple_II/Apple%5D%5BRefJan78.pdf",
+      "title": "Apple II Reference Manual (January 1978)",
+      "author": "Apple Computer",
+      "use": "Original Apple II hardware, graphics, memory map, monitor and schematics; predates IIe.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "2fe28aacbc5f4ca682ccd1580067fb261330cbf8d853f579f65d2001ebcac332",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 155,
+      "bytes": 10059029,
+      "sha256": "2fe28aacbc5f4ca682ccd1580067fb261330cbf8d853f579f65d2001ebcac332"
+    },
+    {
+      "path": "appleII/disk/Beneath_Apple_DOS.pdf",
+      "url": "https://mirrors.apple2.org.za/Apple%20II%20Documentation%20Project/Books/Beneath%20Apple%20DOS.pdf",
+      "title": "Beneath Apple DOS",
+      "author": "Don Worth and Pieter Lechner",
+      "use": "Disk II, DOS internals, sectors and disk structures; distinguish DOS from Pascal disk layout.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "21483c338332e117e1a729428dd0ce56290cd26f7f321a6ece9ae3d13c1e0600",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 177,
+      "bytes": 52377182,
+      "sha256": "21483c338332e117e1a729428dd0ce56290cd26f7f321a6ece9ae3d13c1e0600"
+    },
+    {
+      "path": "appleII/programming/Apple_Pascal_Language_Reference.pdf",
+      "url": "https://mirrors.apple2.org.za/Apple%20II%20Documentation%20Project/Software/Operating%20Systems/Apple%20Pascal/Manuals/Apple%20Pascal%20Language%20Reference%20Manual.pdf",
+      "title": "Apple Pascal Language Reference Manual",
+      "author": "Apple Computer",
+      "use": "Pascal language, compiler behavior and units for interpreting Wizardry's reconstructed source.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "70eb71c62ae541a25d1a5a3d7712e2ed5cac4ecf6602c291c7f6cc87036afcf7",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 120,
+      "bytes": 5957555,
+      "sha256": "70eb71c62ae541a25d1a5a3d7712e2ed5cac4ecf6602c291c7f6cc87036afcf7"
+    },
+    {
+      "path": "appleII/programming/Apple_Pascal_Update_1.1.pdf",
+      "url": "https://mirrors.apple2.org.za/Apple%20II%20Documentation%20Project/Software/Operating%20Systems/Apple%20Pascal/Manuals/Apple%20Pascal%20Update%201.1.pdf",
+      "title": "Apple Pascal Update 1.1",
+      "author": "Apple Computer",
+      "use": "Version-specific supplement relevant to the Wizardry reconstruction's Pascal 1.1 environment.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "6eab7af1274b9c82d50fd8aedd77c5999de08ee08678d499c51878905b4c9061",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 62,
+      "bytes": 2825045,
+      "sha256": "6eab7af1274b9c82d50fd8aedd77c5999de08ee08678d499c51878905b4c9061"
+    },
+    {
+      "path": "appleII/programming/Apple_Pascal_1.1_Attach_BIOS.pdf",
+      "url": "https://mirrors.apple2.org.za/Apple%20II%20Documentation%20Project/Software/Operating%20Systems/Apple%20Pascal/Manuals/Apple%20II%20Pascal%201.1%20Attach-BIOS.pdf",
+      "title": "Apple II Pascal 1.1 Attach-BIOS",
+      "author": "Apple Computer",
+      "use": "Pascal BIOS interface reference for investigating platform-dependent I/O.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "46011d74c62c2826114a34adff0bd6d58b06b7f7761dbfc0feb73ef33c43cfc2",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 50,
+      "bytes": 451109,
+      "sha256": "46011d74c62c2826114a34adff0bd6d58b06b7f7761dbfc0feb73ef33c43cfc2"
+    },
+    {
+      "path": "appleII/programming/Apple_Pascal_Operating_System_Reference.pdf",
+      "url": "https://mirrors.apple2.org.za/Apple%20II%20Documentation%20Project/Software/Operating%20Systems/Apple%20Pascal/Manuals/Apple%20Pascal%20Operating%20System%20Reference%20Manual.pdf",
+      "title": "Apple Pascal Operating System Reference Manual",
+      "author": "Apple Computer",
+      "use": "Pascal system, files, compiler/linker and runtime environment.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "413bf6bbb09caa54d1b6dee7de3c30adede5f06416cc120ba85aa689961ec257",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 307,
+      "bytes": 117032809,
+      "sha256": "413bf6bbb09caa54d1b6dee7de3c30adede5f06416cc120ba85aa689961ec257"
+    },
+    {
+      "path": "appleII/disk/Pascal_Filesystem.html",
+      "url": "https://ciderpress2.com/formatdoc/Pascal-notes.html",
+      "title": "Apple Pascal Filesystem for the Apple II",
+      "author": "Andy McFadden / faddenSoft",
+      "use": "Directory entries, contiguous allocation and 512-byte blocks.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "ad88982561667ed0bd33c8a906704f7779f46e873667fc53eea5089262045aa8",
+      "local_changes": "HTML href/src URLs repaired: included documents/assets use local paths; other relative URLs point to their original website. Document body unchanged.",
+      "bytes": 12614,
+      "sha256": "d5d651e78411824ecef76f9930e268dc8177ca9e011e02814ec3ff283b375548"
+    },
+    {
+      "path": "appleII/disk/Apple_Pascal_File_Formats.html",
+      "url": "https://ciderpress2.com/formatdoc/ApplePascal-notes.html",
+      "title": "Apple Pascal Textfile and Codefile",
+      "author": "Andy McFadden / faddenSoft",
+      "use": "Segment dictionaries and Pascal text/code file formats; version distinctions need checking.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "836a48d93871215d07a6e0149b77a2a07dc74aa7ce09e312ee2ffabbebc69db0",
+      "local_changes": "HTML href/src URLs repaired: included documents/assets use local paths; other relative URLs point to their original website. Document body unchanged.",
+      "bytes": 5918,
+      "sha256": "9f410454b78fb2877f2def07d5407d3aa82e9fed6e9a65602b3a441e78379d36"
+    },
+    {
+      "path": "appleII/disk/Apple_Disk_Image_Formats.html",
+      "url": "https://ciderpress2.com/formatdoc/Unadorned-notes.html",
+      "title": "Unadorned Disk Image Files",
+      "author": "Andy McFadden / faddenSoft",
+      "use": "DOS/ProDOS sector ordering and .dsk/.do/.po/.nib image interpretation.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "62a018115e1af71ff0e88044f232817d6cbb763b30574d2f681d7230c5281f70",
+      "local_changes": "HTML href/src URLs repaired: included documents/assets use local paths; other relative URLs point to their original website. Document body unchanged.",
+      "bytes": 8581,
+      "sha256": "54de7cf1e021dacd88dd6a6f4641312c6ceb81c690ffeee3d44faf4b8b2be00c"
+    },
+    {
+      "path": "appleII/programming/Apple_II_HiRes_Format.html",
+      "url": "https://ciderpress2.com/formatdoc/HiRes-notes.html",
+      "title": "Apple II Hi-Res Graphics",
+      "author": "Andy McFadden / faddenSoft",
+      "use": "Hi-res bitmap storage and artifact color for converting source graphics.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "897b929b1c9985f837fb82c2c7baa7ab05ec61ca0f4fac0bdf0692b53f2f790f",
+      "local_changes": "HTML href/src URLs repaired: included documents/assets use local paths; other relative URLs point to their original website. Document body unchanged.",
+      "bytes": 14271,
+      "sha256": "2116e0e9d6e11d009bd507b89f29bff7ea5f03919dfd2fa2cba1ffefc32a7180"
+    },
+    {
+      "path": "appleII/tools/CiderPress_II_CLI_Manual.md",
+      "url": "https://raw.githubusercontent.com/fadden/CiderPress2/main/docs/Manual-cp2.md",
+      "title": "CiderPress II command-line manual",
+      "author": "Andy McFadden / faddenSoft",
+      "use": "Disk inspection and file extraction/conversion on the host.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "aa5695366a3989cdd269ef5aca7ceffdf65760d11c90f451b376b0bdfee60b8d",
+      "local_changes": "None; original downloaded bytes.",
+      "bytes": 90239,
+      "sha256": "aa5695366a3989cdd269ef5aca7ceffdf65760d11c90f451b376b0bdfee60b8d"
+    },
+    {
+      "path": "appleII/programming/Wizardry_Reconstruction_README.md",
+      "url": "https://raw.githubusercontent.com/snafaru/Wizardry.Code/main/README.md",
+      "title": "Wizardry.Code project README",
+      "author": "snafaru; credits Thomas William Ewers",
+      "use": "Research lead documenting a Pascal 1.1 reconstruction and modified v3.2; not original source provenance.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "ef29a6f6cca574d4f607d4ebcf5f843077064ad4dd42efbf993c885a509b6e5f",
+      "local_changes": "None; original downloaded bytes.",
+      "bytes": 3052,
+      "sha256": "ef29a6f6cca574d4f607d4ebcf5f843077064ad4dd42efbf993c885a509b6e5f"
+    },
+    {
+      "path": "appleII/tools/apple2.html",
+      "url": "https://cc65.github.io/doc/apple2.html",
+      "title": "cc65 apple2 target reference",
+      "author": "cc65 project",
+      "use": "Target memory layout, binary formats, library support and platform-specific conventions.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "04d80c39b575147fc562bd4e67ad9ac25a0c55cfccd8b64df685c0f3be9d7b78",
+      "local_changes": "HTML href/src URLs repaired: included documents/assets use local paths; other relative URLs point to their original website. Document body unchanged. The ca65 link points to the shared copy in common/tools/.",
+      "bytes": 38510,
+      "sha256": "365e95656b34e8951ea9e125ca655fe75601119d046e059fbd16632f6a57a005"
+    },
+    {
+      "path": "appleII/manuals/Apple_IIe_Technical_Reference_Manual.pdf",
+      "url": "https://mirrors.apple2.org.za/Apple%20II%20Documentation%20Project/Computers/Apple%20II/Apple%20IIe/Manuals/Apple%20IIe%20Technical%20Reference%20Manual.pdf",
+      "title": "Apple IIe Technical Reference Manual",
+      "author": "Apple Computer",
+      "use": "IIe hardware, auxiliary memory, soft switches and firmware; distinguish IIe features from original II/II Plus.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "ddd3f598b487e5e2c4e47d2df625de8665b13fcbd013dcf7ad147a48faca15c9",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 444,
+      "bytes": 79702151,
+      "sha256": "ddd3f598b487e5e2c4e47d2df625de8665b13fcbd013dcf7ad147a48faca15c9"
+    },
+    {
+      "path": "appleII/programming/Apple_Pascal_1.1_PCode_Interpreter_Disassembly.pdf",
+      "url": "https://mirrors.apple2.org.za/ftp.apple.asimov.net/documentation/programming/pascal/Apple%202%20Pascal%2011%20PCodeIntDism.pdf",
+      "title": "Apple II Pascal 1.1 p-code interpreter disassembly",
+      "author": "Willi Kusche; introductory correspondence with David Craig",
+      "use": "Annotated 6502 runtime disassembly; investigate the boundary between p-code and machine-specific support.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "e05fe4d3e3ddb35f5d160c94772a5dbc0305e2f64a9938784d847f12c9ad3eff",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 292,
+      "bytes": 4306651,
+      "sha256": "e05fe4d3e3ddb35f5d160c94772a5dbc0305e2f64a9938784d847f12c9ad3eff"
+    },
+    {
+      "path": "appleII/programming/P_Source_Guide_to_Apple_Pascal_1983.pdf",
+      "url": "https://mirrors.apple2.org.za/ftp.apple.asimov.net/documentation/programming/pascal/Hyde_P-Source-A%20Guide%20to%20the%20APPLE%20Pascal%20System_1983.pdf",
+      "title": "p-Source: A Guide to the Apple Pascal System (1983)",
+      "author": "Randall Hyde",
+      "use": "Pascal runtime internals and p-code for evaluating an interpreter-based port.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "bd92432e2e8ee930d0eb18252c6cd571bf36129597dd9202c5aeeb30065c2335",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 462,
+      "bytes": 13024479,
+      "sha256": "bd92432e2e8ee930d0eb18252c6cd571bf36129597dd9202c5aeeb30065c2335"
+    }
+  ],
+  "supporting_assets": [
+    {
+      "path": "appleII/tools/doc.css",
+      "url": "https://cc65.github.io/doc/doc.css",
+      "bytes": 869,
+      "sha256": "d46c259753a3fe12aafa988cd927e6894c67a41a9084a8e86889a6d32cb08d24",
+      "retrieved_on": "2026-10-09"
+    },
+    {
+      "path": "appleII/disk/github-css.css",
+      "url": "https://ciderpress2.com/formatdoc/github-css.css",
+      "bytes": 23181,
+      "sha256": "e4c87ac596655c3fed27aea70f4ba378617d3ce8243897ac5d1a1a065de1e2f3",
+      "retrieved_on": "2026-10-09"
+    },
+    {
+      "path": "appleII/programming/github-css.css",
+      "url": "https://ciderpress2.com/formatdoc/github-css.css",
+      "bytes": 23181,
+      "sha256": "e4c87ac596655c3fed27aea70f4ba378617d3ce8243897ac5d1a1a065de1e2f3",
+      "retrieved_on": "2026-10-09"
+    }
+  ]
+}

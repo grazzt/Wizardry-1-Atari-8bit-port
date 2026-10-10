@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+source "$(dirname -- "$0")/common.sh"
+prepare_disks appleII dsk
+export APPLEII_AGENT_SANDBOX="$RETRO_TOOLS/state/appleii-sandbox.config"
+printf '[disks]@%s\n[output]@%s\n' \
+    "$RETRO_TOOLS/state/appleII-disks" "$RETRO_PROJECT/test-artifacts/emulators" > "$APPLEII_AGENT_SANDBOX"
+export PORT=3033
+exec node "$RETRO_TOOLS/src/appleii-agent-git/src/index.js"

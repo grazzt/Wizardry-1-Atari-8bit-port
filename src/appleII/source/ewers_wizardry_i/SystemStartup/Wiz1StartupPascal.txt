@@ -1,0 +1,1422 @@
+     2   1    1:D     1 (*$L PRINTER: *)
+     3   1    1:D     1 (* SWITCH "$S+" PRECEDES $L SWITCH *)
+     4   1    1:D     1 (*$R-*)
+     5   1    1:D     1 (*$I-*)
+     6   1    1:D     1 (*$V-*)
+     7   1    1:D     1 
+     8   1    1:D     1 (*
+     9   1    1:D     1   WIZARDRY 1, SYSTEM.STARTUP
+    10   1    1:D     1   REVERSE ENGINEERED BY:  THOMAS WILLIAM EWERS, 2014
+    11   1    1:D     1 *)
+    12   1    1:D     1 
+    13   1    1:D     1 
+    14   1    1:D     1 PROGRAM WIZBOOT;
+    15   1    1:D     3 
+    16  28    1:D     3 
+    17  28    2:D     1   PROCEDURE SETCHAIN(TYTLE:STRING);
+    18  28    3:D     1   PROCEDURE SETCVAL(VAL:STRING);
+    19  28    4:D     1   PROCEDURE GETCVAL(VAR VAL:STRING);
+    20  28    5:D     1   PROCEDURE SWAPON;
+    21  28    6:D     1   PROCEDURE SWAPOFF;
+    22  28    6:D     1   
+    23   1    1:D     1   USES CHAINSTUFF;
+    24   1    1:D     3 
+    25   1    1:D     3   CONST
+    26   1    1:D     3         DRIVE1 = 4;
+    27   1    1:D     3         DRIVE2 = 5;
+    28   1    1:D     3         WIZDIRBL = 2;
+    29   1    1:D     3         SERIALBL = 5;
+    30   1    1:D     3         BS = 8;
+    31   1    1:D     3         ESC = 27;
+    32   1    1:D     3         VT = 11;
+    33   1    1:D     3         HOMECLR = 12;
+    34   1    1:D     3         CR = 13;
+    35   1    1:D     3      
+    36   1    1:D     3      
+    37   1    1:D     3   TYPE
+    38   1    1:D     3 
+    39   1    1:D     3        TBLOCKRG = 0..511;
+    40   1    1:D     3   
+    41   1    1:D     3        DIRENTRY = RECORD
+    42   1    1:D     3            FIRSTBLK : INTEGER;
+    43   1    1:D     3            LASTBLK  : INTEGER;
+    44   1    1:D     3            FILEKIND : PACKED RECORD
+    45   1    1:D     3                FT : (VOLHEAD, BADBLK, MACH6502, TEXT, DEBUG,
+    46   1    1:D     3                      DATA, GRAFFILE, FOTOFILE, SUBDIR);
+    47   1    1:D     3              END;
+    48   1    1:D     3            FILENAME : STRING[ 7];
+    49   1    1:D     3            VOLLB    : INTEGER;
+    50   1    1:D     3            FILECNT  : INTEGER;
+    51   1    1:D     3            LOADTIM  : INTEGER;
+    52   1    1:D     3            BOOTDATE : INTEGER;
+    53   1    1:D     3            RES1     : INTEGER;
+    54   1    1:D     3            RES2     : INTEGER;
+    55   1    1:D     3          END;
+    56   1    1:D     3   
+    57   1    1:D     3        TWIZLONG = RECORD
+    58   1    1:D     3            LOW  : INTEGER;
+    59   1    1:D     3            MID  : INTEGER;
+    60   1    1:D     3            HIGH : INTEGER;
+    61   1    1:D     3          END;
+    62   1    1:D     3          
+    63   1    1:D     3        TRACE = (NORACE, HUMAN, ELF, DWARF, GNOME, HOBBIT);
+    64   1    1:D     3        
+    65   1    1:D     3        TCLASS = (FIGHTER, MAGE, PRIEST, THIEF,
+    66   1    1:D     3                  BISHOP, SAMURAI, LORD, NINJA);
+    67   1    1:D     3          
+    68   1    1:D     3        TALIGN = (UNALIGN, GOOD, NEUTRAL, EVIL);
+    69   1    1:D     3          
+    70   1    1:D     3        TSTATUS = (OK, AFRAID, ASLEEP, PLYZE, 
+    71   1    1:D     3                   STONED, DEAD, ASHES, LOST);
+    72   1    1:D     3        
+    73   1    1:D     3        TATTRIB = (STRENGTH, IQ, PIETY, VITALITY, AGILITY, LUCK);
+    74   1    1:D     3        
+    75   1    1:D     3        TSPELL7G = ARRAY[ 1..7] OF INTEGER;
+    76   1    1:D     3        
+    77   1    1:D     3        THPREC = RECORD
+    78   1    1:D     3            LEVEL   : INTEGER;
+    79   1    1:D     3            HPFAC   : INTEGER;
+    80   1    1:D     3            HPMINAD : INTEGER;
+    81   1    1:D     3          END;
+    82   1    1:D     3                 
+    83   1    1:D     3                 
+    84   1    1:D     3        TCHAR = RECORD
+    85   1    1:D     3            NAME     : STRING[ 15];
+    86   1    1:D     3            PASSWORD : STRING[ 15];
+    87   1    1:D     3            INMAZE   : BOOLEAN;
+    88   1    1:D     3            RACE     : TRACE;
+    89   1    1:D     3            CLASS    : TCLASS;
+    90   1    1:D     3            AGE      : INTEGER;
+    91   1    1:D     3            STATUS   : TSTATUS;
+    92   1    1:D     3            ALIGN    : TALIGN;
+    93   1    1:D     3            ATTRIB   : PACKED ARRAY[ STRENGTH..LUCK] OF 0..18;
+    94   1    1:D     3            LUCKSKIL : PACKED ARRAY[ 0..4] OF 0..31;
+    95   1    1:D     3            GOLD     : TWIZLONG;
+    96   1    1:D     3            POSS     : RECORD
+    97   1    1:D     3                POSSCNT : INTEGER;
+    98   1    1:D     3                POSSESS : ARRAY[ 1..8] OF RECORD
+    99   1    1:D     3                    EQUIPED : BOOLEAN;
+   100   1    1:D     3                    CURSED  : BOOLEAN;
+   101   1    1:D     3                    IDENTIF : BOOLEAN;
+   102   1    1:D     3                    EQINDEX : INTEGER;
+   103   1    1:D     3                  END;
+   104   1    1:D     3              END;
+   105   1    1:D     3            EXP      : TWIZLONG;
+   106   1    1:D     3            MAXLEVAC : INTEGER;
+   107   1    1:D     3            CHARLEV  : INTEGER;
+   108   1    1:D     3            HPLEFT   : INTEGER;
+   109   1    1:D     3            HPMAX    : INTEGER;
+   110   1    1:D     3            SPELLSKN : PACKED ARRAY[ 0..49] OF BOOLEAN;
+   111   1    1:D     3            MAGESP   : TSPELL7G;
+   112   1    1:D     3            PRIESTSP : TSPELL7G;
+   113   1    1:D     3            HPCALCMD : INTEGER;
+   114   1    1:D     3            ARMORCL  : INTEGER;
+   115   1    1:D     3            HEALPTS  : INTEGER;
+   116   1    1:D     3            CRITHITM : BOOLEAN;
+   117   1    1:D     3            SWINGCNT : INTEGER;
+   118   1    1:D     3            HPDAMRC  : THPREC;
+   119   1    1:D     3            WEPVSTY2 : PACKED ARRAY[ 0..1, 0..13] OF BOOLEAN;
+   120   1    1:D     3            WEPVSTY3 : PACKED ARRAY[ 0..1, 0..6] OF BOOLEAN;
+   121   1    1:D     3            WEPVSTYP : PACKED ARRAY[ 0..13] OF BOOLEAN;
+   122   1    1:D     3            LOSTXYL  : RECORD CASE INTEGER OF
+   123   1    1:D     3                1:  (LOCATION : ARRAY[ 1..4] OF INTEGER);
+   124   1    1:D     3                2:  (POISNAMT : ARRAY[ 1..4] OF INTEGER);
+   125   1    1:D     3                3:  (AWARDS   : ARRAY[ 1..4] OF INTEGER);
+   126   1    1:D     3              END;
+   127   1    1:D     3          END;
+   128   1    1:D     3                 
+   129   1    1:D     3                 
+   130   1    1:D     3   VAR 
+   131   1    1:D     3        INCHAR : CHAR;
+   132   1    1:D     4        BASE04 : INTEGER;
+   133   1    1:D     5        SERIAL : STRING[ 7];
+   134   1    1:D     9        
+   135   1    1:D     9        
+   136   1    2:D     1   PROCEDURE LZDECOMP( VAR A1 : INTEGER;
+   137   1    2:D     2                           A2 : INTEGER); EXTERNAL;     (* P070002 *)
+   138   1    2:D     3   
+   139   1    3:D     1   PROCEDURE CHKSYNCH( VAR COUNT: INTEGER); EXTERNAL;   (* P070003 *)
+   140   1    3:D     2    
+   141   1    3:D     2    
+   141   1    3:D     2 (*$I WIZ1E:WIZUTILB *)
+   142   7    1:D     1 SEGMENT PROCEDURE UTILS;  (* P070101 *)
+   143   7    1:D     1 
+   144   7    1:D     1   TYPE
+   145   7    1:D     1 
+   146   7    1:D     1         TSPEL012 = (GENERIC, PERSON, GROUP);
+   147   7    1:D     1         
+   148   7    1:D     1         TZSCN = (ZZERO, ZMAZE, ZENEMY, ZREWARD, ZOBJECT,
+   149   7    1:D     1                  ZCHAR, ZSPCCHRS, ZEXP);
+   150   7    1:D     1                    
+   151   7    1:D     1         TSCNTOC = RECORD
+   152   7    1:D     1             GAMENAME : STRING[ 40];
+   153   7    1:D     1             RECPER2B : ARRAY[ ZZERO..ZEXP] OF INTEGER;
+   154   7    1:D     1             RECPERDK : ARRAY[ ZZERO..ZEXP] OF INTEGER;
+   155   7    1:D     1             UNUSEDXX : ARRAY[ ZZERO..ZEXP] OF INTEGER;
+   156   7    1:D     1             BLOFF    : ARRAY[ ZZERO..ZEXP] OF INTEGER;
+   157   7    1:D     1             RACE     : ARRAY[ NORACE..HOBBIT]         OF STRING[ 9];
+   158   7    1:D     1             CLASS    : PACKED ARRAY[ FIGHTER..NINJA]  OF STRING[ 9];
+   159   7    1:D     1             STATUS   : ARRAY[ OK..LOST]               OF STRING[ 8];
+   160   7    1:D     1             ALIGN    : PACKED ARRAY[ UNALIGN..EVIL]   OF STRING[ 9];
+   161   7    1:D     1             SPELLHSH : PACKED ARRAY[ 0..50] OF INTEGER;
+   162   7    1:D     1             SPELLGRP : PACKED ARRAY[ 0..50] OF 0..7;
+   163   7    1:D     1             SPELL012 : PACKED ARRAY[ 0..50] OF TSPEL012;
+   164   7    1:D     1           END;
+   165   7    1:D     1 
+   166   7    1:D     1   VAR
+   167   7    1:D     1   
+   168   7    1:D     1        IOCACHE  : PACKED ARRAY[ 0..1023] OF CHAR;
+   169   7    1:D   513        UNUSEDXX : INTEGER;
+   170   7    1:D   514        CACHEBL  : INTEGER;
+   171   7    1:D   515        SCNTOCBL : INTEGER;
+   172   7    1:D   516        RANDNUM  : INTEGER;
+   173   7    1:D   517        CACHEWRI : BOOLEAN;
+   174   7    1:D   518        SCNTOC   : TSCNTOC;
+   175   7    1:D   770     
+   176   7    1:D   770     
+   177   7    2:D     3     FUNCTION GETREC( DATATYPE : TZSCN;              (* P070102 *)
+   178   7    2:D     4                      DATAINDX : INTEGER;
+   179   7    2:D     5                      DATASIZE : INTEGER) : INTEGER;
+   180   7    2:D     6                       
+   181   7    2:D     6       VAR
+   182   7    2:D     6            BUFFADDR : INTEGER;
+   183   7    2:D     7            DSKBLOCK : INTEGER;
+   184   7    2:D     8            
+   185   7    2:0     0       BEGIN
+   186   7    2:1     0         DSKBLOCK := SCNTOC.BLOFF[ DATATYPE] +
+   187   7    2:1     8                     2 * (DATAINDX DIV SCNTOC.RECPER2B[ DATATYPE]);
+   188   7    2:1    23         BUFFADDR := DATASIZE * (DATAINDX MOD SCNTOC.RECPER2B[ DATATYPE]);
+   189   7    2:1    37         IF CACHEBL <> DSKBLOCK THEN
+   190   7    2:2    45           BEGIN
+   191   7    2:3    45             IF CACHEWRI THEN
+   192   7    2:4    51               UNITWRITE( DRIVE1, IOCACHE, SIZEOF( IOCACHE),
+   193   7    2:4    59                          CACHEBL + SCNTOCBL, 0);
+   194   7    2:3    71             CACHEWRI := FALSE;
+   195   7    2:3    76             CACHEBL := DSKBLOCK;
+   196   7    2:3    81             UNITREAD( DRIVE1, IOCACHE, SIZEOF( IOCACHE),
+   197   7    2:3    89                       CACHEBL + SCNTOCBL, 0)
+   198   7    2:2   101           END;
+   199   7    2:1   101         GETREC := BUFFADDR
+   200   7    2:0   101       END;
+   201   7    2:0   116         
+   202   7    2:0   116         
+   203   7    3:D     3   FUNCTION PUTREC( DATATYPE : TZSCN;             (* P070103 *)
+   204   7    3:D     4                    DATAINDX : INTEGER;
+   205   7    3:D     5                    DATASIZE : INTEGER) : INTEGER;
+   206   7    3:D     6                    
+   207   7    3:D     6     VAR
+   208   7    3:D     6          BUFFADDR : INTEGER;
+   209   7    3:D     7          DSKBLOCK : INTEGER;
+   210   7    3:D     8                     
+   211   7    3:0     0     BEGIN
+   212   7    3:1     0         DSKBLOCK := SCNTOC.BLOFF[ DATATYPE] +
+   213   7    3:1     8                     2 * (DATAINDX DIV SCNTOC.RECPER2B[ DATATYPE]);
+   214   7    3:1    23         BUFFADDR := DATASIZE * (DATAINDX MOD SCNTOC.RECPER2B[ DATATYPE]);
+   215   7    3:1    37         IF CACHEBL <> DSKBLOCK THEN
+   216   7    3:2    45           BEGIN
+   217   7    3:3    45             IF CACHEWRI THEN
+   218   7    3:4    51               UNITWRITE( DRIVE1, IOCACHE, SIZEOF( IOCACHE),
+   219   7    3:4    59                          CACHEBL + SCNTOCBL, 0);
+   220   7    3:3    71             CACHEBL := DSKBLOCK;
+   221   7    3:3    76             UNITREAD( DRIVE1, IOCACHE, SIZEOF( IOCACHE),
+   222   7    3:3    84                       CACHEBL + SCNTOCBL, 0)
+   223   7    3:2    96           END;
+   224   7    3:1    96         CACHEWRI := TRUE;
+   225   7    3:1   101         PUTREC := BUFFADDR
+   226   7    3:0   101     END;
+   227   7    3:0   116   
+   228   7    3:0   116   
+   229   7    4:D     1   PROCEDURE GETKEY;  (* P070104 *)
+   230   7    4:D     1   
+   231   7    4:0     0     BEGIN
+   232   7    4:1     0       READ( INCHAR);
+   233   7    4:1     8       IF EOLN THEN
+   234   7    4:2    18         INCHAR := CHR( 13);
+   235   7    4:1    21       RANDNUM := (RANDNUM + ORD( INCHAR)) MOD 1027
+   236   7    4:1    27       (* NOTE:  RANDNUM IS GARBAGE WHEN THIS IS FIRST CALLED *)
+   237   7    4:0    27     END;
+   238   7    4:0    48     
+   239   7    4:0    48     
+   240   7    5:D     3   FUNCTION FINDFILE( DRIVE    : INTEGER;             (*  P070105 *)
+   241   7    5:D     4                      FILENAME : STRING) : INTEGER;
+   242   7    5:D    46                     
+   243   7    5:D    46     VAR
+   244   7    5:D    46          DIR      : ARRAY[ 0..12] OF DIRENTRY;
+   245   7    5:D   215          FILEIFND : INTEGER;
+   246   7    5:D   216          FILEI    : INTEGER;
+   247   7    5:D   217          FILECNT  : INTEGER;
+   248   7    5:D   218 
+   249   7    5:0     0     BEGIN
+   250   7    5:1     0       UNITREAD( DRIVE, IOCACHE, SIZEOF( IOCACHE), WIZDIRBL, 0);
+   251   7    5:1    17       IF IORESULT <> 0 THEN
+   252   7    5:2    23           FINDFILE := -ABS( IORESULT)    (* THIS IS A BUG *)
+   253   7    5:1    26       ELSE
+   254   7    5:2    31         BEGIN
+   255   7    5:3    31           MOVELEFT( IOCACHE, DIR, SIZEOF( DIR)); 
+   256   7    5:3    43           IF (DIR[ 0].FILECNT < 0) OR (DIR[ 0].FILECNT > 8) THEN
+   257   7    5:4    64             BEGIN
+   258   7    5:5    64               FINDFILE := -1;
+   259   7    5:5    68               EXIT( FINDFILE)
+   260   7    5:4    72             END;
+   261   7    5:3    72           FILEIFND := 0;
+   262   7    5:3    76           FILEI := 1;
+   263   7    5:3    80           FILECNT := DIR[ 0].FILECNT;
+   264   7    5:3    90           WHILE FILEI <= FILECNT DO
+   265   7    5:4    99             BEGIN
+   266   7    5:5    99               IF (DIR[ FILEI].FILEKIND.FT >= BADBLK) AND
+   267   7    5:5   113                  (DIR[ FILEI].FILEKIND.FT <= FOTOFILE)    THEN
+   268   7    5:6   130                 BEGIN
+   269   7    5:7   130                   IF DIR[ FILEI].FILENAME = FILENAME THEN
+   270   7    5:8   145                     FILEIFND := FILEI
+   271   7    5:6   145                 END;
+   272   7    5:5   151               FILEI := FILEI + 1;
+   273   7    5:4   159             END;
+   274   7    5:3   161           IF FILEIFND = 0 THEN
+   275   7    5:4   168             FINDFILE := -9
+   276   7    5:3   168           ELSE
+   277   7    5:4   174             FINDFILE := DIR[ FILEIFND].FIRSTBLK
+   278   7    5:2   181         END
+   279   7    5:0   184       END;
+   280   7    5:0   200     
+   281   7    5:0   200     
+   282   7    6:D     1   PROCEDURE GETCR;  (* P070106 *)
+   283   7    6:D     1   
+   284   7    6:0     0     BEGIN
+   285   7    6:1     0       REPEAT
+   286   7    6:2     0         GOTOXY( 41, 0);
+   287   7    6:2     5         GETKEY
+   288   7    6:1     5       UNTIL INCHAR = CHR( CR)
+   289   7    6:0     9     END;
+   290   7    6:0    26   
+   291   7    6:0    26   
+   292   7    7:D     1   PROCEDURE EXITUTIL;  (* P070107 *)
+   293   7    7:D     1   
+   294   7    7:D     1     VAR
+   295   7    7:D     1         FILEINDX : INTEGER;
+   296   7    7:D     2         
+   297   7    7:0     0     BEGIN
+   298   7    7:1     0       FILEINDX := FINDFILE( DRIVE1, 'SYSTEM.PASCAL');
+   299   7    7:1    23       WHILE FILEINDX <= 0 DO
+   300   7    7:2    28         BEGIN
+   301   7    7:3    28           WRITE( CHR( HOMECLR));
+   302   7    7:3    36           GOTOXY( 0, 10);
+   303   7    7:3    41           WRITE( 'PLACE BOOT DISK IN DRIVE 1, PRESS RETURN');
+   304   7    7:3    91           GETCR;
+   305   7    7:3    93           FILEINDX := FINDFILE( DRIVE1, 'SYSTEM.PASCAL')
+   306   7    7:2   110         END;
+   307   7    7:1   118       EXIT( UTILS)
+   308   7    7:0   122     END;
+   309   7    7:0   136 
+   310   7    7:0   136 
+   311   7    8:D     1   PROCEDURE RDSCNTC2;  (* P070108 *)
+   312   7    8:D     1   
+   313   7    8:0     0     BEGIN
+   314   7    8:1     0       CACHEWRI := FALSE;
+   315   7    8:1     5       CACHEBL := 0;
+   316   7    8:1    10       UNITREAD( DRIVE1, IOCACHE, SIZEOF( IOCACHE), SCNTOCBL);
+   317   7    8:1    25       MOVELEFT( IOCACHE, SCNTOC, SIZEOF( SCNTOC))
+   318   7    8:0    39     END;
+   319   7    8:0    52   
+   320   7    8:0    52   
+   321   7    9:D     1   PROCEDURE RDSCNTOC( MSG : STRING);  (* P070109 *)
+   322   7    9:D    43   
+   323   7    9:D    43     VAR
+   324   7    9:D    43         UNUSEDXX : INTEGER;
+   325   7    9:D    44   
+   326   7    9:0     0     BEGIN
+   327   7    9:1     0       REPEAT
+   328   7    9:2     5         WRITE( CHR( HOMECLR));
+   329   7    9:2    13         GOTOXY( 20 - LENGTH( MSG) DIV 2, 8);
+   330   7    9:2    25         WRITE( MSG);
+   331   7    9:2    34         GOTOXY( 0, 10);
+   332   7    9:2    39         WRITE( 'PLACE SCENARIO IN DRIVE 1, PRESS RETURN');
+   333   7    9:2    88         UNITCLEAR( 1);
+   334   7    9:2    91         GETCR;
+   335   7    9:2    93         SCNTOCBL := FINDFILE( DRIVE1, 'SCENARIO.DATA')
+   336   7    9:1   110       UNTIL (SCNTOCBL >= 0);
+   337   7    9:1   126       RDSCNTC2
+   338   7    9:0   126     END;
+   339   7    9:0   142   
+   340   7    9:0   142   
+   341   7   10:D     1   PROCEDURE GETPASS( VAR PASSWD : STRING );  (* P07010A *)
+   342   7   10:D     2   
+   343   7   10:D     2     VAR
+   344   7   10:D     2          UNUSEDXX : INTEGER;
+   345   7   10:D     3          I        : INTEGER;
+   346   7   10:D     4          PASSI    : INTEGER;
+   347   7   10:D     5          
+   348   7   10:0     0     BEGIN
+   349   7   10:1     0       PASSI := 0;
+   350   7   10:1     3       REPEAT
+   351   7   10:2     3         GETKEY;
+   352   7   10:2     5         IF INCHAR <> CHR( CR) THEN
+   353   7   10:3    10           BEGIN
+   354   7   10:4    10             WRITE( CHR( BS));
+   355   7   10:4    18             FOR I := 0 TO RANDNUM MOD 2 DO
+   356   7   10:5    34               WRITE( 'X')
+   357   7   10:3    42           END;
+   358   7   10:2    49         PASSI := PASSI + 1;
+   359   7   10:2    54         PASSWD[ PASSI] := INCHAR
+   360   7   10:1    56       UNTIL (INCHAR = CHR( CR)) OR (PASSI = 15);
+   361   7   10:1    67       WRITELN;
+   362   7   10:1    73       PASSWD[ 0] := CHR( PASSI - 1)
+   363   7   10:0    78     END;
+   364   7   10:0    96   
+   365   7   10:0    96   
+   366   7   11:D     1   PROCEDURE RDCHARAC( VAR CHARREC : TCHAR; CHARINDX : INTEGER);  (* P07010B *)
+   367   7   11:D     3   
+   368   7   11:0     0     BEGIN
+   369   7   11:1     0       MOVELEFT( IOCACHE[ GETREC( ZCHAR, CHARINDX, SIZEOF( CHARREC))],
+   370   7   11:1    12                 CHARREC,
+   371   7   11:1    14                 SIZEOF( CHARREC)) 
+   372   7   11:0    19     END;
+   373   7   11:0    32   
+   374   7   11:0    32   
+   375   7   12:D     1   PROCEDURE WRCHARAC( VAR CHARREC : TCHAR; CHARINDX : INTEGER);  (* P07010C *)
+   376   7   12:D     3   
+   377   7   12:0     0     BEGIN
+   378   7   12:1     0       MOVELEFT( CHARREC,
+   379   7   12:1     2                 IOCACHE[ PUTREC(  ZCHAR, CHARINDX, SIZEOF( CHARREC))], 
+   380   7   12:1    14                 SIZEOF( CHARREC)) 
+   381   7   12:0    19     END;
+   382   7   12:0    32     
+   383   7   12:0    32     
+   384   7   13:D     1   PROCEDURE WRICACHE;  (* P07010D *)
+   385   7   13:D     1   
+   386   7   13:0     0     BEGIN
+   387   7   13:1     0       UNITWRITE( DRIVE1, IOCACHE, SIZEOF( IOCACHE), (CACHEBL + SCNTOCBL), 0);
+   388   7   13:1    20       CACHEWRI := FALSE
+   389   7   13:0    20     END;
+   390   7   13:0    38     
+   391   7   13:0    38     
+   392   7   14:D     1   PROCEDURE PRESSRET;  (* P07010E *)
+   393   7   14:D     1   
+   394   7   14:0     0     BEGIN
+   395   7   14:1     0       WRITELN;
+   396   7   14:1     6       WRITE( 'PRESS [RET]' :25);
+   397   7   14:1    27       GETCR
+   398   7   14:0    27     END;
+   399   7   14:0    42     
+   400   7   14:0    42     
+   401   7   15:D     1   PROCEDURE TITLESCR( TITLESTR : STRING);    (* P07010F *)
+   402   7   15:D    43   
+   403   7   15:D    43     VAR
+   404   7   15:D    43         I : INTEGER;
+   405   7   15:D    44         
+   406   7   15:0     0     BEGIN
+   407   7   15:1     0       WRITE( CHR( HOMECLR));
+   408   7   15:1    13       WRITELN( TITLESTR : (20 + LENGTH( TITLESTR) DIV 2));
+   409   7   15:1    35       FOR I := 1 TO 40 DO 
+   410   7   15:2    48         WRITE( '-');
+   411   7   15:1    64       WRITELN;
+   412   7   15:1    70       WRITELN
+   413   7   15:0    70     END;
+   414   7   15:0    90     
+   415   7   15:0    90     
+   416   7   16:D     3   FUNCTION  RTNESC( TITLESTR : STRING;             (* P070110 *)
+   417   7   16:D     4                     TITLE2ST : STRING) : BOOLEAN;
+   418   7   16:D    87   
+   419   7   16:0     0     BEGIN
+   420   7   16:1     0       TITLESCR( TITLESTR);
+   421   7   16:1    14       WRITELN( TITLE2ST : (20 + LENGTH( TITLE2ST) DIV 2));
+   422   7   16:1    36       WRITELN;
+   423   7   16:1    42       WRITE( ' PRESS [RET] TO BEGIN OR [ESC] TO EXIT');
+   424   7   16:1    90       REPEAT
+   425   7   16:2    90         GOTOXY( 41, 0);
+   426   7   16:2    95         GETKEY;
+   427   7   16:2    97         IF INCHAR = CHR( CR) THEN
+   428   7   16:3   102           BEGIN
+   429   7   16:4   102             RTNESC := FALSE;
+   430   7   16:4   105             EXIT( RTNESC)
+   431   7   16:3   109           END
+   432   7   16:2   109         ELSE
+   433   7   16:3   111           BEGIN
+   434   7   16:4   111             IF INCHAR = CHR( ESC) THEN
+   435   7   16:5   116               BEGIN
+   436   7   16:6   116                 RTNESC := TRUE;
+   437   7   16:6   119                 EXIT( RTNESC)
+   438   7   16:5   123               END
+   439   7   16:3   123           END
+   440   7   16:1   123       UNTIL FALSE
+   441   7   16:0   123     END;
+   442   7   16:0   140     
+   443   7   16:0   140     
+   444   7   17:D     1   PROCEDURE CHGNAMES;  (* P070111 *)
+   445   7   17:D     1   
+   446   7   17:D     1     VAR
+   447   7   17:D     1         PASSWD   : STRING[ 40];
+   448   7   17:D    22         TONAME   : STRING[ 40];
+   449   7   17:D    43         FROMNAME : STRING[ 40];
+   450   7   17:D    64         X        : INTEGER;
+   451   7   17:D    65         CHARINDX : INTEGER;
+   452   7   17:D    66         BADSTUFF : BOOLEAN;
+   453   7   17:D    67         PLAYREC  : TCHAR;
+   454   7   17:D   171         
+   455   7   17:D   171         
+   456   7   18:D     1     PROCEDURE GETNAME( VAR CHARNAME : STRING;  (* P070112 *)
+   457   7   18:D     2                            VERT4SOL : INTEGER;
+   458   7   18:D     3                            PROMPT   : STRING);
+   459   7   18:D    45                            
+   460   7   18:0     0       BEGIN
+   461   7   18:1     0         REPEAT
+   462   7   18:2     5           REPEAT
+   463   7   18:3     5             REPEAT
+   464   7   18:4     5               GOTOXY( 0, VERT4SOL);
+   465   7   18:4    10               WRITE( CHR( VT));
+   466   7   18:4    18               WRITE( PROMPT);
+   467   7   18:4    27               READLN( CHARNAME)
+   468   7   18:3    41             UNTIL LENGTH( CHARNAME) <= 15;
+   469   7   18:3    48             IF CHARNAME = '' THEN
+   470   7   18:4    56               EXIT( CHGNAMES)
+   471   7   18:2    60           UNTIL LENGTH( CHARNAME) > 0;
+   472   7   18:2    67           
+   473   7   18:2    67           BADSTUFF := FALSE;
+   474   7   18:2    71           FOR X := 1 TO LENGTH( CHARNAME) DO
+   475   7   18:3    88             BADSTUFF := BADSTUFF OR 
+   476   7   18:3    91                         (CHARNAME[ X] < ' ') OR (CHARNAME[ X] > '_')
+   477   7   18:1   106         UNTIL NOT BADSTUFF
+   478   7   18:0   120       END;
+   479   7   18:0   146     
+   480   7   18:0   146   
+   481   7   17:0     0     BEGIN (* CHGNAMES *)
+   482   7   17:1     0       IF RTNESC( 'NAME CHANGE', '') THEN
+   483   7   17:2    23         EXIT( CHGNAMES);
+   484   7   17:1    27       RDSCNTOC( 'NAME CHANGE');
+   485   7   17:1    43       
+   486   7   17:1    43       REPEAT
+   487   7   17:2    43         TITLESCR( 'NAME CHANGE');
+   488   7   17:2    59         WRITELN( 'ENTER THE CURRENT NAME OF  THE CHAR');
+   489   7   17:2   110         WRITELN( '& THEN THE NEW NAME. OR PRESS [RET]');
+   490   7   17:2   161         WRITELN( 'TO EXIT.');
+   491   7   17:2   185         GETNAME( FROMNAME, 10, 'FROM NAME >');
+   492   7   17:2   204         GETNAME( TONAME, 12, ' TO  NAME >');
+   493   7   17:2   223         WRITELN;
+   494   7   17:2   229         WRITELN;
+   495   7   17:2   235         IF TONAME <> '' THEN
+   496   7   17:3   244           BEGIN
+   497   7   17:4   244             BADSTUFF := FALSE;
+   498   7   17:4   247             FOR CHARINDX := 0 TO SCNTOC.RECPERDK[ ZCHAR] - 1 DO
+   499   7   17:5   271               BEGIN
+   500   7   17:6   271                 RDCHARAC( PLAYREC, CHARINDX);
+   501   7   17:6   277                 IF (PLAYREC.NAME = TONAME) AND (PLAYREC.STATUS <> LOST) THEN
+   502   7   17:7   290                   BEGIN
+   503   7   17:8   290                     WRITELN( 'NAME ALREADY IN USE');
+   504   7   17:8   325                     BADSTUFF := TRUE
+   505   7   17:7   325                   END
+   506   7   17:5   328               END;
+   507   7   17:5   336               
+   508   7   17:4   336             IF NOT BADSTUFF THEN
+   509   7   17:5   341               BEGIN
+   510   7   17:6   341                 X := -1;
+   511   7   17:6   345                 FOR CHARINDX := 0 TO SCNTOC.RECPERDK[ ZCHAR] - 1 DO
+   512   7   17:7   369                   BEGIN
+   513   7   17:8   369                     RDCHARAC( PLAYREC, CHARINDX);
+   514   7   17:8   375                     IF PLAYREC.NAME = FROMNAME THEN
+   515   7   17:9   383                       X := CHARINDX
+   516   7   17:7   383                   END;
+   517   7   17:7   395                   
+   518   7   17:6   395                 IF X = -1 THEN
+   519   7   17:7   402                   WRITELN( 'CANT FIND CHAR')
+   520   7   17:6   432                 ELSE
+   521   7   17:7   434                   BEGIN
+   522   7   17:8   434                     RDCHARAC( PLAYREC, X);
+   523   7   17:8   440                     WRITE( 'PASSWORD >');
+   524   7   17:8   460                     GETPASS( PASSWD);
+   525   7   17:8   464                     WRITELN;
+   526   7   17:8   470                     IF PASSWD <> PLAYREC.PASSWORD THEN
+   527   7   17:9   478                       WRITELN( 'PASSWORDS DO NOT MATCH')
+   528   7   17:8   516                     ELSE
+   529   7   17:9   518                       BEGIN
+   530   7   17:0   518                         PLAYREC.NAME := TONAME;
+   531   7   17:0   524                         WRCHARAC( PLAYREC, X);
+   532   7   17:0   530                         WRICACHE;
+   533   7   17:0   532                         WRITELN( 'NAME CHANGED!')
+   534   7   17:9   561                       END
+   535   7   17:7   561                   END
+   536   7   17:5   561               END;
+   537   7   17:4   561             PRESSRET
+   538   7   17:3   561           END
+   539   7   17:1   563       UNTIL FALSE
+   540   7   17:0   563     END;  (* CHGNAMES *)
+   541   7   17:0   588     
+   542   7   17:0   588 (*$I WIZ1E:WIZUTILB *)
+   542   7   17:0   588 (*$I WIZ1E:WIZUTILC *)
+   543   7   19:D     1   PROCEDURE BACKUP;  (* P070113 *)
+   544   7   19:D     1                
+   545   7   19:D     1     VAR
+   546   7   19:D     1          PLAY20BF : ARRAY[ 0..19] OF TCHAR;
+   547   7   19:D  2081          SERIALBU : STRING[ 7];
+   548   7   19:D  2085          SERIALXX : STRING[ 7];
+   549   7   19:D  2089          UNUSEDXX : INTEGER;
+   550   7   19:D  2090          CHARINDX : INTEGER;
+   551   7   19:D  2091   
+   552   7   19:D  2091   
+   553   7   20:D     1     PROCEDURE FRBACKUP;  (* P070114 *)
+   554   7   20:D     1     
+   555   7   20:0     0       BEGIN
+   556   7   20:1     0         WRITE( CHR( HOMECLR));
+   557   7   20:1     8         WRITELN( 'PLACE BACKUP DISKETTE IN DRIVE 1,');
+   558   7   20:1    57         PRESSRET;
+   559   7   20:1    59         WRITE( CHR( HOMECLR));
+   560   7   20:1    67         FOR CHARINDX := 0 TO 19 DO
+   561   7   20:2    83           BEGIN
+   562   7   20:3    83             GOTOXY( 20 * (CHARINDX MOD 2), CHARINDX DIV 2);
+   563   7   20:3   100             UNITREAD( DRIVE1, PLAY20BF[ CHARINDX], SIZEOF( TCHAR),
+   564   7   20:3   114                       CHARINDX, 0);
+   565   7   20:3   121             IF PLAY20BF[ CHARINDX].STATUS <> LOST THEN
+   566   7   20:4   136               WRITE( PLAY20BF[ CHARINDX].NAME)
+   567   7   20:2   152           END;
+   568   7   20:2   164           
+   569   7   20:1   164         UNITREAD( DRIVE1, SERIALBU, 7, 20, 0);
+   570   7   20:1   175         GOTOXY( 0, 20);
+   571   7   20:1   180         WRITE( CHR( VT));
+   572   7   20:1   188         WRITE( 'RECOVER THESE (Y/N) ? >');
+   573   7   20:1   221         REPEAT
+   574   7   20:2   221           GOTOXY (41, 0);
+   575   7   20:2   226           GETKEY;
+   576   7   20:2   228           IF INCHAR = 'N' THEN
+   577   7   20:3   233             EXIT( BACKUP)
+   578   7   20:1   237         UNTIL INCHAR = 'Y';
+   579   7   20:1   242         
+   580   7   20:1   242         RDSCNTOC( 'SCENARIO TO RECOVER TO');
+   581   7   20:1   269         UNITREAD( DRIVE1, SERIALXX, 7, SERIALBL, 0);
+   582   7   20:1   280         IF SERIALXX <> SERIALBU THEN
+   583   7   20:2   292           BEGIN
+   584   7   20:3   292             TITLESCR( 'CANT RECOVER ONTO DIFFERENT SCENARIO');
+   585   7   20:3   333             WRITELN( 'SCENARIO MUST BE MADE OFF SAME MASTER');
+   586   7   20:3   386             WRITELN( 'AS THE SCENARIO THE BACKUP WAS MADE');
+   587   7   20:3   437             WRITELN( 'FROM.');
+   588   7   20:3   458             PRESSRET;
+   589   7   20:3   460             EXIT( BACKUP)
+   590   7   20:2   464           END;
+   591   7   20:2   464           
+   592   7   20:1   464         TITLESCR( 'SAVING CHARS');
+   593   7   20:1   481         FOR CHARINDX := 0 TO SCNTOC.RECPERDK[ ZCHAR] - 1 DO
+   594   7   20:2   506           WRCHARAC( PLAY20BF[ CHARINDX], CHARINDX);
+   595   7   20:1   533         WRICACHE;
+   596   7   20:1   535         TITLESCR( 'BACKUP RECOVERED');
+   597   7   20:1   556         PRESSRET
+   598   7   20:0   556       END;
+   599   7   20:0   578       
+   600   7   20:0   578       
+   601   7   21:D     1     PROCEDURE TOBACKUP;  (* P070115 *)
+   602   7   21:D     1     
+   603   7   21:0     0       BEGIN
+   604   7   21:1     0         RDSCNTOC( 'MAKING BACKUP');
+   605   7   21:1    18         UNITREAD( DRIVE1, SERIALXX, 7, SERIALBL, 0);
+   606   7   21:1    29         TITLESCR( 'LOADING CHARS');
+   607   7   21:1    47         FOR CHARINDX := 0 TO SCNTOC.RECPERDK[ ZCHAR] - 1 DO
+   608   7   21:2    72           RDCHARAC( PLAY20BF[ CHARINDX], CHARINDX);
+   609   7   21:1    99         WRITELN( 'LOADED! NOW PLACE A FORMATTED DISKETTE');
+   610   7   21:1   153         WRITELN( 'IN DRIVE 1 AND PRESS [RETURN] TO SAVE.');
+   611   7   21:1   207         WRITELN;
+   612   7   21:1   213         GOTOXY( 41, 0);
+   613   7   21:1   218         GETCR;
+   614   7   21:1   220         
+   615   7   21:1   220         IF FINDFILE( DRIVE1, 'WIZARDRY.CODE') >= 0 THEN
+   616   7   21:2   245           BEGIN
+   617   7   21:3   245             TITLESCR( 'CANT BACKUP ONTO A WIZARDRY DISK!');
+   618   7   21:3   283             PRESSRET;
+   619   7   21:3   285             EXIT( TOBACKUP)
+   620   7   21:2   289           END;
+   621   7   21:2   289           
+   622   7   21:1   289         FOR CHARINDX := 0 TO SCNTOC.RECPERDK[ ZCHAR] -1 DO
+   623   7   21:2   314           UNITWRITE( DRIVE1, PLAY20BF[ CHARINDX], SIZEOF( TCHAR),
+   624   7   21:2   328                      CHARINDX, 0);
+   625   7   21:1   347         UNITWRITE( DRIVE1, SERIALXX,  7, 20, 0);
+   626   7   21:1   358         TITLESCR( 'BACKUP MADE');
+   627   7   21:1   374         PRESSRET
+   628   7   21:0   374       END;
+   629   7   21:0   392 
+   630   7   21:0   392 
+   631   7   19:0     0     BEGIN  (* BACKUP *)
+   632   7   19:1     0       IF RTNESC( 'CHAR BACKUP', '(INCOMPATIBLE WITH PREVIOUS VERSION)') THEN
+   633   7   19:2    59         EXIT( BACKUP);
+   634   7   19:1    63       TITLESCR( 'CHAR BACKUP');
+   635   7   19:1    79       WRITELN;
+   636   7   19:1    85       WRITE( 'T)O OR F)ROM BACKUP' :30);
+   637   7   19:1   114       GOTOXY( 41, 0);
+   638   7   19:1   119       GETKEY;
+   639   7   19:1   121       IF INCHAR = 'T' THEN
+   640   7   19:2   126         TOBACKUP
+   641   7   19:1   126       ELSE IF INCHAR = 'F' THEN
+   642   7   19:3   135         FRBACKUP
+   643   7   19:0   135     END;
+   644   7   19:0   150     
+   645   7   19:0   150     
+   646   7   22:D     1   PROCEDURE RECOVER;  (* P070116 *)
+   647   7   22:D     1   
+   648   7   22:D     1     VAR
+   649   7   22:D     1          CHARREC  : TCHAR;
+   650   7   22:D   105          CHARINDX : INTEGER;
+   651   7   22:D   106          UNUSEDXX : ARRAY[ 0..1] OF INTEGER;
+   652   7   22:D   108   
+   653   7   22:0     0     BEGIN;
+   654   7   22:1     0       IF RTNESC( 'CHAR RECOVERY', 'NO 10 YEAR PENALTY') THEN
+   655   7   22:2    43         EXIT( RECOVER);
+   656   7   22:1    47       RDSCNTOC( 'INSERT SCENARIO WITH "OUT" CHARS');
+   657   7   22:1    84       WRITE( CHR( HOMECLR));
+   658   7   22:1    92       WRITELN( 'RECOVERING');
+   659   7   22:1   118       WRITELN;
+   660   7   22:1   124       
+   661   7   22:1   124       FOR CHARINDX := 0 TO SCNTOC.RECPERDK[ ZCHAR] - 1 DO
+   662   7   22:2   146         BEGIN
+   663   7   22:3   146           RDCHARAC( CHARREC, CHARINDX);
+   664   7   22:3   152           IF CHARREC.INMAZE THEN
+   665   7   22:4   156             BEGIN
+   666   7   22:5   156               CHARREC.INMAZE := FALSE;
+   667   7   22:5   159               WRCHARAC( CHARREC, CHARINDX);
+   668   7   22:5   165               WRITE( CHARREC.NAME);
+   669   7   22:5   174               WRITELN( ' SAVED');
+   670   7   22:4   196             END
+   671   7   22:2   196         END;
+   672   7   22:1   204       WRICACHE;
+   673   7   22:1   206       PRESSRET
+   674   7   22:0   206     END;
+   675   7   22:0   222     
+   676   7   22:0   222     
+   677   7   23:D     1   PROCEDURE TRANSFER;  (* P070117 *)
+   678   7   23:D     1   
+   679   7   23:D     1     VAR
+   680   7   23:D     1          PLAYREC1 : TCHAR;
+   681   7   23:D   105          PLAYREC2 : TCHAR;
+   682   7   23:D   209          PLAYFRMI : INTEGER;
+   683   7   23:D   210          PLAYINDX : INTEGER;
+   684   7   23:D   211          MPD3     : CHAR;
+   685   7   23:D   212          FRMRNDID : CHAR;
+   686   7   23:D   213          FRMGAMNM : STRING;
+   687   7   23:D   254          BL5BUFF  : PACKED ARRAY[ 0..511] OF CHAR;
+   688   7   23:D   510          SERIALTO : STRING[ 7];
+   689   7   23:D   514          SERIALFR : STRING[ 7];
+   690   7   23:D   518          
+   691   7   23:D   518          
+   692   7   24:D     1     PROCEDURE REMOVCHR;  (* P070118 *)
+   693   7   24:D     1     
+   694   7   24:D     1       VAR
+   695   7   24:D     1            PASSFROM : STRING;
+   696   7   24:D    42            UNUSEDXX : INTEGER;
+   697   7   24:D    43            PLAYERI  : INTEGER;
+   698   7   24:D    44            
+   699   7   24:D    44            
+   700   7   25:D     1       PROCEDURE BADITEM;  (* P070119 *)
+   701   7   25:D     1       
+   702   7   25:0     0         BEGIN
+   703   7   25:1     0           WRITELN;
+   704   7   25:1     6           WRITELN( '** CHAR HAS NON-XFERRABLE ITEMS **');
+   705   7   25:1    56           PRESSRET;
+   706   7   25:1    58           EXIT( TRANSFER)
+   707   7   25:0    62         END;
+   708   7   25:0    74         
+   709   7   25:0    74         
+   710   7   24:0     0       BEGIN
+   711   7   24:1     0         REPEAT
+   712   7   24:2     0           WRITE( CHR( HOMECLR));
+   713   7   24:2     8           WRITE( SCNTOC.GAMENAME :
+   714   7   24:2    15                                 (20 + (LENGTH( SCNTOC.GAMENAME) DIV 2)));
+   715   7   24:2    28           FOR PLAYERI := 0 TO SCNTOC.RECPERDK[ ZCHAR] - 1 DO
+   716   7   24:3    50             BEGIN
+   717   7   24:4    50               GOTOXY( 20 * (PLAYERI MOD 2), 2 + (PLAYERI DIV 2));
+   718   7   24:4    65               RDCHARAC( PLAYREC2, PLAYERI);
+   719   7   24:4    72               IF PLAYREC2.STATUS = OK THEN
+   720   7   24:5    79                 BEGIN
+   721   7   24:6    79                   WRITE( CHR( ORD('A') + PLAYERI));
+   722   7   24:6    90                   WRITE( ' - ');
+   723   7   24:6   103                   WRITE( PLAYREC2.NAME)
+   724   7   24:5   113                 END
+   725   7   24:3   113             END;
+   726   7   24:3   121           
+   727   7   24:2   121           REPEAT
+   728   7   24:3   121             REPEAT
+   729   7   24:4   121               GOTOXY( 0, 18);
+   730   7   24:4   126               WRITELN( 'NOTE - CHARS MUST BE LIVE & IN CASTLE');
+   731   7   24:4   179               WRITELN;
+   732   7   24:4   185               WRITELN( 'ENTER LETTER OF CHAR TO MOVE, OR');
+   733   7   24:4   233               WRITE(   'OR PRESS [RETURN] TO EXIT');
+   734   7   24:4   268               GOTOXY( 41, 0);
+   735   7   24:4   273               GETKEY;
+   736   7   24:4   275               IF INCHAR = CHR( CR) THEN
+   737   7   24:5   280                 EXIT( TRANSFER);
+   738   7   24:4   284               PLAYINDX := ORD( INCHAR) - ORD('A')
+   739   7   24:3   286             UNTIL (PLAYINDX >= 0) AND (PLAYINDX < SCNTOC.RECPERDK[ ZCHAR]);
+   740   7   24:3   313             RDCHARAC( PLAYREC2, PLAYINDX)
+   741   7   24:2   320           UNTIL PLAYREC2.STATUS = OK;
+   742   7   24:2   329           
+   743   7   24:2   329           WRITE( CHR( HOMECLR));
+   744   7   24:2   337           WRITE( 'MOVING ');
+   745   7   24:2   354           WRITELN( PLAYREC2.NAME);
+   746   7   24:2   370           WRITELN;
+   747   7   24:2   376           WRITE( 'PASSWORD >');
+   748   7   24:2   396           GETPASS( PASSFROM)
+   749   7   24:1   398         UNTIL PASSFROM = PLAYREC2.PASSWORD;
+   750   7   24:1   409         
+   751   7   24:1   409         FOR PLAYERI := 1 TO PLAYREC2.POSS.POSSCNT DO
+   752   7   24:2   425           IF PLAYREC2.POSS.POSSESS[ PLAYERI].EQINDEX > 93 THEN
+   753   7   24:3   440             BADITEM;
+   754   7   24:3   450         
+   755   7   24:1   450         PLAYREC1 := PLAYREC2;
+   756   7   24:1   458         PLAYREC1.STATUS := LOST;
+   757   7   24:1   462         WRCHARAC( PLAYREC1, PLAYINDX);
+   758   7   24:1   471         WRICACHE
+   759   7   24:0   471       END;  (* REMOVCHR *)
+   760   7   24:0   496       
+   761   7   24:0   496       
+   762   7   26:D     1     PROCEDURE TRANBAD;  (* P07011A *)
+   763   7   26:D     1     
+   764   7   26:0     0       BEGIN
+   765   7   26:1     0         REPEAT
+   766   7   26:2     0           REPEAT
+   767   7   26:3     0             IF (MPD3 = BL5BUFF[ 10]) AND
+   768   7   26:3    11                (SERIALFR = SERIALTO)     THEN
+   769   7   26:4    24               RDSCNTOC( 'CANT COPY TO BACKUP - PUT IN SOURCE')
+   770   7   26:3    62             ELSE IF (PLAYINDX = -1) THEN
+   771   7   26:5    75               RDSCNTOC( 'DUPLICATE NAME - PUT IN SOURCE')
+   772   7   26:4   108             ELSE
+   773   7   26:5   112               RDSCNTOC( 'ALL SLOTS USED - PUT IN SOURCE');
+   774   7   26:3   147             UNITREAD( DRIVE1, BL5BUFF, SIZEOF( BL5BUFF), SERIALBL, 0)
+   775   7   26:2   160           UNTIL (SCNTOC.GAMENAME = FRMGAMNM) AND (FRMRNDID = BL5BUFF[ 12]);
+   776   7   26:2   184           RDCHARAC( PLAYREC1, PLAYFRMI)
+   777   7   26:1   191         UNTIL PLAYREC1.NAME = PLAYREC2.NAME;
+   778   7   26:1   203         WRCHARAC( PLAYREC2, PLAYFRMI);
+   779   7   26:1   212         WRICACHE;
+   780   7   26:1   214         TITLESCR( 'CHAR HAS BEEN PUT BACK.');
+   781   7   26:1   242         PRESSRET
+   782   7   26:0   242       END;
+   783   7   26:0   260       
+   784   7   26:0   260       
+   785   7   27:D     1     PROCEDURE TRANGOOD;  (* P07011B *)
+   786   7   27:D     1     
+   787   7   27:0     0       BEGIN
+   788   7   27:1     0         WRCHARAC( PLAYREC2, PLAYINDX);
+   789   7   27:1     9         WRICACHE;
+   790   7   27:1    11         TITLESCR( 'CHAR HAS BEEN MOVED');
+   791   7   27:1    35         PRESSRET
+   792   7   27:0    35       END;
+   793   7   27:0    50          
+   794   7   27:0    50          
+   795   7   23:0     0     BEGIN  (* TRANSFER *)
+   796   7   23:1     0       IF RTNESC( 'MOVE CHARS BETWEEN SCENARIOS', '') THEN
+   797   7   23:2    40         EXIT( TRANSFER);
+   798   7   23:1    44       RDSCNTOC( 'INSERT SCENARIO WITH CHAR(S) TO BE MOVED');
+   799   7   23:1    89       UNITREAD( DRIVE1, BL5BUFF, SIZEOF( BL5BUFF), SERIALBL, 0);
+   800   7   23:1   101       MPD3 := BL5BUFF[ 10];
+   801   7   23:1   109       MOVELEFT( BL5BUFF, SERIALFR, 7);
+   802   7   23:1   120       BL5BUFF[ 12] := CHR( (ORD( BL5BUFF[ 12]) + RANDNUM) MOD 256);
+   803   7   23:1   139       UNITWRITE( DRIVE1, BL5BUFF, SIZEOF( BL5BUFF), SERIALBL, 0);
+   804   7   23:1   151       FRMRNDID := BL5BUFF[ 12];
+   805   7   23:1   159       REMOVCHR;
+   806   7   23:1   161       PLAYFRMI := PLAYINDX;
+   807   7   23:1   167       FRMGAMNM := SCNTOC.GAMENAME;
+   808   7   23:1   176       RDSCNTOC( 'INSERT SCENARIO TO MOVE CHAR(S) TO');
+   809   7   23:1   215       UNITREAD( DRIVE1, BL5BUFF, SIZEOF( BL5BUFF), SERIALBL, 0);
+   810   7   23:1   227       MOVELEFT( BL5BUFF, SERIALTO, 7);
+   811   7   23:1   238       PLAYINDX := SCNTOC.RECPERDK[ ZCHAR];
+   812   7   23:1   249       
+   813   7   23:1   249       IF (MPD3 <> BL5BUFF[ 10]) OR
+   814   7   23:1   258          (SERIALFR <> SERIALTO)    THEN
+   815   7   23:2   269          BEGIN
+   816   7   23:3   269            FOR BASE04 := 0 TO SCNTOC.RECPERDK[ ZCHAR] - 1 DO
+   817   7   23:4   292              BEGIN
+   818   7   23:5   292                RDCHARAC( PLAYREC1, BASE04);
+   819   7   23:5   297                IF (PLAYREC1.NAME = PLAYREC2.NAME) AND
+   820   7   23:5   303                   (PLAYREC1.STATUS <> LOST) THEN
+   821   7   23:6   310                  PLAYINDX := -1
+   822   7   23:5   310                ELSE
+   823   7   23:6   317                  IF PLAYINDX = SCNTOC.RECPERDK[ ZCHAR] THEN
+   824   7   23:7   331                    IF PLAYREC1.STATUS = LOST THEN
+   825   7   23:8   337                      PLAYINDX := BASE04
+   826   7   23:4   337              END;
+   827   7   23:2   348          END;
+   828   7   23:2   348       
+   829   7   23:1   348       IF (PLAYINDX = -1) OR
+   830   7   23:1   354          (PLAYINDX = SCNTOC.RECPERDK[ ZCHAR]) THEN
+   831   7   23:2   369          TRANBAD
+   832   7   23:1   369       ELSE
+   833   7   23:2   373          TRANGOOD
+   834   7   23:0   373     END;  (* TRANSFER *)
+   835   7   23:0   390     
+   836   7   23:0   390     
+   837   7   28:D     1   PROCEDURE MAKESCEN;  (* P07011C *)
+   838   7   28:D     1       
+   839   7   28:D     1     VAR
+   840   7   28:D     1          UNUSED   : INTEGER;
+   841   7   28:D     2          DUPIDX   : INTEGER;
+   842   7   28:D     3          TEMPI    : INTEGER; (* MULTIPLE USES *)
+   843   7   28:D     4          CHARREC0 : TCHAR;
+   844   7   28:D   108          IOCACHE2 : PACKED ARRAY [ 0..3071] OF CHAR;
+   845   7   28:D  1644          SERBUFF  : PACKED ARRAY [ 0..511] OF CHAR;
+   846   7   28:D  1900       
+   847   7   28:D  1900       
+   848   7   29:D     1     PROCEDURE EXITMAKE( ERRMSG : STRING);  (* P07011D *)
+   849   7   29:D    43     
+   850   7   29:0     0       BEGIN
+   851   7   29:1     0         TITLESCR( 'ERROR MAKING SCENARIO');
+   852   7   29:1    31         WRITELN( ERRMSG: (20 + LENGTH( ERRMSG) DIV 2) );
+   853   7   29:1    53         PRESSRET;
+   854   7   29:1    55         EXIT( MAKESCEN)
+   855   7   29:0    59       END;  (* EXITMAKE *)
+   856   7   29:0    72       
+   857   7   29:0    72       
+   858   7   30:D     1     PROCEDURE DSKERROR;  (* P07011E *)
+   859   7   30:D     1     
+   860   7   30:0     0       BEGIN
+   861   7   30:1     0         EXITMAKE( 'DISK ERROR')
+   862   7   30:0    13       END;
+   863   7   30:0    28       
+   864   7   30:0    28       
+   865   7   31:D     1     PROCEDURE NOTSCEN; (* P07011F *)
+   866   7   31:D     1     
+   867   7   31:0     0       BEGIN
+   868   7   31:1     0         EXITMAKE( 'NOT SCENARIO DISK')
+   869   7   31:0    20       END;
+   870   7   31:0    34       
+   871   7   31:0    34       
+   872   7   28:0     0     BEGIN (* MAKESCEN *)
+   873   7   28:1     0       IF RTNESC( 'MAKE NEW SCENARIO DISKETTE', '') THEN
+   874   7   28:2    38         EXIT( MAKESCEN);
+   875   7   28:1    42       TITLESCR( 'MAKE NEW SCENARIO DISKETTE');
+   876   7   28:1    73       WRITELN( 'PLACE ORIGINAL MASTER SCENARIO SIDE IN');
+   877   7   28:1   127       WRITELN( 'DRIVE 2,  AND A  FORMATTED DISKETTE IN');
+   878   7   28:1   181       WRITELN( 'DRIVE 1.');
+   879   7   28:1   205       WRITELN;
+   880   7   28:1   211       WRITELN( 'REMEMBER : ORIGINAL=2, NEW=1');
+   881   7   28:1   255       PRESSRET;
+   882   7   28:1   257       TITLESCR( 'MAKING SCENARIO - DO NOT DISTURB');
+   883   7   28:1   294       SCNTOCBL := FINDFILE( DRIVE2, 'SCENARIO.DATA');
+   884   7   28:1   319       IF SCNTOCBL < 0 THEN
+   885   7   28:2   327         NOTSCEN;
+   886   7   28:1   329       UNITREAD( DRIVE2, SERBUFF, SIZEOF( SERBUFF), SERIALBL, 0);
+   887   7   28:1   341       IF IORESULT <> 0 THEN
+   888   7   28:2   347         DSKERROR;
+   889   7   28:1   349       IF SERBUFF[ 10] <> CHR( 0) THEN
+   890   7   28:2   358         EXITMAKE( 'NOT MASTER IN 2');
+   891   7   28:1   378       DUPIDX := ORD( SERBUFF[ 11]) + 1;
+   892   7   28:1   387       IF DUPIDX = 256 THEN
+   893   7   28:2   394         DUPIDX := 1;
+   894   7   28:1   397       SERBUFF[ 11] := CHR( DUPIDX);
+   895   7   28:1   403       UNITWRITE( DRIVE2, SERBUFF, SIZEOF( SERBUFF), SERIALBL, 0);
+   896   7   28:1   415       IF IORESULT <> 0 THEN
+   897   7   28:2   421         DSKERROR;
+   898   7   28:1   423       FOR TEMPI := 0 TO 34 DO
+   899   7   28:2   437         BEGIN
+   900   7   28:3   437           UNITREAD( DRIVE2, IOCACHE, SIZEOF( IOCACHE), 8 * TEMPI, 0);
+   901   7   28:3   451           IF IORESULT <> 0 THEN
+   902   7   28:4   457             DSKERROR;
+   903   7   28:3   459           UNITREAD( DRIVE2, IOCACHE2[ 0], SIZEOF( IOCACHE2),
+   904   7   28:3   466                       8 * TEMPI + 2, 0);
+   905   7   28:3   474           IF IORESULT <> 0 THEN
+   906   7   28:4   480             DSKERROR;
+   907   7   28:3   482           UNITWRITE( DRIVE1, IOCACHE, SIZEOF( IOCACHE), 8 * TEMPI, 0);
+   908   7   28:3   496           IF IORESULT <> 0 THEN
+   909   7   28:4   502             DSKERROR;
+   910   7   28:3   504           UNITWRITE( DRIVE1, IOCACHE2[ 0], SIZEOF( IOCACHE2),
+   911   7   28:3   511                        8 * TEMPI + 2, 0);
+   912   7   28:3   519           IF IORESULT <> 0 THEN
+   913   7   28:4   525             DSKERROR;
+   914   7   28:2   527         END;
+   915   7   28:2   534         
+   916   7   28:1   534       SERBUFF[ 10] := SERBUFF[ 11];
+   917   7   28:1   544       SERBUFF[ 11] := CHR( 0);
+   918   7   28:1   550       SERBUFF[ 12] := CHR( (ORD( SERBUFF[ 12]) +  RANDNUM) MOD 256 );
+   919   7   28:1   569       
+   920   7   28:1   569       UNITWRITE( DRIVE1, SERBUFF, SIZEOF( SERBUFF), SERIALBL, 0);
+   921   7   28:1   581       IF IORESULT <> 0 THEN
+   922   7   28:2   587         DSKERROR;
+   923   7   28:1   589       SCNTOCBL := FINDFILE( DRIVE1, 'SCENARIO.DATA');
+   924   7   28:1   614       IF SCNTOCBL < 0 THEN
+   925   7   28:2   622         NOTSCEN;
+   926   7   28:1   624       RDSCNTC2;
+   927   7   28:1   626       CHARREC0.STATUS := LOST;
+   928   7   28:1   629       FOR TEMPI := 0 TO SCNTOC.RECPERDK[ ZCHAR] DO
+   929   7   28:2   650         WRCHARAC( CHARREC0, TEMPI);
+   930   7   28:1   662       WRICACHE;
+   931   7   28:1   664       TITLESCR( 'MADE');
+   932   7   28:1   673       PRESSRET
+   933   7   28:0   673     END;
+   934   7   28:0   692     
+   935   7   28:0   692     
+   936   7   32:D     1   PROCEDURE UPDATDSK;  (* P070120 *)
+   937   7   32:D     1   
+   938   7   32:D     1     VAR
+   939   7   32:D     1         UNUSED  : INTEGER;
+   940   7   32:D     2         TEMPI   : INTEGER;                  (* MULTIPLE USES *)
+   941   7   32:D     3         CHARS20 : ARRAY [ 0..19] OF TCHAR;
+   942   7   32:D  2083         SERNUM  : STRING[ 6];               (* EVER USED PROPERLY? *)
+   943   7   32:D  2087         UNUSED2 : PACKED ARRAY [0..38] OF CHAR;
+   944   7   32:D  2107         IOBUF   : PACKED ARRAY [ 0..511] OF CHAR;
+   945   7   32:D  2363         BUF6BLK : PACKED ARRAY [ 0..3071] OF CHAR;
+   946   7   32:D  3899         
+   947   7   32:D  3899         
+   948   7   33:D     1     PROCEDURE EXITUPD;  (* P070121 *)
+   949   7   33:D     1     
+   950   7   33:0     0       BEGIN
+   951   7   33:1     0         TITLESCR( 'ERROR DURING UPDATE');
+   952   7   33:1    24         WRITELN( 'UPDATE ABORTED' :27);
+   953   7   33:1    54         PRESSRET;
+   954   7   33:1    56         EXIT( UPDATDSK)
+   955   7   33:0    60       END;
+   956   7   33:0    72     
+   957   7   33:0    72     
+   958   7   34:D     1     PROCEDURE COPYDSK;  (* P070122 *)
+   959   7   34:D     1     
+   960   7   34:D     1       (* COPY ALL OF DISK FROM DRIVE 2 TO DRIVE 1,
+   961   7   34:D     1          EXCEPT FOR THE SERIAL BLOCK (#5)          *)
+   962   7   34:D     1     
+   963   7   34:D     1     
+   964   7   35:D     1       PROCEDURE COPYTRCK( BLOCKNUM : INTEGER);  (* P070123 *)
+   965   7   35:D     2       
+   966   7   35:0     0         BEGIN
+   967   7   35:1     0           UNITREAD( DRIVE2, IOCACHE, SIZEOF( IOCACHE), BLOCKNUM, 0);
+   968   7   35:1    12           IF IORESULT <> 0 THEN
+   969   7   35:2    18             EXITUPD;
+   970   7   35:1    20           UNITREAD( DRIVE2, BUF6BLK, SIZEOF( BUF6BLK), BLOCKNUM + 2, 0);
+   971   7   35:1    35           IF IORESULT <> 0 THEN
+   972   7   35:2    41             EXITUPD;
+   973   7   35:1    43           UNITWRITE( DRIVE1, IOCACHE, SIZEOF( IOCACHE), BLOCKNUM, 0);
+   974   7   35:1    55           IF IORESULT <> 0 THEN
+   975   7   35:2    61             EXITUPD;
+   976   7   35:1    63           UNITWRITE( DRIVE1, BUF6BLK, SIZEOF( BUF6BLK), BLOCKNUM + 2, 0);
+   977   7   35:1    78           IF IORESULT <> 0 THEN
+   978   7   35:2    84             EXITUPD
+   979   7   35:0    84         END;
+   980   7   35:0    98         
+   981   7   35:0    98         
+   982   7   34:0     0       BEGIN (* COPYDSK *)
+   983   7   34:1     0         TITLESCR( 'UPDATING');
+   984   7   34:1    13         UNITREAD( DRIVE2, BUF6BLK, 5 * 512, 0, 0);
+   985   7   34:1    28         IF IORESULT <> 0 THEN
+   986   7   34:2    34           EXITUPD;
+   987   7   34:1    36         UNITWRITE( DRIVE1, BUF6BLK, 5 * 512, 0, 0);
+   988   7   34:1    51         IF IORESULT <> 0 THEN
+   989   7   34:2    57           EXITUPD;
+   990   7   34:2    59           
+   991   7   34:2    59         (* SKIP BLOCK 5, THE SERIAL BLOCK *)
+   992   7   34:2    59           
+   993   7   34:1    59         UNITREAD( DRIVE2, BUF6BLK, 1024, 6, 0);
+   994   7   34:1    72         IF IORESULT <> 0 THEN
+   995   7   34:2    78           EXITUPD;
+   996   7   34:1    80         UNITWRITE( DRIVE1, BUF6BLK, 1024, 6, 0);
+   997   7   34:1    93         IF IORESULT <> 0 THEN
+   998   7   34:2    99           EXITUPD;
+   999   7   34:1   101         FOR TEMPI := 1 TO 34 DO
+  1000   7   34:2   115             COPYTRCK( 8 * TEMPI)
+  1001   7   34:0   120       END;
+  1002   7   34:0   146       
+  1003   7   34:0   146       
+  1004   7   36:D     1     PROCEDURE UPDINSTR;  (* P070124 *)
+  1005   7   36:D     1     
+  1006   7   36:0     0       BEGIN
+  1007   7   36:1     0         IF RTNESC( 'UPDATE DISK', 
+  1008   7   36:1    14                    'WARNING - FOLLOW DIRECTIONS CAREFULLY') THEN
+  1009   7   36:2    60           EXIT( UPDATDSK);
+  1010   7   36:1    64         TITLESCR( 'STEP 1 - UPDATE BOOT SIDE');
+  1011   7   36:1    94         WRITELN( 'PUNCH WRITE-PROTECT NOTCH ON BOOT SIDE');
+  1012   7   36:1   148         WRITELN( 'OF OLD DISKETTE.');
+  1013   7   36:1   180         WRITELN;
+  1014   7   36:1   186         WRITELN( 'PLACE NEW BOOT SIDE IN DRIVE 2');
+  1015   7   36:1   232         WRITELN( '      OLD BOOT SIDE IN DRIVE 1');
+  1016   7   36:1   278         WRITELN;
+  1017   7   36:1   284         WRITELN( 'BE SURE : NEW=2, OLD=1; COPY 2 -> 1!');
+  1018   7   36:1   336         WRITELN;
+  1019   7   36:1   342         PRESSRET
+  1020   7   36:0   342       END;
+  1021   7   36:0   356       
+  1022   7   36:0   356       
+  1023   7   32:0     0     BEGIN (* UPDATDSK *)
+  1024   7   32:1     0       UPDINSTR;
+  1025   7   32:1     2       COPYDSK;
+  1026   7   32:1     4       UNITREAD( DRIVE1, IOBUF, SIZEOF( IOBUF), SERIALBL, 0);
+  1027   7   32:1    16       IF IORESULT <> 0 THEN
+  1028   7   32:2    22         EXITUPD;
+  1029   7   32:1    24       MOVELEFT( IOBUF, SERNUM, 7);
+  1030   7   32:1    35       IOBUF[ 10] := CHR( 0);
+  1031   7   32:1    41       IOBUF[ 11] := CHR( 1);
+  1032   7   32:1    47       IOBUF[ 12] := CHR( RANDNUM);
+  1033   7   32:1    56       UNITWRITE( DRIVE1, IOBUF, SIZEOF( IOBUF), SERIALBL, 0);
+  1034   7   32:1    68       IF IORESULT <> 0 THEN
+  1035   7   32:2    74         EXITUPD;
+  1036   7   32:1    76       REPEAT
+  1037   7   32:2    76         TITLESCR( 'STEP 2 - UPDATE SCENARIO SIDE');
+  1038   7   32:2   110         WRITELN( 'NOW FLIP BOTH DISKETTES SO WE CAN COPY');
+  1039   7   32:2   164         WRITELN( 'SCENARIO SIDES.');
+  1040   7   32:2   195         PRESSRET;
+  1041   7   32:2   197         SCNTOCBL := FINDFILE( DRIVE1, 'SCENARIO.DATA')
+  1042   7   32:1   214       UNTIL SCNTOCBL >= 0;
+  1043   7   32:1   230       RDSCNTC2;
+  1044   7   32:1   232       FOR TEMPI := 0 TO 19 DO
+  1045   7   32:2   246         RDCHARAC( CHARS20[ TEMPI], TEMPI);
+  1046   7   32:1   261       COPYDSK;
+  1047   7   32:1   263       SCNTOCBL := FINDFILE( DRIVE1, 'SCENARIO.DATA');
+  1048   7   32:1   288       RDSCNTC2;
+  1049   7   32:1   290       FOR TEMPI := 0 TO 19 DO
+  1050   7   32:2   304         BEGIN
+  1051   7   32:3   304           IF CHARS20[ TEMPI].AGE > 1250 THEN
+  1052   7   32:4   317             CHARS20[ TEMPI].AGE := 1250;
+  1053   7   32:3   328           CHARS20[ TEMPI].INMAZE := FALSE;
+  1054   7   32:3   337           WRCHARAC( CHARS20[ TEMPI], TEMPI);
+  1055   7   32:2   345         END;
+  1056   7   32:1   352       WRICACHE;
+  1057   7   32:1   354       UNITREAD( DRIVE1, IOBUF, SIZEOF( IOBUF), SERIALBL, 0);
+  1058   7   32:1   366       IF IORESULT <> 0 THEN
+  1059   7   32:2   372         EXITUPD;
+  1060   7   32:1   374       MOVELEFT( IOBUF, SERNUM, 7);  (* THIS LOOKS LIKE BUG *)
+  1061   7   32:1   385       IOBUF[ 10] := CHR( 0);
+  1062   7   32:1   391       IOBUF[ 11] := CHR( 1);
+  1063   7   32:1   397       IOBUF[ 12] := CHR( RANDNUM);
+  1064   7   32:1   406       UNITWRITE( DRIVE1, IOBUF, SIZEOF( IOBUF), SERIALBL, 0);
+  1065   7   32:1   418       IF IORESULT <> 0 THEN
+  1066   7   32:2   424         EXITUPD;
+  1067   7   32:1   426       TITLESCR( 'DISK UPDATED');
+  1068   7   32:1   443       WRITELN( 'REMEMBER TO PUT A WRITE-PROTECT TAB ON');
+  1069   7   32:1   497       WRITELN( 'THE NOTCH YOU PUNCHED!');
+  1070   7   32:1   535       PRESSRET
+  1071   7   32:0   535     END;
+  1072   7   32:0   556     
+  1073   7   32:0   556     
+  1074   7   32:0   556 
+  1075   7    1:0     0   BEGIN (* UTILS *)
+  1076   7    1:1     0     REPEAT
+  1077   7    1:2     0       TITLESCR( 'WIZARDRY UTILITIES');
+  1078   7    1:2    23       WRITELN;
+  1079   7    1:2    29       WRITELN(  'CHOOSE AN OPTION' :28);
+  1080   7    1:2    61       WRITELN;
+  1081   7    1:2    67       WRITELN(  'R)ECOVER  T)RANSFER B)ACKUP' :34);
+  1082   7    1:2   110       WRITELN;
+  1083   7    1:2   116       WRITELN(  'M)AKE SCENARIO DISK U)PDATE' :34);
+  1084   7    1:2   159       WRITELN;
+  1085   7    1:2   165       WRITELN(  'C)HANGE NAMES       L)EAVE ' :34);
+  1086   7    1:2   208       
+  1087   7    1:2   208       REPEAT
+  1088   7    1:3   208         GOTOXY( 41, 0);
+  1089   7    1:3   213         GETKEY
+  1090   7    1:2   213       UNTIL (INCHAR = 'R') OR (INCHAR = 'T') OR
+  1091   7    1:2   222             (INCHAR = 'L') OR (INCHAR = 'C') OR
+  1092   7    1:2   230             (INCHAR = 'B') OR (INCHAR = 'M') OR
+  1093   7    1:2   238             (INCHAR = 'U');
+  1094   7    1:2   244       
+  1095   7    1:2   244       CASE INCHAR OF
+  1096   7    1:2   247         'L':  EXITUTIL;
+  1097   7    1:2   251         'T':  TRANSFER;
+  1098   7    1:2   255         'R':  RECOVER;
+  1099   7    1:2   259         'C':  CHGNAMES;
+  1100   7    1:2   263         'B':  BACKUP;
+  1101   7    1:2   267         'M':  MAKESCEN;
+  1102   7    1:2   271         'U':  UPDATDSK;
+  1103   7    1:2   275       END
+  1104   7    1:1   322     UNTIL FALSE
+  1105   7    1:0   322   END; (* UTILS *)
+  1106   7    1:0   342   
+  1107   7    1:0   342 (*$I WIZ1E:WIZUTILC *)
+  1107   7    1:0   342 (*$I WIZ1E:TITLELOA *)
+  1108   8    1:D     1 SEGMENT PROCEDURE TITLELOA;  (* P070201 *)
+  1109   8    1:D     1 
+  1110   8    1:D     1   TYPE
+  1111   8    1:D     1   
+  1112   8    1:D     1        BYTE = PACKED ARRAY [ 0..1] OF 0..255;
+  1113   8    1:D     1        
+  1114   8    1:D     1        MAGIC = RECORD CASE BOOLEAN OF
+  1115   8    1:D     1            FALSE : (I : INTEGER);
+  1116   8    1:D     1            TRUE  : (P : ^BYTE);
+  1117   8    1:D     1          END;
+  1118   8    1:D     1 
+  1119   8    1:D     1   VAR
+  1120   8    1:D     1 
+  1121   8    1:D     1        LZFLAG : INTEGER;
+  1122   8    1:D     2        STKPTR : ^INTEGER;
+  1123   8    1:D     3        WTBUFF : ARRAY[ 0..4607] OF INTEGER;  (* 9 BLOCKS == 18 SECTORS *)
+  1124   8    1:D  4611        MEMORY : MAGIC;
+  1125   8    1:D  4612 
+  1126   8    1:D  4612 
+  1127   8    2:D     1   PROCEDURE SOFTSWTC( MEMLOC : INTEGER);  (* P070202 *)
+  1128   8    2:D     2   
+  1129   8    2:0     0     BEGIN
+  1130   8    2:1     0       MEMORY.I := MEMLOC;
+  1131   8    2:1     5       MEMORY.P^[ 0] := 0
+  1132   8    2:0    10     END;
+  1133   8    2:0    24     
+  1134   8    2:0    24     
+  1135   8    3:D     3   FUNCTION KEYPRESS : BOOLEAN;  (* P070203 *)
+  1136   8    3:D     3   
+  1137   8    3:0     0     BEGIN
+  1138   8    3:1     0       KEYPRESS := TRUE;
+  1139   8    3:1     3       MEMORY.I := -16384;  (* $C000  KEYBOARD DATA *)
+  1140   8    3:1    11       IF MEMORY.P^[ 0] > 127 THEN
+  1141   8    3:2    21         EXIT( KEYPRESS);
+  1142   8    3:1    25       MEMORY.I := -16616;  (* $BF18  PASCAL INPUT BUFFER *)
+  1143   8    3:1    33                            (* $BF19  PASCAL INPUT BUFFER *)
+  1144   8    3:1    33       IF MEMORY.P^[ 0] <> MEMORY.P^[ 1] THEN
+  1145   8    3:2    48         EXIT( KEYPRESS);
+  1146   8    3:1    52       KEYPRESS := FALSE
+  1147   8    3:0    52     END;
+  1148   8    3:0    68     
+  1149   8    3:0    68     
+  1150   8    4:D     1   PROCEDURE DSPTITLE;  (* P070204 *)
+  1151   8    4:D     1   
+  1152   8    4:D     1     VAR
+  1153   8    4:D     1         MP01 : INTEGER;
+  1154   8    4:D     2         MP02 : INTEGER;
+  1155   8    4:D     3         UNUSED : INTEGER;
+  1156   8    4:D     4         MP04 : INTEGER;
+  1157   8    4:D     5         MP05 : INTEGER;
+  1158   8    4:D     6   
+  1159   8    4:D     6   
+  1160   8    5:D     1     PROCEDURE CHKEYPR( LOOPCNT : INTEGER);  (* P070205 *)
+  1161   8    5:D     2     
+  1162   8    5:0     0       BEGIN
+  1163   8    5:1     0         GOTOXY( 41, 0);
+  1164   8    5:1     5         WHILE LOOPCNT > 0 DO
+  1165   8    5:2    10           BEGIN
+  1166   8    5:3    10             IF KEYPRESS THEN
+  1167   8    5:4    16               EXIT( DSPTITLE);
+  1168   8    5:3    20             LOOPCNT := LOOPCNT - 1
+  1169   8    5:2    21           END
+  1170   8    5:0    25       END;
+  1171   8    5:0    42       
+  1172   8    5:0    42       
+  1173   8    6:D     1     PROCEDURE P070206;
+  1174   8    6:D     1     
+  1175   8    6:0     0       BEGIN
+  1176   8    6:1     0         MP04 := 1 + (MP04 MOD 3);
+  1177   8    6:1    10         LZDECOMP( WTBUFF[ 0], WTBUFF[ MP04])
+  1178   8    6:0    25       END;
+  1179   8    6:0    40       
+  1180   8    6:0    40       
+  1181   8    7:D     1     PROCEDURE P070207;
+  1182   8    7:D     1     
+  1183   8    7:0     0       BEGIN
+  1184   8    7:1     0         MP05 := 5 + ((MP05 - 4) MOD 3);
+  1185   8    7:1    12         LZDECOMP( WTBUFF[ 0], WTBUFF[ MP05])
+  1186   8    7:0    27       END;
+  1187   8    7:0    42       
+  1188   8    7:0    42       
+  1189   8    4:0     0     BEGIN (* DSPTITLE *)
+  1190   8    4:1     0        LZDECOMP( WTBUFF[ 0], WTBUFF[ 8]);
+  1191   8    4:1    16        MEMORY.I := 8192;                (* $2000 *)
+  1192   8    4:1    23        FILLCHAR( MEMORY.P^, 8192, 0);   (* CLEAR HI RES SCREEN *)
+  1193   8    4:1    34        WRITE( CHR(12));                 (* CLEAR TEXT SCREEN *)
+  1194   8    4:1    42        
+  1195   8    4:1    42        GOTOXY( 12, 10);
+  1196   8    4:1    47        WRITE( 'PREPARE YOURSELF');
+  1197   8    4:1    73        CHKEYPR( 150);                   (* CHECK 150 TIMES FOR KEY PRESS *)
+  1198   8    4:1    78        GOTOXY( 12, 12);
+  1199   8    4:1    83        WRITE( 'FOR THE ULTIMATE');
+  1200   8    4:1   109        CHKEYPR( 150);                   (* CHECK 150 TIMES FOR KEY PRESS *)
+  1201   8    4:1   114        GOTOXY( 12, 14);
+  1202   8    4:1   119        WRITE( 'IN FANTASY GAMES');
+  1203   8    4:1   145        CHKEYPR( 500);                   (* CHECK 500 TIMES FOR KEY PRESS *)
+  1204   8    4:1   150        
+  1205   8    4:1   150        SOFTSWTC( -16300);  (* PRIMARY PAGE     *)
+  1206   8    4:1   156        SOFTSWTC( -16297);  (* HI RES           *)
+  1207   8    4:1   162        SOFTSWTC( -16302);  (* ALL GRAPHICS     *)
+  1208   8    4:1   168        SOFTSWTC( -16304);  (* DISPLAY GRAPHICS *)
+  1209   8    4:1   174        
+  1210   8    4:1   174        WRITE( CHR( 12)); (* CLEAR TEXT SCREEN *)
+  1211   8    4:1   182        GOTOXY( 41, 0);   (* MOVE CURSOR OFF SCREEN *)
+  1212   8    4:1   187        
+  1213   8    4:1   187        LZDECOMP( WTBUFF[ 0], WTBUFF[ 0]);
+  1214   8    4:1   203        MP04 := 0;
+  1215   8    4:1   206        MP05 := 4;
+  1216   8    4:1   209        FOR MP02 := 1 TO 20 DO
+  1217   8    4:2   220          BEGIN
+  1218   8    4:3   220            CHKEYPR( 15);
+  1219   8    4:3   223            P070206
+  1220   8    4:2   223          END;
+  1221   8    4:2   232          
+  1222   8    4:1   232        FOR MP02 := 1 TO 24 DO 
+  1223   8    4:2   243          BEGIN
+  1224   8    4:3   243            FOR MP01 := 1 TO 2 DO
+  1225   8    4:4   254              BEGIN
+  1226   8    4:5   254                CHKEYPR( 12);
+  1227   8    4:5   257                P070206
+  1228   8    4:4   257              END;
+  1229   8    4:3   266            P070207
+  1230   8    4:2   266          END;
+  1231   8    4:2   275          
+  1232   8    4:1   275        LZDECOMP( WTBUFF[ 0], WTBUFF[ 8]);
+  1233   8    4:1   291        P070206;
+  1234   8    4:1   293        FOR MP02 := 9 TO 23 DO
+  1235   8    4:2   304          BEGIN
+  1236   8    4:3   304            FOR MP01 := 1 TO 2 DO
+  1237   8    4:4   315              BEGIN
+  1238   8    4:5   315                CHKEYPR( 5 + MP02);
+  1239   8    4:5   320                P070206
+  1240   8    4:4   320              END;
+  1241   8    4:3   329            LZDECOMP( WTBUFF[ 0], WTBUFF[ MP02])
+  1242   8    4:2   342          END;
+  1243   8    4:2   352          
+  1244   8    4:1   352        FOR MP02 := 24 TO 32 DO
+  1245   8    4:2   363          BEGIN
+  1246   8    4:3   363            FOR MP01 := 1 TO 4 DO 
+  1247   8    4:4   374              BEGIN
+  1248   8    4:5   374                CHKEYPR( 10);
+  1249   8    4:5   377                P070206
+  1250   8    4:4   377              END;
+  1251   8    4:3   386            LZDECOMP( WTBUFF[ 0], WTBUFF[ MP02])
+  1252   8    4:2   399          END;
+  1253   8    4:2   409          
+  1254   8    4:1   409        FOR MP02 := 1 TO 40 DO
+  1255   8    4:2   420          BEGIN
+  1256   8    4:3   420            CHKEYPR( 12);
+  1257   8    4:3   423            P070206
+  1258   8    4:2   423          END;
+  1259   8    4:2   432          
+  1260   8    4:1   432        FOR MP02 := 1 TO 80 DO
+  1261   8    4:2   443          BEGIN
+  1262   8    4:3   443            LZDECOMP( LZFLAG, 0);
+  1263   8    4:3   450            CHKEYPR( 7);
+  1264   8    4:3   453            P070206
+  1265   8    4:2   453          END;
+  1266   8    4:2   462          
+  1267   8    4:1   462        FOR MP02 := 1 TO 40 DO
+  1268   8    4:2   473          BEGIN
+  1269   8    4:3   473            CHKEYPR( 12);
+  1270   8    4:3   476            P070206
+  1271   8    4:2   476          END
+  1272   8    4:0   478     END;
+  1273   8    4:0   518     
+  1274   8    4:0   518     
+  1275   8    8:D     1   PROCEDURE READWT;  (* P070208 *)
+  1276   8    8:D     1   
+  1277   8    8:D     1     VAR
+  1278   8    8:D     1         FILE1 : FILE; (* UNTYPED FILE *)
+  1279   8    8:D    41         
+  1280   8    8:D    41   
+  1281   8    8:0     0     BEGIN
+  1282   8    8:1     0       RESET( FILE1, 'WT');  (* WIZARDRY TITLE SCREEN *)
+  1283   8    8:1    24       BASE04 := BLOCKREAD( FILE1, WTBUFF, 18, 0);
+  1284   8    8:1    40       CLOSE( FILE1)
+  1285   8    8:0    46     END;
+  1286   8    8:0    64 
+  1287   8    8:0    64 
+  1288   8    8:0    64 
+  1289   8    1:0     0   BEGIN  (* TITLELOA *)
+  1290   8    1:0     0   
+  1291   8    1:1     0     SETCHAIN( 'WIZARDRY');
+  1292   8    1:1    14     READWT;               (* READ WIZARDRY TITLE FILE *)
+  1293   8    1:1    16     MARK( STKPTR);
+  1294   8    1:1    20     MEMORY.I := 16384;    (* $4000 PROTECT HI RES SCREEN *)
+  1295   8    1:1    26     RELEASE( MEMORY.P);
+  1296   8    1:1    31     LZFLAG := 253;
+  1297   8    1:1    36     
+  1298   8    1:1    36     REPEAT
+  1299   8    1:2    36       DSPTITLE;           (* DISPLAY TITLE ANIMATION AND CHECK KEYPRESS *)
+  1300   8    1:2    38       IF LZFLAG = 253 THEN
+  1301   8    1:3    45          LZFLAG := 254
+  1302   8    1:2    45       ELSE
+  1303   8    1:3    52          LZFLAG := 253;
+  1304   8    1:2    57       SOFTSWTC( -16300);  (* DISPLAY PRIMARY PAGE *)
+  1305   8    1:2    63       SOFTSWTC( -16303)   (* DISPLAY TEXT *)
+  1306   8    1:1    67     UNTIL KEYPRESS;
+  1307   8    1:1    75     
+  1308   8    1:1    75     WRITE( CHR( 32));  (* SPACE CHARACTER *)
+  1309   8    1:1    83     UNITCLEAR( 1);     (* FLUSH TYPE AHEAD BUFFER; RESET TO LEFT 40 COLS *)
+  1310   8    1:1    86     RELEASE( STKPTR)
+  1311   8    1:0    88   END;  (* TITLELOA *)
+  1312   8    1:0   104 
+  1313   8    1:0   104 (*$I WIZ1E:TITLELOA *)
+  1313   8    1:0   104 (*$I WIZ1E:OPTIONS  *)
+  1314   9    1:D     1 SEGMENT PROCEDURE OPTIONS;  (* P070301 *)
+  1315   9    1:D     1 
+  1316   9    1:D     1   CONST 
+  1317   9    1:D     1         HOMECLR = 12;
+  1318   9    1:D     1 
+  1319   9    1:D     1   VAR   
+  1320   9    1:D     1         IOBUFF : PACKED ARRAY[ 0..511] OF CHAR;
+  1321   9    1:D   257     
+  1322   9    1:0     0   BEGIN
+  1323   9    1:0     0     
+  1324   9    1:1     0     UNITREAD( DRIVE1, IOBUFF, SIZEOF( IOBUFF), 0, 0);
+  1325   9    1:1    11     UNITWRITE( DRIVE1, IOBUFF, SIZEOF( IOBUFF), 0, 0);
+  1326   9    1:1    22     
+  1327   9    1:1    22     IF IORESULT <> 16 THEN
+  1328   9    1:2    28       REPEAT
+  1329   9    1:2    28       UNTIL FALSE;
+  1330   9    1:2    31       
+  1331   9    1:1    31     WRITE( CHR( HOMECLR));
+  1332   9    1:1    39     
+  1333   9    1:1    39     WRITELN( 'COPYRIGHT (C)1981 ALL RIGHTS RESERVED BY');
+  1334   9    1:1    95     WRITELN( 'ANDREW GREENBERG, INC & ROBERT WOODHEAD,');
+  1335   9    1:1   151     WRITELN( 'INC.  THIS PROGRAM  IS  PROTECTED  UNDER');
+  1336   9    1:1   207     WRITELN( 'THE LAWS OF THE UNITED STATES  AND OTHER');
+  1337   9    1:1   263     WRITELN( 'COUNTRIES,  AND ILLEGAL DISTRIBUTION MAY');
+  1338   9    1:1   319     WRITELN( 'RESULT IN CIVIL  LIABILITY  AND CRIMINAL');
+  1339   9    1:1   375     WRITELN( 'PROSECUTION.');
+  1340   9    1:1   403     
+  1341   9    1:1   403     GOTOXY( 0, 12);
+  1342   9    1:1   408     
+  1343   9    1:1   408     WRITE( '  VERSION 2.1 OF 22-JAN-82  SER:');
+  1344   9    1:1   450     WRITELN( SERIAL);
+  1345   9    1:1   465     WRITELN;
+  1346   9    1:1   471     WRITELN;
+  1347   9    1:1   477     
+  1348   9    1:1   477     WRITE( '  S)TART GAME  U)TILITIES  T)ITLE PAGE');
+  1349   9    1:1   525     
+  1350   9    1:1   525     REPEAT
+  1351   9    1:2   525       GOTOXY( 41,0);
+  1352   9    1:2   530       READ( INCHAR)
+  1353   9    1:1   538     UNTIL (INCHAR = 'S') OR (INCHAR = 'U') OR (INCHAR = 'T')
+  1354   9    1:0   548   END;
+  1355   9    1:0   568 (*$I WIZ1E:OPTIONS  *)
+  1356   9    1:0   568 
+  1357   9    1:0   568 
+  1358   1    4:D     1   PROCEDURE CHKCOPY;  (* P070004 *)
+  1359   1    4:D     1   
+  1360   1    4:D     1     VAR
+  1361   1    4:D     1         CPCALC   : INTEGER;
+  1362   1    4:D     2         TRIES    : INTEGER;
+  1363   1    4:D     3         SAVEI    : INTEGER;
+  1364   1    4:D     4         CPTEMP   : INTEGER;
+  1365   1    4:D     5         GOODCOPY : BOOLEAN;
+  1366   1    4:D     6         SYNCH    : ARRAY[ 0..3] OF INTEGER;
+  1367   1    4:D    10         IOCACHE  : PACKED ARRAY[ TBLOCKRG] OF CHAR;
+  1368   1    4:D   266   
+  1369   1    4:0     0     BEGIN
+  1370   1    4:1     0       UNITREAD( DRIVE1, IOCACHE, SIZEOF( IOCACHE), SERIALBL, 0);
+  1371   1    4:1    11       MOVELEFT( IOCACHE, SERIAL, 7);
+  1372   1    4:1    20       
+  1373   1    4:1    20       CPTEMP := 31;
+  1374   1    4:1    23       FOR SAVEI := 10 TO 13 DO
+  1375   1    4:2    37         BEGIN
+  1376   1    4:3    37           MOVELEFT( IOCACHE[ CPTEMP], SYNCH[ SAVEI - 10], 2);
+  1377   1    4:3    51           CPTEMP := CPTEMP + 2 * ((SYNCH[ SAVEI - 10]) MOD 13) + 5;
+  1378   1    4:2    69         END;
+  1379   1    4:2    76         
+  1380   1    4:1    76       FOR TRIES := 1 TO 5 DO
+  1381   1    4:2    90         BEGIN
+  1382   1    4:3    90           GOODCOPY := TRUE;
+  1383   1    4:3    93           FOR SAVEI := 10 TO 13 DO
+  1384   1    4:4   107             BEGIN
+  1385   1    4:5   107               UNITREAD( DRIVE1, IOCACHE, SIZEOF( IOCACHE), 8 * SAVEI, 0);
+  1386   1    4:5   120               CHKSYNCH( CPTEMP);
+  1387   1    4:5   124               IF SAVEI = 10 THEN
+  1388   1    4:6   129                 CPCALC := CPTEMP - SYNCH[ 10 - 10];
+  1389   1    4:5   141               CPTEMP := CPTEMP - CPCALC;
+  1390   1    4:5   146               GOODCOPY := GOODCOPY AND (ABS((CPTEMP - SYNCH[ SAVEI - 10]))
+  1391   1    4:5   158                                         < 35)
+  1392   1    4:4   160             END;
+  1393   1    4:3   170           IF GOODCOPY THEN
+  1394   1    4:4   173             EXIT( CHKCOPY)
+  1395   1    4:2   177         END;
+  1396   1    4:1   184       HALT
+  1397   1    4:0   184     END;
+  1398   1    4:0   204     
+  1399   1    4:0   204     
+  1400   1    1:0     0 BEGIN  (* SYSTEM.STARTUP *)
+  1401   1    1:0     0   
+  1402   1    1:1     0   CHKCOPY;
+  1403   1    1:1     7   TITLELOA;
+  1404   1    1:1    10   REPEAT
+  1405   1    1:2    10     OPTIONS;
+  1406   1    1:2    13     CASE INCHAR OF
+  1407   1    1:2    16     
+  1408   1    1:2    16       'S':  BEGIN
+  1409   1    1:4    16               CHKCOPY;
+  1410   1    1:4    18               EXIT( WIZBOOT)
+  1411   1    1:3    22             END;
+  1412   1    1:3    24                
+  1413   1    1:2    24       'U':  UTILS;
+  1414   1    1:2    29             
+  1415   1    1:2    29       'T':  TITLELOA;
+  1416   1    1:2    34       
+  1417   1    1:2    34     END;
+  1418   1    1:1    48   UNTIL FALSE
+  1419   1    1:0    48 END.

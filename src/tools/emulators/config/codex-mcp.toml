@@ -1,0 +1,11 @@
+# Codex MCP registration for this project. bin/codex-retro passes the same
+# settings on the command line with this checkout's paths filled in; to
+# register permanently instead, replace /path/to/wizardry_1 and merge into
+# ~/.codex/config.toml.
+[mcp_servers.wizardry_vice]
+command = "/path/to/wizardry_1/tools/emulators/bin/mcp-vice"
+startup_timeout_sec = 30
+
+[mcp_servers.wizardry_apple2]
+command = "/path/to/wizardry_1/tools/emulators/bin/mcp-apple2"
+startup_timeout_sec = 30

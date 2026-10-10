@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+"""Launch Codex with the project MCP servers; preserve existing user settings."""
+import json
+import os
+from pathlib import Path
+import sys
+
+root = Path(__file__).resolve().parent.parent
+args = ['codex']
+for name, launcher in [('wizardry_vice', 'mcp-vice'), ('wizardry_apple2', 'mcp-apple2')]:
+    args += ['-c', f'mcp_servers.{name}.command={json.dumps(str(root / "bin" / launcher))}']
+    args += ['-c', f'mcp_servers.{name}.startup_timeout_sec=30']
+os.execvp(args[0], args + sys.argv[1:])

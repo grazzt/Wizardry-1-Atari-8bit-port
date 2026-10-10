@@ -1,0 +1,40 @@
+{
+  "title": "Wizardry I: Proving Grounds of the Mad Overlord",
+  "platform": "c64",
+  "downloaded_on": "2026-10-09",
+  "emulator_boot_tested": false,
+  "files": [
+    {
+      "file": "wizardry_i_side_a.d64",
+      "url": "https://archive.org/download/d64_Wizardry_I_Proving_Grounds_of_the_Mad_Overlord_1982_Sir-Tech_Side_A/Wizardry_I_Proving_Grounds_of_the_Mad_Overlord_1982_Sir-Tech_Side_A.d64",
+      "retrieved_on": "2026-10-09",
+      "bytes": 174848,
+      "sha256": "23fc1b12c69bfad89368a4db5c52af82a796a3bb1cfa18ab15ffe90f61ba43fc",
+      "local_changes": "None",
+      "format": "D64; 35 tracks; 683 sectors of 256 bytes",
+      "archive_md5": "07b191374ad03be375004e2166b2fc23",
+      "archive_sha1": "d33eb37d7b365d16c551dd898dba7a475368ce51",
+      "archive_hashes_verified": true
+    },
+    {
+      "file": "wizardry_i_side_b.d64",
+      "url": "https://archive.org/download/d64_Wizardry_I_Proving_Grounds_of_the_Mad_Overlord_1982_Sir-Tech_Side_A/Wizardry_I_Proving_Grounds_of_the_Mad_Overlord_1982_Sir-Tech_Side_B.d64",
+      "retrieved_on": "2026-10-09",
+      "bytes": 174848,
+      "sha256": "373c48e1edc23f6fb5cd06390c095bc33fae5ecc6be87da60fa9d8626aa16b7a",
+      "local_changes": "None",
+      "format": "D64; 35 tracks; 683 sectors of 256 bytes",
+      "archive_md5": "78fef1e9dd02878e3ec9315ada68d96a",
+      "archive_sha1": "4631aa6274989163f8865aa3098ccc61db750ed9",
+      "archive_hashes_verified": true
+    },
+    {
+      "file": "archive_metadata.json",
+      "url": "https://archive.org/metadata/d64_Wizardry_I_Proving_Grounds_of_the_Mad_Overlord_1982_Sir-Tech_Side_A",
+      "retrieved_on": "2026-10-09",
+      "bytes": 10292,
+      "sha256": "abd7738c67ec763dc649c31c73b81c922c65a2c212c1ad6b7b5b7a438b06ea9c",
+      "local_changes": "None"
+    }
+  ]
+}

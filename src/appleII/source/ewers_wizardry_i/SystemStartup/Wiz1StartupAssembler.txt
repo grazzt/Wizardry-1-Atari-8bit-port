@@ -1,0 +1,878 @@
+PAGE -   0
+Current memory available:   10286
+2 blocks for procedure code  9810 words left
+PAGE -   1  LZDECOMP  FILE:   
+
+
+0000|                        .PROC LZDECOMP,2 ; P070002,2 ; 2 PARAMETERS 
+Current memory available:    9761
+0000|                       ; 
+0000|                        .REF L04BC, L057C 
+0000|                       ; 
+0000|                       ;                 ; CALL:  LZDECOMP( A1, A2); 
+0000|                       ;                 ;          A1 BY VAR, A2 BY VALUE. 
+0000|                       ;                 ;          A2 IS AN INDEX INTO A1. 
+0000|                       ;                 ; 
+0000|                       ;                 ; 
+0000|                       ;                 ; 
+0000| BF1C                  SPCHAR .EQU 0BF1C ; SEE APPLE II COMPUTER TECHNICAL INFORMATION 
+0000|                       ;                 ; (ATTACH-BIOS DOCUMENT FOR APPLE II PASCAL 1.1) 
+0000|                       ;                 ; (ATTACH.PDF) 
+0000|                       ;                 ; 
+0000|                       ;                 ; CONTROL SPECIAL CHARACTERS ON INPUT 
+0000|                       ; 
+0000| 68                     PLA      ; PULL RETURN 
+0001| AA                     TAX      ; XY := RETURN ADDRESS 
+0002| 68                     PLA 
+0003| A8                     TAY 
+0004|                       ; 
+0004| 68                     PLA      ; 00.01 := PARM 2 
+0005| 85 00                  STA 00 
+0007| 68                     PLA 
+0008| 85 01                  STA 01 
+000A|                       ; 
+000A| 68                     PLA      ; 02.03 := PARM 1 
+000B| 85 02                  STA 02 
+000D| 68                     PLA 
+000E| 85 03                  STA 03 
+0010|                       ; 
+0010| 98                     TYA      ; PUSH RETURN 
+0011| 48                     PHA 
+0012| 8A                     TXA 
+0013| 48                     PHA 
+0014|                       ; 
+0014| 18                     CLC      ; 02.03 := 02.03 + 00.01 
+0015| A5 02                  LDA 02 
+0017| 65 00                  ADC 00   ;    PARM 2 IS AN INDEX INTO PARM 1 
+0019| 85 02                  STA 02 
+001B| A5 03                  LDA 03 
+001D| 65 01                  ADC 01 
+001F| 85 03                  STA 03 
+0021|                       ; 
+0021| A2 00                  LDX #00 
+0023| A9 03                  LDA #03     ; DONT CHECK FOR APPLE PASCAL SPECIAL CHARS ON KEYBOARD INPUT 
+0025| 0D 1CBF                ORA SPCHAR  ;   CTRL-A, Z, W, E, K,  CTRL-S, F 
+0028| 8D 1CBF                STA SPCHAR  ; 
+002B|                       ; 
+002B|                       L5145 
+002B|                       L002B 
+002B| A1 02                  LDA @02,X 
+002D| C9 C0                  CMP #0C0 
+002F| 90**                   BCC L5181 
+PAGE -   2  LZDECOMP  FILE:   
+
+
+0031| C9 FD                  CMP #0FD 
+0033| 90**                   BCC L5152 
+0035| 4C ****                JMP L0132 ; L524C 
+0033* 03
+0038|                       L5152 
+0038| 38                     SEC 
+0039| E9 C0                  SBC #0C0 
+003B| 85 07                  STA 07 
+003D| A0 02                  LDY #02 
+003F| B1 02                  LDA @02,Y 
+0041| 85 06                  STA 06 
+0043| 88                     DEY 
+0044| B1 02                  LDA @02,Y 
+0046| A8                     TAY 
+0047| B9 0000                LDA L04BC,Y    ; 04.05 POINTER TO HI RES SCREEN LEFT EDGE 
+004A| 85 04                  STA 04 
+004C| B9 0000                LDA L057C,Y 
+004F| 85 05                  STA 05 
+0051| A4 07                  LDY 07 
+0053| A5 06                  LDA 06 
+0055| 91 04                  STA @04,Y 
+0057| 18                     CLC 
+0058| A5 02                  LDA 02 
+005A| 69 03                  ADC #03 
+005C| 85 02                  STA 02 
+005E| A9 00                  LDA #00 
+0060| 65 03                  ADC 03 
+0062| 85 03                  STA 03 
+0064| 4C 2B00                JMP L002B ; L5145  L51D1 
+002F* 36
+0067|                       L5181 
+0067| A8                     TAY 
+0068| B9 0000                LDA L04BC,Y    ; 04.05 POINTER TO HI RES SCREEN LEFT EDGE 
+006B| 85 04                  STA 04 
+006D| B9 0000                LDA L057C,Y 
+0070| 85 05                  STA 05 
+0072| A0 01                  LDY #01 
+0074| B1 02                  LDA @02,Y 
+0076| 85 06                  STA 06 
+0078| C8                     INY 
+0079| B1 02                  LDA @02,Y 
+007B| 85 07                  STA 07 
+007D| C8                     INY 
+007E| B1 02                  LDA @02,Y 
+0080| 85 08                  STA 08 
+0082| C8                     INY 
+0083| B1 02                  LDA @02,Y 
+0085| 85 09                  STA 09 
+0087| C8                     INY 
+0088| B1 02                  LDA @02,Y 
+008A| 85 0A                  STA 0A 
+008C| 18                     CLC 
+008D| A5 02                  LDA 02 
+008F| 69 06                  ADC #06 
+0091| 85 02                  STA 02 
+PAGE -   3  LZDECOMP  FILE:   
+
+
+0093| A5 03                  LDA 03 
+0095| 69 00                  ADC #00 
+0097| 85 03                  STA 03 
+0099| A0 00                  LDY #00 
+009B| A5 06                  LDA 06 
+009D| 20 ****                JSR L00B7 ; L51D1 
+00A0| A5 07                  LDA 07 
+00A2| 20 ****                JSR L00B7 
+00A5| A5 08                  LDA 08 
+00A7| 20 ****                JSR L00B7 
+00AA| A5 09                  LDA 09 
+00AC| 20 ****                JSR L00B7 
+00AF| A5 0A                  LDA 0A 
+00B1| 20 ****                JSR L00B7 
+00B4| 4C 2B00                JMP L002B ; L5145 
+00B7|                       L51D1 
+00B2* B700
+00AD* B700
+00A8* B700
+00A3* B700
+009E* B700
+00B7|                       L00B7 
+00B7| 85 00                  STA 00 
+00B9| 46 00                  LSR 00 
+00BB| 90**                   BCC L51E1 
+00BD| A1 02                  LDA @02,X 
+00BF| 91 04                  STA @04,Y 
+00C1| E6 02                  INC 02 
+00C3| D0**                   BNE L51E1 
+00C5| E6 03                  INC 03 
+00C3* 02
+00BB* 0A
+00C7|                       L51E1 
+00C7| C8                     INY 
+00C8| 46 00                  LSR 00 
+00CA| 90**                   BCC L51F0 
+00CC| A1 02                  LDA @02,X 
+00CE| 91 04                  STA @04,Y 
+00D0| E6 02                  INC 02 
+00D2| D0**                   BNE L51F0 
+00D4| E6 03                  INC 03 
+00D2* 02
+00CA* 0A
+00D6|                       L51F0 
+00D6| C8                     INY 
+00D7| 46 00                  LSR 00 
+00D9| 90**                   BCC L51FF 
+00DB| A1 02                  LDA @02,X 
+00DD| 91 04                  STA @04,Y 
+00DF| E6 02                  INC 02 
+00E1| D0**                   BNE L51FF 
+00E3| E6 03                  INC 03 
+00E1* 02
+00D9* 0A
+00E5|                       L51FF 
+PAGE -   4  LZDECOMP  FILE:   
+
+
+00E5| C8                     INY 
+00E6| 46 00                  LSR 00 
+00E8| 90**                   BCC L520E 
+00EA| A1 02                  LDA @02,X 
+00EC| 91 04                  STA @04,Y 
+00EE| E6 02                  INC 02 
+00F0| D0**                   BNE L520E 
+00F2| E6 03                  INC 03 
+00F0* 02
+00E8* 0A
+00F4|                       L520E 
+00F4| C8                     INY 
+00F5| 46 00                  LSR 00 
+00F7| 90**                   BCC L521D 
+00F9| A1 02                  LDA @02,X 
+00FB| 91 04                  STA @04,Y 
+00FD| E6 02                  INC 02 
+00FF| D0**                   BNE L521D 
+0101| E6 03                  INC 03 
+00FF* 02
+00F7* 0A
+0103|                       L521D 
+0103| C8                     INY 
+0104| 46 00                  LSR 00 
+0106| 90**                   BCC L522C 
+0108| A1 02                  LDA @02,X 
+010A| 91 04                  STA @04,Y 
+010C| E6 02                  INC 02 
+010E| D0**                   BNE L522C 
+0110| E6 03                  INC 03 
+010E* 02
+0106* 0A
+0112|                       L522C 
+0112| C8                     INY 
+0113| 46 00                  LSR 00 
+0115| 90**                   BCC L523B 
+0117| A1 02                  LDA @02,X 
+0119| 91 04                  STA @04,Y 
+011B| E6 02                  INC 02 
+011D| D0**                   BNE L523B 
+011F| E6 03                  INC 03 
+011D* 02
+0115* 0A
+0121|                       L523B 
+0121| C8                     INY 
+0122| 46 00                  LSR 00 
+0124| 90**                   BCC L524A 
+0126| A1 02                  LDA @02,X 
+0128| 91 04                  STA @04,Y 
+012A| E6 02                  INC 02 
+012C| D0**                   BNE L524A 
+012E| E6 03                  INC 03 
+012C* 02
+0124* 0A
+0130|                       L524A 
+PAGE -   5  LZDECOMP  FILE:   
+
+
+0130| C8                     INY 
+0131| 60                     RTS 
+0132|                       L524C 
+0036* 3201
+0132|                       L0132 
+0132| C9 FE                  CMP #0FE 
+0134| F0**                   BEQ L5255 
+0136| C9 FD                  CMP #0FD 
+0138| F0**                   BEQ L5264 
+013A| 60                     RTS 
+0134* 05
+013B|                       L5255 
+013B| A9 30                  LDA #030 
+013D| 85 09                  STA 09 
+013F|                       L5259 
+013F| 20 ****                JSR L0177 ; L5291 
+0142| C6 09                  DEC 09 
+0144| D0F9                   BNE L5259 
+0146| 20 ****                JSR L0177 
+0149| 60                     RTS 
+0138* 10
+014A|                       L5264 
+014A| A9 30                  LDA #030 
+014C| 85 09                  STA 09 
+014E|                       L5268 
+014E| 20 ****                JSR L0159 ; L5273 
+0151| C6 09                  DEC 09 
+0153| D0F9                   BNE L5268 
+0155| 20 ****                JSR L0159 
+0158| 60                     RTS 
+0159|                       L5273 
+0156* 5901
+014F* 5901
+0159|                       L0159 
+0159| A4 09                  LDY 09 
+015B| B9 0000                LDA L04BC,Y    ; 04.05 POINTER TO HI RES SCREEN LEFT EDGE 
+015E| 85 04                  STA 04 
+0160| B9 0000                LDA L057C,Y 
+0163| 85 05                  STA 05 
+0165| A0 27                  LDY #027 
+0167|                       L5281 
+0167| B1 04                  LDA @04,Y 
+0169| 49 80                  EOR #080 
+016B| 91 04                  STA @04,Y 
+016D| 88                     DEY 
+016E| D0F7                   BNE L5281 
+0170| B1 04                  LDA @04,Y 
+0172| 49 80                  EOR #080 
+0174| 91 04                  STA @04,Y 
+0176| 60                     RTS 
+0177|                       L5291 
+0147* 7701
+0140* 7701
+0177|                       L0177 
+0177| 18                     CLC 
+PAGE -   6  LZDECOMP  FILE:   
+
+
+0178| A4 09                  LDY 09 
+017A| B9 0000                LDA L04BC,Y    ; 04.05 POINTER TO HI RES SCREEN LEFT EDGE 
+017D| 85 04                  STA 04 
+017F| 69 01                  ADC #01        ; 06.07 POINTER TO HI RES SCREEN LEFT EDGE + 1 
+0181| 85 06                  STA 06 
+0183| B9 0000                LDA L057C,Y 
+0186| 85 05                  STA 05 
+0188| 69 00                  ADC #00 
+018A| 85 07                  STA 07 
+018C| A0 00                  LDY #00 
+018E| B1 04                  LDA @04,Y 
+0190| 85 08                  STA 08 
+0192| A2 27                  LDX #027 
+0194|                       L52AE 
+0194| B1 06                  LDA @06,Y 
+0196| 91 04                  STA @04,Y 
+0198| C8                     INY 
+0199| CA                     DEX 
+019A| D0F8                   BNE L52AE 
+019C| A5 08                  LDA 08 
+019E| 91 04                  STA @04,Y 
+01A0| 60                     RTS 
+01A1|                       ; 
+01A1|                        .END 
+PAGE -   7  LZDECOMP  FILE:  SYMBOLTABLE DUMP
+
+
+AB - Absolute     LB - Label     UD - Undefined     MC - Macro
+RF - Ref          DF - Def       PR - Proc          FC - Func
+PB - Public       PV - Private   CS - Consts
+
+
+L002B    LB 002B|  L00B7    LB 00B7|  L0132    LB 0132|  L0159    LB 0159|  L0177    LB 0177|  L04BC    RF ----|  L057C    RF ----
+L5145    LB 002B|  L5152    LB 0038|  L5181    LB 0067|  L51D1    LB 00B7|  L51E1    LB 00C7|  L51F0    LB 00D6|  L51FF    LB 00E5
+L520E    LB 00F4|  L521D    LB 0103|  L522C    LB 0112|  L523B    LB 0121|  L524A    LB 0130|  L524C    LB 0132|  L5255    LB 013B
+L5259    LB 013F|  L5264    LB 014A|  L5268    LB 014E|  L5273    LB 0159|  L5281    LB 0167|  L5291    LB 0177|  L52AE    LB 0194
+LZDECOMP PR ----|  SPCHAR   AB BF1C|  
+PAGE -   8  LZDECOMP  FILE:   
+
+
+Current minimum space is 9481 words
+
+Assembly complete:       268 lines
+     0   Errors flagged on this Assembly
+PAGE -   0
+Current memory available:   10286
+2 blocks for procedure code  9810 words left
+PAGE -   1  CHKSYNCH  FILE:   
+
+
+0000|                        .PROC CHKSYNCH,1 ;     P070003,1 ; 1 PARAMETER 
+Current memory available:    9761
+0000|                       ; 
+0000|                       ; 
+0000|                       ;            ; CALL:  CHKSYNCH( VAR RESULT); 
+0000|                       ;            ;          RESULT IS AN INTEGER THAT GETS THE RESULT. 
+0000|                       ;            ; 
+0000|                       ;            ; PURPOSE:  COPY PROTECTION BY CHECKING SYNCHRONIZATION  
+0000|                       ;            ;           BETWEEN TRACKS. 
+0000|                       ;            ; 
+0000|                       ;            ; 1. READ SECTOR 0 ADDRESS FIELD PROLOGUE ON CURRENT TRACK. 
+0000|                       ;            ; 2. MOVE DISK ARM TO NEXT HIGHER NUMBERED TRACK. 
+0000|                       ;            ; 3. COUNT NUMBER OF NIBBLES UNTIL SECTOR 0 
+0000|                       ;            ;      ADDRESS FIELD PROLOGUE ON THIS TRACK IS READ. 
+0000|                       ;            ; 4. RETURN COUNT. 
+0000|                       ;            ; 
+0000|                       ;            ; SEE ALSO SCENARIO.DATA.  SIMILAR COPY PROTECTION CODE 
+0000|                       ;            ; RESIDES THERE TOO, AND IS USED IN WIZARDRY.CODE. 
+0000|                       ; 
+0000| 68                     PLA         ; PULL RETURN 
+0001| 85 00                  STA 00 
+0003| 68                     PLA 
+0004| 85 01                  STA 01 
+0006|                       ; 
+0006| 68                     PLA         ; 02.03 := POINTER TO RESULT (TRACK SYNCH VALUE) 
+0007| 85 02                  STA 02 
+0009| 68                     PLA 
+000A| 85 03                  STA 03 
+000C|                       ; 
+000C| A5 01                  LDA 01      ; PUSH RETURN 
+000E| 48                     PHA 
+000F| A5 00                  LDA 00 
+0011| 48                     PHA 
+0012|                       ; 
+0012| A9 00                  LDA #0      ; INIT SYNCH COUNT VALUE 
+0014| 85 0D                  STA 0D      ; 0D.0E 
+0016| 85 0E                  STA 0E      ; 
+0018|                       ; 
+0018| A2 60                  LDX #060     ; SLOT# * 16   (SLOT 6) 
+001A| BD 8AC0                LDA 0C08A,X  ; DRIVE #1 
+001D| BD 89C0                LDA 0C089,X  ; MOTOR ON 
+0020| BD 8EC0                LDA 0C08E,X  ; PREPARE LATCH FOR INPUT 
+0023|                       ; 
+0023|                       L5313 
+0023| BD 8CC0                LDA 0C08C,X  ; READ A BYTE 
+0026| 10FB                   BPL L5313 
+0028| C9 FF                  CMP #0FF     ;   #$FF 
+002A| D0F7                   BNE L5313 
+002C|                       L531C 
+002C| BD 8CC0                LDA 0C08C,X  ; READ A BYTE 
+002F| 10FB                   BPL L531C 
+0031| C9 FF                  CMP #0FF     ;   #$FF 
+0033| D0EE                   BNE L5313 
+0035|                       L0035 
+0035| BD 8CC0                LDA 0C08C,X  ; READ A BYTE 
+PAGE -   2  CHKSYNCH  FILE:   
+
+
+0038| 10FB                   BPL L0035 
+003A| C9 FF                  CMP #0FF     ;   #$FF 
+003C| D0**                   BNE L5331 
+003E| 4C 3500                JMP L0035 
+0041|                       ; 
+003C* 03
+0041|                       L5331 
+0041| BD 8CC0                LDA 0C08C,X  ; READ A BYTE 
+0044| 10FB                   BPL L5331 
+0046| C9 D5                  CMP#0D5      ;   #$D5 
+0048| D0F7                   BNE L5331 
+004A|                       L533A 
+004A| BD 8CC0                LDA 0C08C,X  ; READ 
+004D| 10FB                   BPL L533A 
+004F| C9 AA                  CMP #0AA     ;   #$AA 
+0051| D0EE                   BNE L5331 
+0053|                       L5343 
+0053| BD 8CC0                LDA 0C08C,X  ; READ 
+0056| 10FB                   BPL L5343 
+0058| C9 96                  CMP #096     ;   #$96 
+005A| D0E5                   BNE L5331 
+005C|                       ; 
+005C|                       ;             ; WE HAVE JUST READ AN ADDRESS FIELD PROLOGUE (D5 AA 96) 
+005C|                       ; 
+005C|                       L534C 
+005C| BD 8CC0                LDA 0C08C,X  ; READ 
+005F| 10FB                   BPL L534C 
+0061| EA                     NOP          ;   VOLUME (IGNORED) 
+0062| EA                     NOP 
+0063| EA                     NOP 
+0064| EA                     NOP 
+0065| EA                     NOP 
+0066|                       L5356 
+0066| BD 8CC0                LDA 0C08C,X  ; READ 
+0069| 10FB                   BPL L5356 
+006B| EA                     NOP          ;   VOLUME (IGNORED) 
+006C| EA                     NOP 
+006D| EA                     NOP 
+006E| EA                     NOP 
+006F| EA                     NOP 
+0070|                       L5360 
+0070| BD 8CC0                LDA 0C08C,X  ; READ 
+0073| 10FB                   BPL L5360 
+0075| EA                     NOP          ;   TRACK (IGNORED) 
+0076| EA                     NOP 
+0077| EA                     NOP 
+0078| EA                     NOP 
+0079| EA                     NOP 
+007A|                       L536A 
+007A| BD 8CC0                LDA 0C08C,X  ; READ 
+007D| 10FB                   BPL L536A 
+007F| EA                     NOP          ;   TRACK (IGNORED) 
+0080| EA                     NOP 
+0081| EA                     NOP 
+0082| EA                     NOP 
+PAGE -   3  CHKSYNCH  FILE:   
+
+
+0083| EA                     NOP 
+0084|                       L5374 
+0084| BD 8CC0                LDA 0C08C,X  ; READ 
+0087| 10FB                   BPL L5374 
+0089| A8                     TAY          ;   SECTOR 
+008A| EA                     NOP 
+008B| EA                     NOP 
+008C| EA                     NOP 
+008D| EA                     NOP 
+008E| EA                     NOP 
+008F|                       L537F 
+008F| BD 8CC0                LDA 0C08C,X  ; READ 
+0092| 10FB                   BPL L537F 
+0094| 85 04                  STA 04       ;   SECTOR 
+0096| 98                     TYA 
+0097| 38                     SEC 
+0098| 2A                     ROL A 
+0099| 25 04                  AND 04       ; A = SECTOR VALUE 
+009B| C9 00                  CMP #00      ; SECTOR 0? 
+009D| D084                   BNE L5313    ; NO, L5313.  TRY UNTIL WE GET SECTOR 0 
+009F|                       ; 
+009F|                       ;             ; WE HAVE JUST READ SECTOR 0 ADDRESS FIELD 
+009F|                       ; 
+009F| 20 ****                JSR L011B    ; MOVETRACK.  MOVE DISK ARM INWARD TO NEXT HIGHER NUMBERED TRACK 
+00A2|                       ; 
+00A2|                       L00A2 
+00A2|                       L5392 
+00A2| BD 8CC0                LDA 0C08C,X  ; READ 
+00A5| 10FB                   BPL L5392 
+00A7| C9 D5                  CMP #0D5     ; #$D5? 
+00A9| F0**                   BEQ L53A4    ;   YES, L53A4 
+00AB|                                     ;   NO 
+00AB| E6 0D                  INC 0D       ; 0D.0E COUNT MOST NIBBLES UNTIL WE READ SECTOR 0 PROLOGUE 
+00AD| D0F3                   BNE L5392    ; 
+00AF| E6 0E                  INC 0E       ; 0D IS LOW ORDER, 0E IS HIGH ORDER 
+00B1| 4C A200                JMP L00A2 
+00A9* 09
+00B4|                       L53A4 
+00B4| BD 8CC0                LDA 0C08C,X  ; READ 
+00B7| 10FB                   BPL L53A4 
+00B9| C9 AA                  CMP #0AA     ;   #$AA 
+00BB| D0E5                   BNE L5392 
+00BD|                       L53AD 
+00BD| BD 8CC0                LDA 0C08C,X  ; READ 
+00C0| 10FB                   BPL L53AD 
+00C2| C9 96                  CMP #096     ;   #$96 
+00C4| D0DC                   BNE L5392 
+00C6|                       L53B6 
+00C6| BD 8CC0                LDA 0C08C,X  ; READ 
+00C9| 10FB                   BPL L53B6 
+00CB| EA                     NOP          ;   VOL 
+00CC| EA                     NOP 
+00CD| EA                     NOP 
+00CE| EA                     NOP 
+00CF| EA                     NOP 
+PAGE -   4  CHKSYNCH  FILE:   
+
+
+00D0|                       L53C0 
+00D0| BD 8CC0                LDA 0C08C,X  ; READ 
+00D3| 10FB                   BPL L53C0 
+00D5| EA                     NOP          ;   VOL 
+00D6| EA                     NOP 
+00D7| EA                     NOP 
+00D8| EA                     NOP 
+00D9| EA                     NOP 
+00DA|                       L53CA 
+00DA| BD 8CC0                LDA 0C08C,X  ; READ 
+00DD| 10FB                   BPL L53CA 
+00DF| EA                     NOP          ;   TRACK 
+00E0| EA                     NOP 
+00E1| EA                     NOP 
+00E2| EA                     NOP 
+00E3| EA                     NOP 
+00E4|                       L53D4 
+00E4| BD 8CC0                LDA 0C08C,X  ; READ 
+00E7| 10FB                   BPL L53D4 
+00E9| EA                     NOP          ;   TRACK 
+00EA| EA                     NOP 
+00EB| EA                     NOP 
+00EC| EA                     NOP 
+00ED| EA                     NOP 
+00EE|                       L53DE 
+00EE| BD 8CC0                LDA 0C08C,X  ; READ 
+00F1| 10FB                   BPL L53DE 
+00F3| A8                     TAY          ;   SECTOR 
+00F4| EA                     NOP 
+00F5| EA                     NOP 
+00F6| EA                     NOP 
+00F7| EA                     NOP 
+00F8| EA                     NOP 
+00F9|                       L53E9 
+00F9| BD 8CC0                LDA 0C08C,X  ; READ 
+00FC| 10FB                   BPL L53E9 
+00FE| 85 04                  STA 04       ;   SECTOR 
+0100| 98                     TYA 
+0101| 38                     SEC 
+0102| 2A                     ROL A 
+0103| 25 04                  AND 04       ; SECTOR 
+0105| C9 00                  CMP #0       ; 0? 
+0107| F0**                   BEQ L53FC    ;   YES, L53FC 
+0109| 4C A200                JMP L00A2    ;   NO,  L00A2 AND TRY AGAIN 
+010C|                       ; 
+0107* 03
+010C|                       L53FC 
+010C| A0 00                  LDY #0       ; ALL DONE 
+010E| A5 0D                  LDA 0D       ; STORE RESULTS AT PASSED POINTER 
+0110| 91 02                  STA @02,Y    ; 0D.0E IS COUNT OF NIBBLES BEFORE SECTOR 0 WAS 
+0112| C8                     INY          ;   READ ON ADJACENT TRACK. 
+0113| A5 0E                  LDA 0E 
+0115| 91 02                  STA @02,Y 
+0117| BD 88C0                LDA 0C088,X  ; MOTOR OFF 
+011A| 60                     RTS 
+PAGE -   5  CHKSYNCH  FILE:   
+
+
+011B|                       ; ---------------------------------------------------------------------------- 
+011B|                       ; 
+00A0* 1B01
+011B|                       L011B 
+011B|                       ;              NAME:  L011B   (SIMILAR TO SEEKABS) 
+011B|                       ;           PURPOSE:  MOVE DISK ARM TO NEXT HIGHER NUMBERED TRACK 
+011B|                       ;              CALL:  LDX #$60;    SLOT# * 16 
+011B|                       ;                     JSR $L011B 
+011B|                       ; 
+011B|                       ; 
+011B| 86 06                  STX 06    ; 06 := SLOT# * 16 
+011D| A0 0C                  LDY #0C   ; DESIRED TRACK #$0C       (ASSUMED VALUE; NOT ALWAYS TRUE) 
+011F| 84 07                  STY 07    ; 07 := DESIRED TRACK 
+0121| 88                     DEY       ; CALCULATE CURRENT TRACK 
+0122| 88                     DEY       ; THESE ARE 1/2 TRACK INCREMENTS 
+0123| 84 08                  STY 08    ; 08 := CURRENT TRACK #$0A (ASSUMED VALUE; NOT ALWAYS TRUE) 
+0125|                       ; 
+0125| A9 EF                  LDA #0EF  ; INITIAL DELAY TIME SET TO $D8EF 
+0127| 85 0B                  STA 0B 
+0129| A9 D8                  LDA #0D8 
+012B| 85 0C                  STA 0C 
+012D|                       ; 
+012D| A9 00                  LDA #0    ; 09 := #0   1/2 TRACKS MOVED COUNT 
+012F| 85 09                  STA 09 
+0131|                       ; 
+0131|                       ;          ; THE REST OF THIS CODE IS NEARLY IDENTICAL TO THE DOS CODE 
+0131|                       ;          ; FOR SEEKABS.  THE ONLY DIFFERENCE IS IN THE LOCATION 
+0131|                       ;          ; OF THE VARIOUS "VARIABLES". 
+0131|                       ;          ; 
+0131|                       ;          ;   07 =    DESIRED TRACK 
+0131|                       ;          ;   08 =    CURRENT TRACK 
+0131|                       ;          ;   09 =    1/2 TRACKS MOVED 
+0131|                       ;          ;   0A =    PRIOR 1/2 TRACK 
+0131|                       ;          ;   0B.0C = DELAY TIME 
+0131|                       L5421 
+0131| A5 08                  LDA 08    ; CURRENT TRACK - DESIRED TRACK = ... 
+0133| 85 0A                  STA 0A    ; SAVE PRIOR 1/2 TRACK BEFORE MOVE 
+0135| 38                     SEC       ; 
+0136| E5 07                  SBC 07    ; ...DISTANCE AWAY AND DIRECTION TO MOVE 
+0138| F0**                   BEQ L545B ; SAME TRACK?  YES, 
+013A| B0**                   BCS L5432 ; MOVE INWARD OR OUTWARD? 
+013C| 49 FF                  EOR #0FF  ; INWARD (TO A BIGGER #)     ADD +1 
+013E| E6 08                  INC 08    ; CURRENT TRACK AFTER ARM MOVES 
+0140| 90**                   BCC L5436 
+013A* 06
+0142|                       L5432 
+0142| 69 FE                  ADC #0FE  ; OUTWARD (TO A SMALLER #)   ADD -1 
+0144| C6 08                  DEC 08    ; CURRENT TRACK AFTER ARM MOVES 
+0146|                                  ;   A = # OF 1/2 TRACKS STILL TO MOVE 
+0140* 04
+0146|                       L5436 
+0146| C5 09                  CMP 09 
+0148| 90**                   BCC L543C 
+014A| A5 09                  LDA 09 
+0148* 02
+PAGE -   6  CHKSYNCH  FILE:   
+
+
+014C|                       L543C 
+014C| C9 0C                  CMP #0C 
+014E| B0**                   BCS L5441 
+0150| A8                     TAY 
+014E* 01
+0151|                       L5441 
+0151| 38                     SEC         ; C=1 
+0152| 20 ****                JSR L016F   ; TURN PHASE ON (CURRENT TRACK) 
+0155| B9 ****                LDA L0191,Y 
+0158| 20 ****                JSR L0180   ; MSWAIT 
+015B| A5 0A                  LDA 0A 
+015D| 18                     CLC         ; C=0 
+015E| 20 ****                JSR L0171 
+0161| B9 ****                LDA L019D,Y 
+0164| 20 ****                JSR L0180   ; MSWAIT 
+0167| E6 09                  INC 09 
+0169| D0C6                   BNE L5421 
+016B|                       ; 
+0138* 31
+016B|                       L545B 
+016B| 20 ****                JSR L0180   ; MSWAIT 
+016E| 18                     CLC 
+0153* 6F01
+016F|                       L016F 
+016F| A5 08                  LDA 08 
+015F* 7101
+0171|                       L0171 
+0171| 29 03                  AND #03 
+0173| 2A                     ROL A 
+0174| 05 06                  ORA 06 
+0176| AA                     TAX 
+0177| BD 80C0                LDA 0C080,X  ; STEPPER MOTOR PHASES 
+017A| A6 06                  LDX 06 
+017C| 60                     RTS 
+017D|                       ; 
+017D| AA                     TAX 
+017E| A0 A0                  LDY #0A0 
+0180|                       ; 
+016C* 8001
+0165* 8001
+0159* 8001
+0180|                       L0180 
+0180|                       L5470 
+0180|                       ; 
+0180|                       ;             ; ARM MOVE DELAY 
+0180|                       ; 
+0180| A2 11                  LDX #011 
+0182|                       L5472 
+0182| CA                     DEX 
+0183| D0FD                   BNE L5472 
+0185| E6 0B                  INC 0B 
+0187| D0**                   BNE L547B 
+0189| E6 0C                  INC 0C 
+0187* 02
+018B|                       L547B 
+PAGE -   7  CHKSYNCH  FILE:   
+
+
+018B| 38                     SEC 
+018C| E9 01                  SBC #01 
+018E| D0F0                   BNE L5470 
+0190| 60                     RTS 
+0191|                       ; 
+0191|                       ;              ; ARM MOVE DELAY TABLE 
+0191|                       ; 
+0191|                       ;              ;  DOS HAS 01 30 28 24 20 1E 
+0191|                       ;              ;                   -- 
+0191|                       ;              ; 
+0191|                       ; ONTABLE 
+0156* 9101
+0191| 01 30 28 20 20 1E 1D  L0191 .BYTE 001,030,028,020,020,01E,01D,01C,01C,01C,01C,01C 
+0198| 1C 1C 1C 1C 1C        
+019D|                       ; 
+019D|                       ; OFFTABLE 
+0162* 9D01
+019D| 70 2C 26 22 1F 1E 1D  L019D .BYTE 070,02C,026,022,01F,01E,01D,01C,01C,01C,01C,01C 
+01A4| 1C 1C 1C 1C 1C        
+01A9| 00                     .BYTE 000 
+01AA|                        .END 
+PAGE -   8  CHKSYNCH  FILE:  SYMBOLTABLE DUMP
+
+
+AB - Absolute     LB - Label     UD - Undefined     MC - Macro
+RF - Ref          DF - Def       PR - Proc          FC - Func
+PB - Public       PV - Private   CS - Consts
+
+
+CHKSYNCH PR ----|  L0035    LB 0035|  L00A2    LB 00A2|  L011B    LB 011B|  L016F    LB 016F|  L0171    LB 0171|  L0180    LB 0180
+L0191    LB 0191|  L019D    LB 019D|  L5313    LB 0023|  L531C    LB 002C|  L5331    LB 0041|  L533A    LB 004A|  L5343    LB 0053
+L534C    LB 005C|  L5356    LB 0066|  L5360    LB 0070|  L536A    LB 007A|  L5374    LB 0084|  L537F    LB 008F|  L5392    LB 00A2
+L53A4    LB 00B4|  L53AD    LB 00BD|  L53B6    LB 00C6|  L53C0    LB 00D0|  L53CA    LB 00DA|  L53D4    LB 00E4|  L53DE    LB 00EE
+L53E9    LB 00F9|  L53FC    LB 010C|  L5421    LB 0131|  L5432    LB 0142|  L5436    LB 0146|  L543C    LB 014C|  L5441    LB 0151
+L545B    LB 016B|  L5470    LB 0180|  L5472    LB 0182|  L547B    LB 018B|  
+PAGE -   9  CHKSYNCH  FILE:   
+
+
+Current minimum space is 9422 words
+
+Assembly complete:       333 lines
+     0   Errors flagged on this Assembly
+PAGE -   0
+Current memory available:   10286
+2 blocks for procedure code  9810 words left
+PAGE -   1  SCREENPT  FILE:   
+
+
+0000|                        .PROC SCREENPT ; P070005 ; LZDECOMP USES THESE TABLES 
+Current memory available:    9761
+0000|                       ; 
+0000|                        .DEF L04BC, L057C 
+0000|                       ; 
+0000|                       ; 
+0000|                       ;        ; POINTERS TO LEFT EDGE OF PRIMARY HI RES SCREEN 
+0000|                       L54BC 
+0000|                       L04BC 
+0000| 00 00 00 00 00 00 00   .BYTE 000,000,000,000,000,000,000,000 
+0007| 00                    
+0008| 80 80 80 80 80 80 80   .BYTE 080,080,080,080,080,080,080,080 
+000F| 80                    
+0010| 00 00 00 00 00 00 00   .BYTE 000,000,000,000,000,000,000,000 
+0017| 00                    
+0018| 80 80 80 80 80 80 80   .BYTE 080,080,080,080,080,080,080,080 
+001F| 80                    
+0020| 00 00 00 00 00 00 00   .BYTE 000,000,000,000,000,000,000,000 
+0027| 00                    
+0028| 80 80 80 80 80 80 80   .BYTE 080,080,080,080,080,080,080,080 
+002F| 80                    
+0030| 00 00 00 00 00 00 00   .BYTE 000,000,000,000,000,000,000,000 
+0037| 00                    
+0038| 80 80 80 80 80 80 80   .BYTE 080,080,080,080,080,080,080,080 
+003F| 80                    
+0040|                       ; 
+0040| 28 28 28 28 28 28 28   .BYTE 028,028,028,028,028,028,028,028 
+0047| 28                    
+0048| A8 A8 A8 A8 A8 A8 A8   .BYTE 0A8,0A8,0A8,0A8,0A8,0A8,0A8,0A8 
+004F| A8                    
+0050| 28 28 28 28 28 28 28   .BYTE 028,028,028,028,028,028,028,028 
+0057| 28                    
+0058| A8 A8 A8 A8 A8 A8 A8   .BYTE 0A8,0A8,0A8,0A8,0A8,0A8,0A8,0A8 
+005F| A8                    
+0060| 28 28 28 28 28 28 28   .BYTE 028,028,028,028,028,028,028,028 
+0067| 28                    
+0068| A8 A8 A8 A8 A8 A8 A8   .BYTE 0A8,0A8,0A8,0A8,0A8,0A8,0A8,0A8 
+006F| A8                    
+0070| 28 28 28 28 28 28 28   .BYTE 028,028,028,028,028,028,028,028 
+0077| 28                    
+0078| A8 A8 A8 A8 A8 A8 A8   .BYTE 0A8,0A8,0A8,0A8,0A8,0A8,0A8,0A8 
+007F| A8                    
+0080|                       ; 
+0080| 50 50 50 50 50 50 50   .BYTE 050,050,050,050,050,050,050,050 
+0087| 50                    
+0088| D0 D0 D0 D0 D0 D0 D0   .BYTE 0D0,0D0,0D0,0D0,0D0,0D0,0D0,0D0 
+008F| D0                    
+0090| 50 50 50 50 50 50 50   .BYTE 050,050,050,050,050,050,050,050 
+0097| 50                    
+0098| D0 D0 D0 D0 D0 D0 D0   .BYTE 0D0,0D0,0D0,0D0,0D0,0D0,0D0,0D0 
+009F| D0                    
+00A0| 50 50 50 50 50 50 50   .BYTE 050,050,050,050,050,050,050,050 
+00A7| 50                    
+00A8| D0 D0 D0 D0 D0 D0 D0   .BYTE 0D0,0D0,0D0,0D0,0D0,0D0,0D0,0D0 
+00AF| D0                    
+PAGE -   2  SCREENPT  FILE:   
+
+
+00B0| 50 50 50 50 50 50 50   .BYTE 050,050,050,050,050,050,050,050 
+00B7| 50                    
+00B8| D0 D0 D0 D0 D0 D0 D0   .BYTE 0D0,0D0,0D0,0D0,0D0,0D0,0D0,0D0 
+00BF| D0                    
+00C0|                       L557C 
+00C0|                       L057C 
+00C0| 20 24 28 2C 30 34 38   .BYTE 020,024,028,02C,030,034,038,03C 
+00C7| 3C                    
+00C8| 20 24 28 2C 30 34 38   .BYTE 020,024,028,02C,030,034,038,03C 
+00CF| 3C                    
+00D0| 21 25 29 2D 31 35 39   .BYTE 021,025,029,02D,031,035,039,03D 
+00D7| 3D                    
+00D8| 21 25 29 2D 31 35 39   .BYTE 021,025,029,02D,031,035,039,03D 
+00DF| 3D                    
+00E0| 22 26 2A 2E 32 36 3A   .BYTE 022,026,02A,02E,032,036,03A,03E 
+00E7| 3E                    
+00E8| 22 26 2A 2E 32 36 3A   .BYTE 022,026,02A,02E,032,036,03A,03E 
+00EF| 3E                    
+00F0| 23 27 2B 2F 33 37 3B   .BYTE 023,027,02B,02F,033,037,03B,03F 
+00F7| 3F                    
+00F8| 23 27 2B 2F 33 37 3B   .BYTE 023,027,02B,02F,033,037,03B,03F 
+00FF| 3F                    
+0100|                       ; 
+0100| 20 24 28 2C 30 34 38   .BYTE 020,024,028,02C,030,034,038,03C 
+0107| 3C                    
+0108| 20 24 28 2C 30 34 38   .BYTE 020,024,028,02C,030,034,038,03C 
+010F| 3C                    
+0110| 21 25 29 2D 31 35 39   .BYTE 021,025,029,02D,031,035,039,03D 
+0117| 3D                    
+0118| 21 25 29 2D 31 35 39   .BYTE 021,025,029,02D,031,035,039,03D 
+011F| 3D                    
+0120| 22 26 2A 2E 32 36 3A   .BYTE 022,026,02A,02E,032,036,03A,03E 
+0127| 3E                    
+0128| 22 26 2A 2E 32 36 3A   .BYTE 022,026,02A,02E,032,036,03A,03E 
+012F| 3E                    
+0130| 23 27 2B 2F 33 37 3B   .BYTE 023,027,02B,02F,033,037,03B,03F 
+0137| 3F                    
+0138| 23 27 2B 2F 33 37 3B   .BYTE 023,027,02B,02F,033,037,03B,03F 
+013F| 3F                    
+0140|                       L55FC 
+0140| 20 24 28 2C 30 34 38   .BYTE 020,024,028,02C,030,034,038,03C 
+0147| 3C                    
+0148| 20 24 28 2C 30 34 38   .BYTE 020,024,028,02C,030,034,038,03C 
+014F| 3C                    
+0150| 21 25 29 2D 31 35 39   .BYTE 021,025,029,02D,031,035,039,03D 
+0157| 3D                    
+0158| 21 25 29 2D 31 35 39   .BYTE 021,025,029,02D,031,035,039,03D 
+015F| 3D                    
+0160| 22 26 2A 2E 32 36 3A   .BYTE 022,026,02A,02E,032,036,03A,03E 
+0167| 3E                    
+0168| 22 26 2A 2E 32 36 3A   .BYTE 022,026,02A,02E,032,036,03A,03E 
+016F| 3E                    
+0170| 23 27 2B 2F 33 37 3B   .BYTE 023,027,02B,02F,033,037,03B,03F 
+0177| 3F                    
+0178| 23 27 2B 2F 33 37 3B   .BYTE 023,027,02B,02F,033,037,03B,03F 
+PAGE -   3  SCREENPT  FILE:   
+
+
+017F| 3F                    
+0180|                       ; 
+0180|                        .END 
+PAGE -   4  SCREENPT  FILE:  SYMBOLTABLE DUMP
+
+
+AB - Absolute     LB - Label     UD - Undefined     MC - Macro
+RF - Ref          DF - Def       PR - Proc          FC - Func
+PB - Public       PV - Private   CS - Consts
+
+
+L04BC    DF 0000|  L057C    DF 00C0|  L54BC    LB 0000|  L557C    LB 00C0|  L55FC    LB 0140|  SCREENPT PR ----|  
+PAGE -   5  SCREENPT  FILE:   
+
+
+Current minimum space is 9721 words
+
+Assembly complete:       112 lines
+     0   Errors flagged on this Assembly
+

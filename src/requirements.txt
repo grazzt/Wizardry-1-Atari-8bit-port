@@ -1,0 +1,3 @@
+# Picture conversion (imported by the Atari build).
+numpy
+Pillow

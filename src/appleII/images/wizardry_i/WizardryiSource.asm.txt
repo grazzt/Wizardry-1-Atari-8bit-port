@@ -1,0 +1,89 @@
+Begin
+Title:         Wizardry_i_SourceCode
+Author:        Thomas William Ewers
+Version:       
+Entered-date:  June 15, 2014  
+Description:   
+  Pascal (and assembler) source code files and generated listings for
+  Wizardry_I, Proving Grounds of the Mad Overlord.
+
+  I have re-engineered Pascal source code (and assembler code) from the
+  Wizardry_I program.  The original executable files can be found on:
+
+    Wizardry_i_boot.dsk
+
+  In this package:
+
+    /WizardryCode
+       Wiz1A.DSK
+       Wiz1B.DSK
+       Wiz1C.DSK
+       Wiz1D.DSK
+       Wiz1WizardryAssembler.txt
+       Wiz1WizardryPascal.txt
+                      
+    /SystemStartup
+       Wiz1E.DSK
+       Wiz1StartupAssembler.txt
+       Wiz1StartupPascal.txt
+
+  The Pascal code found on the enclosed disks is NOT the code that the original
+  authors wrote.  However, when you compile (and assemble and link) these
+  files, the EXACT executable code in Wizardry.code and System.Startup are
+  created.
+
+  The source code can be compiled using Apple Pascal 1.1 on an Apple][
+  computer (or simulator) that has 4 diskette drives.
+
+  To compile System.Startup:
+
+    1. Assemble WIZ1E:LZDECOMP.TEXT (creates LZDECOMP.CODE)
+    2. Assemble WIZ1E:CHKSYNCH.TEXT (creates CHKSYNCH.CODE)
+    3. Assemble WIZ1E:SCREENPT.text (creates SCREENPT.CODE)
+    4. Compile  WIZ1E:STARTUP.TEXT  (creates unlinked STARTUP.CODE)
+    5. Link     WIZ1E:STARTUP.CODE  (creates STARTUP.CODE)
+    6. Rename   STARTUP.CODE        (creates SYSTEM.STARTUP)
+
+  To compile WIZARDRY.CODE:
+
+    1. Assemble WIZ1D:CLRRECT.TEXT  (creates CLRRECT.CODE)
+    2. Assemble WIZ1D:MVCURSOR.TEXT (creates MVCURSOR.CODE)
+    3. Assemble WIZ1D:PRGRCHR.TEXT  (creates PRGRCHR.CODE)
+    4. Assemble WIZ1D:DRAWLINE.TEXT (creates DRAWLINE.CODE)
+    5. Assemble WIZ1D:CLRPICT.TEXT  (creates CLRPICT.CODE)
+    6. Assemble WIZ1D:KEYAVAIL.TEXT (creates KEYAVAIL.CODE)
+    7. Assemble WIZ1D:RANDOM.TEXT   (creates RANDOM.CODE)
+    8. Compile  WIZ1A:WIZ.TEXT      (creates unlinked WIZ.CODE)
+    9. Link     WIZ1A:WIZ.CODE      (creates WIZARDRY.CODE)
+    
+  See the discussion on Usenet at:
+    comp.sys.apple2
+      "Wizardry re-engineering"
+
+  My Google Groups name is:  TommyGoog
+
+Keywords:      Wizardry, Proving Grounds of the Mad Overlord, SIR-TECH 
+Uploader:      ewerst@msn.com   
+Primary-site:  ftp://ftp.apple.asimov.net
+                 /pub/apple_II/images/games/rpg/wizardry/wizardry_I/
+
+               Wizardry_i_SourceCode.zip
+
+                   WiziSourceCode.ASM.txt
+
+                   /WizardryCode
+                      Wiz1A.DSK
+                      Wiz1B.DSK
+                      Wiz1C.DSK
+                      Wiz1D.DSK
+                      Wiz1WizardryAssembler.txt
+                      Wiz1WizardryPascal.txt
+                      
+                   /SystemStartup
+                      Wiz1E.DSK
+                      Wiz1StartupAssembler.txt
+                      Wiz1StartupPascal.txt
+
+
+Platform:      Apple][ 
+End

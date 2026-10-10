@@ -1,0 +1,55 @@
+{
+  "title": "Wizardry I reconstructed Pascal and assembler source (Thomas William Ewers, 2014)",
+  "url": "https://mirrors.apple2.org.za/ftp.apple.asimov.net/images/games/rpg/wizardry/wizardry_I/Wizardry_i_SourceCode.zip",
+  "retrieved_on": "2026-10-09",
+  "archive_bytes": 286374,
+  "archive_sha256": "3f31ffe91927f6b0af6d675ac3eb5701e23b0a0881e9731bde905a0f5f47a080",
+  "local_changes": "Archive extracted; the zip itself and its copy of WizardryiSource.asm.txt (identical to ../../images/wizardry_i/WizardryiSource.asm.txt) are not stored. File bytes unchanged, including CRLF line endings.",
+  "files": [
+    {
+      "file": "SystemStartup/Wiz1E.DSK",
+      "bytes": 143360,
+      "sha256": "1da179f50991fb8ecc12e7cf5f351a0112b8180db8b91a4c10a4c442c3c1466c"
+    },
+    {
+      "file": "SystemStartup/Wiz1StartupAssembler.txt",
+      "bytes": 36832,
+      "sha256": "aee881d301d224d93beba6f262b236c424b45e52588877b3f43e4803a75bbcfd"
+    },
+    {
+      "file": "SystemStartup/Wiz1StartupPascal.txt",
+      "bytes": 74836,
+      "sha256": "3ef496126ce4b2e11c5e1ebd865378f45ad39b97044ab608f58b7564a8bc7c31"
+    },
+    {
+      "file": "WizardryCode/Wiz1A.DSK",
+      "bytes": 143360,
+      "sha256": "2d7431b8cba162fd992b0cc7d7eeb81be3246749c8fb8bb92e65fc0e95a45b22"
+    },
+    {
+      "file": "WizardryCode/Wiz1B.DSK",
+      "bytes": 143360,
+      "sha256": "a276239195ad0d972dc656593a09f1d2fa85fa5ab8c4ee3ee078a367534f3490"
+    },
+    {
+      "file": "WizardryCode/Wiz1C.DSK",
+      "bytes": 143360,
+      "sha256": "6812cf4d401bc9268e25ad0865ab8a35a86cfec92bd5d9cbd7f5809da7595ea9"
+    },
+    {
+      "file": "WizardryCode/Wiz1D.DSK",
+      "bytes": 143360,
+      "sha256": "7879f6a6215618db20fc829fbc401336ce89004162e3c51afe466738ff16495e"
+    },
+    {
+      "file": "WizardryCode/Wiz1WizardryAssembler.txt",
+      "bytes": 44197,
+      "sha256": "0edef9bda781f6edbd49fbe394c6257f0eed707492f814cb4237098e1876644a"
+    },
+    {
+      "file": "WizardryCode/Wiz1WizardryPascal.txt",
+      "bytes": 666507,
+      "sha256": "fb30a53cc79db6ef3c0919bd638eaceb3aaee10d78e0c2e1f634b2d4760c867c"
+    }
+  ]
+}

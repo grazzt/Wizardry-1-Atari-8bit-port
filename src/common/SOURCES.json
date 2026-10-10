@@ -1,0 +1,65 @@
+{
+  "platform": "common",
+  "collected_on": "2026-10-09",
+  "reference_file_count": 4,
+  "documents": [
+    {
+      "path": "common/tools/ca65.html",
+      "url": "https://cc65.github.io/doc/ca65.html",
+      "title": "ca65 macro assembler manual",
+      "author": "cc65 project",
+      "use": "6502 assembly syntax, directives, macros and object generation.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "21561139c77b29a0e2701a534b6783749f2466191b5f678b0d14f26aa69cb32a",
+      "local_changes": "HTML href/src URLs repaired: included documents/assets use local paths; other relative URLs point to their original website. Document body unchanged.",
+      "bytes": 241470,
+      "sha256": "30fbde49fe56a739e6303e6dfad83a8a4823ea052cadf35d39a9dad03fde60b3"
+    },
+    {
+      "path": "common/tools/ld65.html",
+      "url": "https://cc65.github.io/doc/ld65.html",
+      "title": "ld65 linker manual",
+      "author": "cc65 project",
+      "use": "Linker configuration, memory regions and segment placement.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "f3ac06980fdbb274289364394eb4f7b9eb18f7f76a9ec6276e96e8b54637773a",
+      "local_changes": "HTML href/src URLs repaired: included documents/assets use local paths; other relative URLs point to their original website. Document body unchanged.",
+      "bytes": 64296,
+      "sha256": "f3ac06980fdbb274289364394eb4f7b9eb18f7f76a9ec6276e96e8b54637773a"
+    },
+    {
+      "path": "common/tools/da65.html",
+      "url": "https://cc65.github.io/doc/da65.html",
+      "title": "da65 disassembler manual",
+      "author": "cc65 project",
+      "use": "6502 disassembly and control files for classifying code and data.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "9b356b513f6ef9174bb7ab804705b56cdf620f67c97758e514d24e35f6b4bd52",
+      "local_changes": "HTML href/src URLs repaired: included documents/assets use local paths; other relative URLs point to their original website. Document body unchanged.",
+      "bytes": 33503,
+      "sha256": "1b8c77e452a1159a8b48b27c7fcc29df32ae2b8544a0b691f259b5ef01010136"
+    },
+    {
+      "path": "common/programming/MOS_6500_Programming_Manual_1976.pdf",
+      "url": "https://bitsavers.trailing-edge.com/components/mosTechnology/6500-50A_MCS6500pgmManJan76.pdf",
+      "title": "MCS6500 Microcomputer Family Programming Manual (January 1976)",
+      "author": "MOS Technology",
+      "use": "Shared NMOS 6502-family instruction set, addressing modes, flags, arithmetic and interrupts.",
+      "retrieved_on": "2026-10-09",
+      "download_sha256": "a7b2ffce0ed8c876f36b78a9cabae951dc6183224d2d44d82de510ed313b6a1a",
+      "local_changes": "None; original downloaded bytes.",
+      "pdf_pages": 262,
+      "bytes": 10978298,
+      "sha256": "a7b2ffce0ed8c876f36b78a9cabae951dc6183224d2d44d82de510ed313b6a1a"
+    }
+  ],
+  "supporting_assets": [
+    {
+      "path": "common/tools/doc.css",
+      "url": "https://cc65.github.io/doc/doc.css",
+      "bytes": 869,
+      "sha256": "d46c259753a3fe12aafa988cd927e6894c67a41a9084a8e86889a6d32cb08d24",
+      "retrieved_on": "2026-10-09"
+    }
+  ]
+}

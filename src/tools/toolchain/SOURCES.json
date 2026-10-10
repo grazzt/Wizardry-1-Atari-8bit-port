@@ -1,0 +1,15 @@
+{
+  "pinned_on": "2026-10-09",
+  "cc65": {
+    "url": "https://github.com/cc65/cc65.git",
+    "commit": "2ea1df8b2bdda43ec4aef7b9124f3be6c9a91fb7",
+    "commit_date": "2026-09-20",
+    "note": "The last tagged release (V2.19) is from 2020; the project ships from master. This commit was the newest one at least two weeks old when pinned."
+  },
+  "ciderpress2": {
+    "version": "1.2.0",
+    "url": "https://github.com/fadden/CiderPress2/releases/download/v1.2.0/cp2_1.2.0_linux-x64_sc.zip",
+    "sha256": "8c8748a0b484b4a778354146ffe4b6b44527f066b440a2e7bccebf4050948981",
+    "note": "Self-contained linux-x64 build; no .NET runtime needed. Hash is the digest GitHub publishes for the release asset."
+  }
+}

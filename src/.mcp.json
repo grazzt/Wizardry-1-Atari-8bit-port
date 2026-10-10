@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "wizardry_vice": {
+      "command": "tools/emulators/bin/mcp-vice"
+    },
+    "wizardry_apple2": {
+      "command": "tools/emulators/bin/mcp-apple2"
+    }
+  }
+}

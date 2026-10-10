@@ -1,0 +1,983 @@
+PAGE -   0
+Current memory available:   10286
+2 blocks for procedure code  9810 words left
+PAGE -   1  CLRRECT   FILE:   
+
+
+0000|                        .PROC CLRRECT,4 ; 4 PARAMETERS   ;     P01001E,4 ; 
+Current memory available:    9761
+0000|                       ; 
+0000|                        .REF L0998, L0999 
+0000|                       ; 
+0000|                       ;          ; CALL:  CLRRECT( X, Y, WIDTH, HEIGHT); 
+0000|                       ; 
+0000|                       ;          ; WIDTH = # OF COLUMNS (7 BITS PER COLUMN) TO CLEAR 
+0000|                       ;          ; HIEGHT = # OF LINES (8 BITS PER LINE) TO CLEAR 
+0000|                       ; 
+0000|                       ;          ; X, Y ARE UPPER LEFT CORNER OF RECTANGLE TO CLEAR 
+0000|                       ;          ; 0,0 IS UPPER LEFT ORIGIN 
+0000|                       ; 
+0000| 18                     CLC 
+0001| D8                     CLD 
+0002| 68                     PLA       ; PULL RETURN 
+0003| 85 00                  STA 00 
+0005| 68                     PLA 
+0006| 85 01                  STA 01 
+0008|                       ; 
+0008| 68                     PLA       ; 09 := PARM 4    HEIGHT (LINES) 
+0009| 85 09                  STA 09 
+000B| 68                     PLA       ; 07 := PARM 3    WIDTH  (COLS) 
+000C| 68                     PLA 
+000D| 85 07                  STA 07 
+000F| 68                     PLA 
+0010| 68                     PLA       ; 08 := PARM 2    Y 
+0011| 85 08                  STA 08 
+0013| 68                     PLA 
+0014| 68                     PLA       ; 06 := PARM 1    X 
+0015| 85 06                  STA 06 
+0017| 68                     PLA 
+0018|                       ; 
+0018| A5 01                  LDA 01    ; PUSH RETURN 
+001A| 48                     PHA 
+001B| A5 00                  LDA 00 
+001D| 48                     PHA 
+001E|                       ; 
+001E|                       L5854 
+001E| 20 ****                JSR L585E ; CLEAR 1 "LINE" (8 PIXELS) ON THE HI RES SCREEN 
+0021| E6 08                  INC 08    ; INC TO NEXT LINE 
+0023| C6 09                  DEC 09    ; DEC LINES LEFT 
+0025| D0F7                   BNE L5854 ; DO ANOTHER LINE 
+0027| 60                     RTS 
+0028|                       ; 
+001F* 2800
+0028|                       L585E 
+0028|                       ;            ; CLEAR 1 "LINE" (8 PIXELS) ON THE HI RES SCREEN. 
+0028|                       ; 
+0028| A5 08                  LDA 08      ; "LINE" NUMBER (8 PIXELS PER HI RES "LINE") 
+002A| 0A                     ASL A       ; ADJUST.  2 BYTES PER POINTER IN L0998 TABLE 
+002B| A8                     TAY 
+002C| B9 0000                LDA L0998,Y ; 04.05 := PTR TO TOP OF "LINE" ON HI RES SCREEN 
+002F| 85 04                  STA 04      ;          THESE ARE LEFT EDGE OF SCREEN. 
+0031| B9 0000                LDA L0999,Y ;          EACH POINTER IN THIS TABLE OCCUPIES 2 BYTES. 
+PAGE -   2  CLRRECT   FILE:   
+
+
+0034| 85 05                  STA 05 
+0036|                       ; 
+0036| A9 00                  LDA #00 
+0038| 20 ****                JSR L5887   ; CLEAR HI RES ROW 1 FOR THIS "LINE"  
+003B| 20 ****                JSR L5887   ; CLEAR HI RES ROW 2 FOR THIS "LINE" 
+003E| 20 ****                JSR L5887   ; 
+0041| 20 ****                JSR L5887   ; 
+0044| 20 ****                JSR L5887   ; 
+0047| 20 ****                JSR L5887   ; 
+004A| 20 ****                JSR L5887   ; 
+004D| 20 ****                JSR L5887   ; CLEAR HI RES ROW 8 FOR THIS "LINE" 
+0050| 60                     RTS 
+0051|                       ; 
+004E* 5100
+004B* 5100
+0048* 5100
+0045* 5100
+0042* 5100
+003F* 5100
+003C* 5100
+0039* 5100
+0051|                       L5887 
+0051|                       ;            ; CLEAR 1 ROW OF PIXELS 
+0051|                       ; 
+0051| A4 06                  LDY 06      ; HORIZONTAL (X) COORDINATE 
+0053| A6 07                  LDX 07      ; NUMBER OF COLUMNS TO CLEAR 
+0055|                       L588B 
+0055| 91 04                  STA @4,Y    ; CLEAR 7 PIXELS ON HI RES 
+0057| C8                     INY 
+0058| CA                     DEX 
+0059| D0FA                   BNE L588B   ; DO ANOTHER HI RES COLUMN 
+005B|                                    ; DONE WITH THAT ROW 
+005B| E6 05                  INC 05      ; ADVANCE POINTER TO NEXT HI RES LINE 
+005D| E6 05                  INC 05 
+005F| E6 05                  INC 05 
+0061| E6 05                  INC 05 
+0063| 60                     RTS 
+0064|                        .END 
+PAGE -   3  CLRRECT   FILE:  SYMBOLTABLE DUMP
+
+
+AB - Absolute     LB - Label     UD - Undefined     MC - Macro
+RF - Ref          DF - Def       PR - Proc          FC - Func
+PB - Public       PV - Private   CS - Consts
+
+
+CLRRECT  PR ----|  L0998    RF ----|  L0999    RF ----|  L5854    LB 001E|  L585E    LB 0028|  L5887    LB 0051|  L588B    LB 0055
+
+PAGE -   4  CLRRECT   FILE:   
+
+
+Current minimum space is 9667 words
+
+Assembly complete:        83 lines
+     0   Errors flagged on this Assembly
+PAGE -   0
+Current memory available:   10286
+2 blocks for procedure code  9810 words left
+PAGE -   1  MVCURSOR  FILE:   
+
+
+0000|                        .PROC MVCURSOR,2 ; 2 PARAMETERS ;    P01001F,2 
+Current memory available:    9761
+0000|                       ; 
+0000|                       ;          ; CALL:  MVCURSOR (X, Y); 
+0000|                       ;          ; 
+0000|                       ;          ; IN THIS ROUTINE: 
+0000|                       ;          ; 
+0000|                       ;          ;        X STORED AT $4F9  (SLOT #1 RAM SPACE) 
+0000|                       ;          ;        Y STORED AT $579  (SLOT #1 RAM SPACE) 
+0000|                       ;          ; 
+0000|                       ;          ;            PRGRCHR USES $4F9 AND $579 
+0000|                       ;          ; 
+0000|                       ;          ; MVCURSOR( 40, Y)    TURN ON GRAPHICS MODE 
+0000|                       ;          ; MVCUROSR( 50, Y)    TURN ON TEXT MODE 
+0000|                       ;          ; MVCURSOR( 60, Y)    JUMP TO $2002  (COPY PROTECTION) 
+0000|                       ;          ; MVCURSOR( 70, Y)    CRASH AND BURN (COPY PROTECTION) 
+0000|                       ;          ; MVCURSOR( 80, Y)    ADJUST RANDOM # (UNTIL KEY IS AVAILABLE) 
+0000|                       ;          ;                                  $47A, $47B, $47C, $47D (???) 
+0000|                       ;          ;                       RNG USES:  $47A, $4FA, $57A, $5FB (!!!) 
+0000|                       ;     
+0000| 68                     PLA       ; PULL RETURN 
+0001| 85 00                  STA 00 
+0003| 68                     PLA 
+0004| 85 01                  STA 01 
+0006|                       ; 
+0006| 68                     PLA       ; PARAM 2    08 := Y COORDINATE 
+0007| 85 08                  STA 08 
+0009| 68                     PLA 
+000A| 68                     PLA       ; PARAM 1    06 := X COORDINATE 
+000B| 85 06                  STA 06 
+000D| 68                     PLA 
+000E|                       ; 
+000E| A5 01                  LDA 01    ; PUSH RETURN 
+0010| 48                     PHA 
+0011| A5 00                  LDA 00 
+0013| 48                     PHA 
+0014|                       ; 
+0014| A5 06                  LDA 06 
+0016| C9 28                  CMP #028  ; X = 40? 
+0018| F0**                   BEQ L58EF ;   YES, L58EF 
+001A|                       ; 
+001A| C9 32                  CMP #032  ; X = 50? 
+001C| F0**                   BEQ L58FC ;   YES, L58FC 
+001E|                       ; 
+001E| C9 3C                  CMP #03C  ; X = 60? 
+0020| F0**                   BEQ L5909 ;   YES, L5909 
+0022|                       ; 
+0022| C9 46                  CMP #046  ; X = 70? 
+0024| F0**                   BEQ L590C ;   YES, L590C 
+0026|                       ; 
+0026| C9 50                  CMP #050  ; X = 80? 
+0028| F0**                   BEQ L5920 ;   YES, L5920 
+002A|                       ; 
+002A|                       ;          ; X NOT A "SPECIAL" VALUE 
+002A|                       ; 
+PAGE -   2  MVCURSOR  FILE:   
+
+
+002A| 8D F904                STA 004F9 ; SAVE "X" COORDINATE (AT SLOT #1 RAM SPACE) 
+002D| A5 08                  LDA 08 
+002F| 8D 7905                STA 00579 ; SAVE "Y" COORDINATE (AT SLOT #1 RAM SPACE) 
+0032| 60                     RTS 
+0033|                       ; 
+0018* 19
+0033|                       L58EF 
+0033|                       ; 
+0033|                       ;          ; TURN ON GRAPHICS MODE 
+0033|                       ;  
+0033| 8D 50C0                STA 0C050 ;   GRAPHICS 
+0036| 8D 54C0                STA 0C054 ;   PRIMARY PAGE 
+0039| 8D 57C0                STA 0C057 ;   HI RES 
+003C| 8D 52C0                STA 0C052 ;   ALL GRAPHICS 
+003F| 60                     RTS 
+0040|                       ; 
+001C* 22
+0040|                       L58FC 
+0040|                       ; 
+0040|                       ;          ; TURN ON TEXT MODE 
+0040|                       ; 
+0040| 8D 51C0                STA 0C051 ;   TEXT 
+0043| 8D 54C0                STA 0C054 ;   PRIMARY PAGE 
+0046| 8D 56C0                STA 0C056 ;   LO RES 
+0049| 8D 52C0                STA 0C052 ;   ALL TEXT 
+004C| 60                     RTS 
+004D|                       ; 
+0020* 2B
+004D|                       L5909 
+004D|                       ; 
+004D|                       ;          ; EXECUTE COPY PROTECTION CODE 
+004D|                       ;          ; CODE AT $2002 WAS LOADED FROM SCENARIO.DATA ON SIDE 2 OF DISK 
+004D|                       ;          ; 
+004D| 4C 0220                JMP 02002 ; 
+0050|                       ; 
+0024* 2A
+0050|                       L590C 
+0050|                       ; 
+0050|                       ;          ; CRASH AND BURN  (PART OF COPY PROTECTION CODE) 
+0050|                       ; 
+0050| A9 BF                  LDA #0BF  ; START AT $BF00..$BFFF 
+0052| 85 03                  STA 03 
+0054| A9 00                  LDA #00 
+0056| 85 02                  STA 02 
+0058|                       ; 
+0058|                       L5914 
+0058| A0 00                  LDY #00 
+005A|                       L5916 
+005A| 91 02                  STA @2,Y  ; STORE 0 
+005C| 88                     DEY 
+005D| D0FB                   BNE L5916 ; DO 256 BYTES 
+005F|                       ; 
+005F| C6 03                  DEC 03    ; CONTINUE DOWNWARD THROUGH MEMORY 
+0061| 4C 5800                JMP L5914 ; EVENTUALLY THE SYSTEM WILL EXECUTE A 0 INSTRUCTION 
+0064|                                  ; WHICH IS A BRK INSTRUCTION.  SINCE THE BRK VECTORS 
+PAGE -   3  MVCURSOR  FILE:   
+
+
+0064|                                  ; HAVE ALREADY BEEN CHANGED, THE MONITOR WILL REBOOT. 
+0064|                                  ; 
+0028* 3A
+0064|                       L5920 
+0064|                       ; 
+0064|                       ;          ; ADJUST RANDOM # UNTIL KEY IS AVAILABLE FROM INPUT BUFFER 
+0064|                       ;          ;   OR A KEY IS PRESSED. 
+0064|                       ; 
+0064| AD 83C0                LDA 0C083 ; SELECT RAM CARD RAM READ, BANK 2 
+0067| 20 0ABF                JSR 0BF0A ; $BF0A IS CONCK IN SYSCOM (PASCAL OS) 
+006A| AD 83C0                LDA 0C083 
+006D| AD 18BF                LDA 0BF18 ; $BF18 IS RPTR IN SYSCOM (PASCAL OS) 
+0070| CD 19BF                CMP 0BF19 ; $BF19 IS WPTR IN SYSCOM (PASCAL OS) 
+0073| D0**                   BNE L5942 ; CIRCULAR INPUT BUFFER.  WHEN EQUAL, THEN NO CHARACTERS AVAILABLE. 
+0075|                       ; 
+0075|                       ;            ;   NO CHARACTER WAS IN THE INPUT BUFFER 
+0075|                       L5931 
+0075| A2 00                  LDX #00 
+0077|                       L5933 
+0077| FE 7A04                INC 0047A,X ; INCREMENT RANDOM #         (BUG !!!!!!) 
+007A| D0**                   BNE L593D   ;   $47A, $47B, $47C, $47D   (??????????) 
+007C| E8                     INX         ;   RAM FOR SLOTS #2, #3, #4, #5 
+007D| E0 04                  CPX #04     ; 
+007F| D0F6                   BNE L5933   ; RNG CODE USES $47A, $4FA, $57A, $5FB (ALL SLOT #2) 
+007A* 05
+0081|                       L593D 
+0081| AD 00C0                LDA 0C000   ; KEYBOARD DATA 
+0084| 10EF                   BPL L5931   ; KEY PRESSED?  NO, L5931  (CONTINUE INCREMENTING RANDOM #) 
+0086|                       ; 
+0073* 11
+0086|                       L5942 
+0086|                       ;            ;   YES, A KEY WAS PRESSED (OR IS AVAILABLE FROM INPUT BUFFER) 
+0086| AD 8BC0                LDA 0C08B   ; RAM CARD RAM READ, BANK 1 
+0089| 60                     RTS 
+008A|                        .END 
+PAGE -   4  MVCURSOR  FILE:  SYMBOLTABLE DUMP
+
+
+AB - Absolute     LB - Label     UD - Undefined     MC - Macro
+RF - Ref          DF - Def       PR - Proc          FC - Func
+PB - Public       PV - Private   CS - Consts
+
+
+L58EF    LB 0033|  L58FC    LB 0040|  L5909    LB 004D|  L590C    LB 0050|  L5914    LB 0058|  L5916    LB 005A|  L5920    LB 0064
+L5931    LB 0075|  L5933    LB 0077|  L593D    LB 0081|  L5942    LB 0086|  MVCURSOR PR ----|  
+PAGE -   5  MVCURSOR  FILE:   
+
+
+Current minimum space is 9648 words
+
+Assembly complete:       137 lines
+     0   Errors flagged on this Assembly
+PAGE -   0
+Current memory available:   10286
+2 blocks for procedure code  9810 words left
+PAGE -   1  PRGRCHR   FILE:   
+
+
+0000|                        .PROC PRGRCHR,1 ; 1 PARAMETER    ; P010020,1 
+Current memory available:    9761
+0000|                       ; 
+0000|                       ;        CALL:  PRGRCHR( ACHAR); 
+0000|                       ; 
+0000|                       ;               ACHAR IS A PACKED ARRAY[ 0..7] OF 0..255;  (SEE TCHRIMAG) 
+0000|                       ; 
+0000|                       ;        PURPOSE:  PRINT A CHARACTER TO THE HI RES SCREEN (7 X 8 PIXELS) 
+0000|                       ; 
+0000|                       ;        USES:  $579 IS LINE POSITION ON SCREEN 
+0000|                       ;               $4F9 IS HORIZONTAL POSTION ON SCREEN 
+0000|                       ; 
+0000|                        .DEF L0998, L0999 
+0000|                       ; 
+0000| 68                     PLA          ; PULL RETURN 
+0001| 85 00                  STA 00 
+0003| 68                     PLA 
+0004| 85 01                  STA 01 
+0006|                       ; 
+0006| 68                     PLA          ; 02 := CHARACTER TO DISPLAY  (PACKED ARRY[ 0..7] OF 0..255) 
+0007| 85 02                  STA 02 
+0009| 68                     PLA 
+000A| 85 03                  STA 03 
+000C|                       ; 
+000C| A5 01                  LDA 01       ; PUSH RETURN 
+000E| 48                     PHA 
+000F| A5 00                  LDA 00 
+0011| 48                     PHA 
+0012|                       ; 
+0012| D8                     CLD 
+0013| 18                     CLC 
+0014| AD 7905                LDA 00579    ; LINE POSITION 
+0017| 0A                     ASL A        ; ADJUST SINCE L5998 AND L5999 HAVE 2 BYTES PER POINTER 
+0018| A8                     TAY 
+0019| B9 ****                LDA L5998,Y  ; LEFT EDGE OF SCREEN (TOP PIXEL OF CHARACTER) 
+001C| 6D F904                ADC 004F9    ; ADD HORIZONTAL POSITION ON SCREEN 
+001F| 85 04                  STA 04       ; SET 04.05 TO HI RES LOCATION FOR CHARACTER 
+0021| B9 ****                LDA L5999,Y 
+0024| 85 05                  STA 05 
+0026| A2 08                  LDX #08      ; EACH CHARACTER IS 8 PIXELS HIGH 
+0028| A0 00                  LDY #00 
+002A|                       ; 
+002A|                       L597E 
+002A|                       ; 
+002A|                       ;             ; PLACE A ROW OF PIXELS ON THE SCREEN FOR THE CHARACTER 
+002A|                       ; 
+002A| B1 02                  LDA @2,Y     ; GET 7 PIXELS OF THE CHARACTER 
+002C| 91 04                  STA @4,Y     ; PUT 7 PIXELS ON THE SCREEN 
+002E| E6 05                  INC 05       ; ADVANCE 1 ROW OF PIXELS ON THE SCREEN 
+0030| E6 05                  INC 05 
+0032| E6 05                  INC 05 
+0034| E6 05                  INC 05 
+0036| 18                     CLC 
+0037| E6 02                  INC 02       ; INCREMENT TO NEXT ROW OF CHARACTER PIXELS 
+0039| D0**                   BNE L5991 
+PAGE -   2  PRGRCHR   FILE:   
+
+
+003B| E6 03                  INC 03 
+0039* 02
+003D|                       L5991 
+003D| CA                     DEX 
+003E| D0EA                   BNE L597E    ; DO ANOTHER ROW UNTIL 8 ARE PLACED ON SCREEN. 
+0040|                                     ; 8 ROWS FOR 1 CHARACTER HAVE BEEN PLACED ON THE SCREEN. 
+0040| EE F904                INC 004F9    ; ADVANCE HORIZONTAL POSITION 
+0043| 60                     RTS 
+0044|                       ; 
+0044|                       ; 
+0044|                       ;             ; TABLE OF 24 POINTERS TO LEFT EDGE OF HI RES SCREEN 
+0044|                       ;             ; EACH PTR REPRESENTS ONE "CHARACTER" ROW OF 8 PIXELS. 
+0044|                       ; 
+0044|                       L0998 
+001A* 4400
+0044|                       L5998 
+0044| 00                     .BYTE 0 
+0045|                       L0999 
+0022* 4500
+0045|                       L5999 
+0045| 20 80 20 00 21 80 21   .BYTE 020, 080, 020, 000, 021, 080, 021, 000, 022, 080, 022, 000, 023, 080 
+004C| 00 22 80 22 00 23 80  
+0053| 23 28 20 A8 20 28 21   .BYTE 023, 028, 020, 0A8, 020, 028, 021, 0A8, 021, 028, 022, 0A8, 022, 028 
+005A| A8 21 28 22 A8 22 28  
+0061| 23 A8 23 50 20 D0 20   .BYTE 023, 0A8, 023, 050, 020, 0D0, 020, 050, 021, 0D0, 021, 050, 022, 0D0 
+0068| 50 21 D0 21 50 22 D0  
+006F| 22 50 23 D0 23         .BYTE 022, 050, 023, 0D0, 023 
+0074|                        .END 
+PAGE -   3  PRGRCHR   FILE:  SYMBOLTABLE DUMP
+
+
+AB - Absolute     LB - Label     UD - Undefined     MC - Macro
+RF - Ref          DF - Def       PR - Proc          FC - Func
+PB - Public       PV - Private   CS - Consts
+
+
+L0998    DF 0044|  L0999    DF 0045|  L597E    LB 002A|  L5991    LB 003D|  L5998    LB 0044|  L5999    LB 0045|  PRGRCHR  PR ----
+
+PAGE -   4  PRGRCHR   FILE:   
+
+
+Current minimum space is 9698 words
+
+Assembly complete:        79 lines
+     0   Errors flagged on this Assembly
+PAGE -   0
+Current memory available:   10286
+2 blocks for procedure code  9810 words left
+PAGE -   1  DRAWLINE  FILE:   
+
+
+0000|                        .PROC DRAWLINE,5 ;  P01001B,5 ; 5 PARAMETERS 
+Current memory available:    9761
+0000|                        ; 
+0000|                        .DEF L5AE4, L5B33 
+0000|                        ;   DEFINE POINTERS TO HI RES SCREEN LEFT EDGE STARTING WITH LINE 5. 
+0000|                        ; 
+0000|                        ; THIS ROUTINE USES $679, $6F9, $779, $07F9 SET PREVIOUSLY BY 
+0000|                        ; CLRPICT PROCEDURE (WITH THE LAST PARAMETER NOT SET TO 100 OR 101). 
+0000|                        ; 
+0000|                        ; THOSE VALUES DETERMINE THE VALID RECTANGLE DRAWING REGION. 
+0000|                        ; 
+0000| 18                     CLC 
+0001| D8                     CLD 
+0002| 68                     PLA     ; POP RETURN 
+0003| 85 00                  STA 00 
+0005| 68                     PLA 
+0006| 85 01                  STA 01 
+0008| 68                     PLA 
+0009| 85 0C                  STA 0C  ; 0C := PARM 5  LINE LENGTH (MAX NUMBER OF PIXELS TO DRAW) 
+000B| 68                     PLA 
+000C| 68                     PLA 
+000D| 85 0A                  STA 0A  ; 0A := PARM 4  DELTA VERTICAL ( -1, 0, +1) 
+000F| 68                     PLA 
+0010| 68                     PLA 
+0011| 85 08                  STA 08  ; 08 := PARM 3  DELTA HORIZONTAL ( -1, 0, +1) 
+0013| 68                     PLA 
+0014| 68                     PLA 
+0015| 85 06                  STA 06  ; 06 := PARM 2  Y COORDINATE 
+0017| 68                     PLA 
+0018| 68                     PLA 
+0019| 85 04                  STA 04  ; 04 := PARM 1  X COORDINATE  (0,0) IS UPPER LEFT IN "PICTURE" 
+001B| 68                     PLA 
+001C|                       ; 
+001C| A5 01                  LDA 01  ; PUSH RETURN 
+001E| 48                     PHA 
+001F| A5 00                  LDA 00 
+0021| 48                     PHA 
+0022|                       ; 
+0022|                       L59FA 
+0022| A5 04                  LDA 04       ; SEE IF X COORDINATE IS OUTSIDE DRAWING BOUNDARY 
+0024| CD 7906                CMP 00679 
+0027| 30**                   BMI L5A2C    ;   YES, L5A2C 
+0029| CD 7907                CMP 00779 
+002C| F0**                   BEQ L5A08 
+002E| 10**                   BPL L5A2C    ;   YES, L5A2C 
+002C* 02
+0030|                       L5A08 
+0030| AA                     TAX 
+0031| A5 06                  LDA 06       ; SEE IF Y COORDINATE IS OUTSIDE DRAWING BOUNDARY 
+0033| CD F906                CMP 006F9 
+0036| 30**                   BMI L5A2C    ;   YES, L5A2C 
+0038| CD F907                CMP 007F9 
+003B| F0**                   BEQ L5A17 
+003D| 10**                   BPL L5A2C    ;   YES, L5A2C 
+003F|                       ; 
+003B* 02
+PAGE -   2  DRAWLINE  FILE:   
+
+
+003F|                       L5A17 
+003F|                       ; 
+003F|                       ;             ; PREPARE TO DRAW A PIXEL 
+003F|                       ; 
+003F| A8                     TAY 
+0040| B9 ****                LDA L5AE4,Y  ; SET UP POINTER TO HI RES SCREEN LOCATION 
+0043| 85 02                  STA 02       ;   L5AE4 TABLE STARTS WITH LINE 5 OF HI RES (ZERO BASED) 
+0045| B9 ****                LDA L5B33,Y 
+0048| 85 03                  STA 03 
+004A| BC ****                LDY L5A40,X  ; GET BYTE OFFSET FROM LEFT EDGE OF SCREEN MEMORY MAP 
+004D| BD ****                LDA L5A92,X  ; LOAD 1 BIT INTO A  (1 MEMORY LOCATION HOLDS 7 SCREEN PIXELS) 
+0050| 11 02                  ORA @2,Y     ; SET 1 BIT ON SCREEN 
+0052| 91 02                  STA @2,Y     ; SET 1 BIT ON SCREEN 
+003D* 15
+0036* 1C
+002E* 24
+0027* 2B
+0054|                       L5A2C 
+0054| 18                     CLC          ; ADVANCE TO NEXT HORIZONTAL POSITION (-1, 0, +1) 
+0055| A5 04                  LDA 04 
+0057| 65 08                  ADC 08 
+0059| 85 04                  STA 04 
+005B| 18                     CLC          ; ADVANCE TO NEXT VERTICAL POSITION (-1, 0, +1) 
+005C| A5 06                  LDA 06 
+005E| 65 0A                  ADC 0A 
+0060| 85 06                  STA 06 
+0062| 18                     CLC          ; DEC LINE LENGTH COUNTER 
+0063| C6 0C                  DEC 0C 
+0065| D0BB                   BNE L59FA    ; DO ANOTHER PIXEL ALONG THE LINE. 
+0067| 60                     RTS 
+0068|                       ; 
+004B* 6800
+0068|                       L5A40 
+0068|                       ; 
+0068|                       ;  HORIZONTAL OFFSET TO DETERMINE HI RES MEMORY MAPPED SCREEN LOCATION. 
+0068|                       ;  THE FIRST 4 COLUMNS OF HI RES ARE NOT PART OF THE "PICTURE" AREA. 
+0068|                       ; 
+0068|                       ;  THIS TABLE IS INDEXED BY THE HORIZONTAL PIXEL POSTION. 
+0068|                       ; 
+0068| 00 00 00               .BYTE 000, 000, 000 
+006B| 01 01 01 01 01 01 01   .BYTE 001, 001, 001, 001, 001, 001, 001 
+0072| 02 02 02 02 02 02 02   .BYTE 002, 002, 002, 002, 002, 002, 002 
+0079| 03 03 03 03 03 03 03   .BYTE 003, 003, 003, 003, 003, 003, 003 
+0080| 04 04 04 04 04 04 04   .BYTE 004, 004, 004, 004, 004, 004, 004 
+0087| 05 05 05 05 05 05 05   .BYTE 005, 005, 005, 005, 005, 005, 005 
+008E| 06 06 06 06 06 06 06   .BYTE 006, 006, 006, 006, 006, 006, 006 
+0095| 07 07 07 07 07 07 07   .BYTE 007, 007, 007, 007, 007, 007, 007 
+009C| 08 08 08 08 08 08 08   .BYTE 008, 008, 008, 008, 008, 008, 008 
+00A3| 09 09 09 09 09 09 09   .BYTE 009, 009, 009, 009, 009, 009, 009 
+00AA| 0A 0A 0A 0A 0A 0A 0A   .BYTE 00A, 00A, 00A, 00A, 00A, 00A, 00A 
+00B1| 0B 0B 0B 0B 0B 0B 0B   .BYTE 00B, 00B, 00B, 00B, 00B, 00B, 00B 
+00B8| 0C 0C                  .BYTE 00C, 00C 
+00BA|                       ; 
+004E* BA00
+PAGE -   3  DRAWLINE  FILE:   
+
+
+00BA|                       L5A92 
+00BA|                       ; 
+00BA|                       ;  PIXEL POSITION IN MEMORY MAPPED SCREEN LOCATION 
+00BA|                       ;  THERE ARE 7 PIXELS PER BYTE (HI BIT NOT USED AS PIXEL BIT). 
+00BA|                       ;  LOW ORDER BIT IS LEFTMOST ONE DISPLAYED ON SCREEN FOR THAT BYTE. 
+00BA|                       ; 
+00BA|                       ;  THE FIRST 4 COLUMNS ON HI RES ARE NOT PART OF THE "PICTURE" AREA. 
+00BA|                       ; 
+00BA| 10 20 40               .BYTE 010, 020, 040 
+00BD| 01 02 04 08 10 20 40   .BYTE 001, 002, 004, 008, 010, 020, 040 
+00C4| 01 02 04 08 10 20 40   .BYTE 001, 002, 004, 008, 010, 020, 040 
+00CB| 01 02 04 08 10 20 40   .BYTE 001, 002, 004, 008, 010, 020, 040 
+00D2| 01 02 04 08 10 20 40   .BYTE 001, 002, 004, 008, 010, 020, 040 
+00D9| 01 02 04 08 10 20 40   .BYTE 001, 002, 004, 008, 010, 020, 040 
+00E0| 01 02 04 08 10 20 40   .BYTE 001, 002, 004, 008, 010, 020, 040 
+00E7| 01 02 04 08 10 20 40   .BYTE 001, 002, 004, 008, 010, 020, 040 
+00EE| 01 02 04 08 10 20 40   .BYTE 001, 002, 004, 008, 010, 020, 040 
+00F5| 01 02 04 08 10 20 40   .BYTE 001, 002, 004, 008, 010, 020, 040 
+00FC| 01 02 04 08 10 20 40   .BYTE 001, 002, 004, 008, 010, 020, 040 
+0103| 01 02 04 08 10 20 40   .BYTE 001, 002, 004, 008, 010, 020, 040 
+010A| 01 02                  .BYTE 001, 002 
+010C|                       ; 
+0041* 0C01
+010C|                       L5AE4 
+010C|                       ; 
+010C|                       ; HI RES PAGE 1 LEFT EDGE SCREEN MEMORY PTR (LOW PART). 
+010C|                       ; THE TABLE STARTS WITH LINE 5 OF HI RES SCREEN. 
+010C|                       ; THIS IS THE "PICTURE" PART OF WIZARDRY DISPLAY WHERE THE MAZE 
+010C|                       ; IS DRAWN.  THE AREA IS 82 PIXELS WIDE BY 79 PIXELS HIGH. 
+010C|                       ; 
+010C| 00 00 00               .BYTE 000, 000, 000 
+010F| 80 80 80 80 80 80 80   .BYTE 080, 080, 080, 080, 080, 080, 080, 080 
+0116| 80                    
+0117| 00 00 00 00 00 00 00   .BYTE 000, 000, 000, 000, 000, 000, 000, 000 
+011E| 00                    
+011F| 80 80 80 80 80 80 80   .BYTE 080, 080, 080, 080, 080, 080, 080, 080 
+0126| 80                    
+0127| 00 00 00 00 00 00 00   .BYTE 000, 000, 000, 000, 000, 000, 000, 000 
+012E| 00                    
+012F| 80 80 80 80 80 80 80   .BYTE 080, 080, 080, 080, 080, 080, 080, 080 
+0136| 80                    
+0137| 00 00 00 00 00 00 00   .BYTE 000, 000, 000, 000, 000, 000, 000, 000 
+013E| 00                    
+013F| 80 80 80 80 80 80 80   .BYTE 080, 080, 080, 080, 080, 080, 080, 080 
+0146| 80                    
+0147| 28 28 28 28 28 28 28   .BYTE 028, 028, 028, 028, 028, 028, 028, 028 
+014E| 28                    
+014F| A8 A8 A8 A8 A8 A8 A8   .BYTE 0A8, 0A8, 0A8, 0A8, 0A8, 0A8, 0A8, 0A8 
+0156| A8                    
+0157| 28 28 28 28            .BYTE 028, 028, 028, 028 
+015B|                       ; 
+0046* 5B01
+015B|                       L5B33 
+015B|                       ; 
+015B|                       ; HI RES PAGE 1 LEFT EDGE SCREEN MEMORY PTR (HIGH PART) 
+PAGE -   4  DRAWLINE  FILE:   
+
+
+015B|                       ; 
+015B| 34 38 3C               .BYTE 034, 038, 03C 
+015E| 20 24 28 2C 30 34 38   .BYTE 020, 024, 028, 02C, 030, 034, 038, 03C 
+0165| 3C                    
+0166| 21 25 29 2D 31 35 39   .BYTE 021, 025, 029, 02D, 031, 035, 039, 03D 
+016D| 3D                    
+016E| 21 25 29 2D 31 35 39   .BYTE 021, 025, 029, 02D, 031, 035, 039, 03D 
+0175| 3D                    
+0176| 22 26 2A 2E 32 36 3A   .BYTE 022, 026, 02A, 02E, 032, 036, 03A, 03E 
+017D| 3E                    
+017E| 22 26 2A 2E 32 36 3A   .BYTE 022, 026, 02A, 02E, 032, 036, 03A, 03E 
+0185| 3E                    
+0186| 23 27 2B 2F 33 37 3B   .BYTE 023, 027, 02B, 02F, 033, 037, 03B, 03F 
+018D| 3F                    
+018E| 23 27 2B 2F 33 37 3B   .BYTE 023, 027, 02B, 02F, 033, 037, 03B, 03F 
+0195| 3F                    
+0196| 20 24 28 2C 30 34 38   .BYTE 020, 024, 028, 02C, 030, 034, 038, 03C 
+019D| 3C                    
+019E| 20 24 28 2C 30 34 38   .BYTE 020, 024, 028, 02C, 030, 034, 038, 03C 
+01A5| 3C                    
+01A6| 21 25 29 2D            .BYTE 021, 025, 029, 02D 
+01AA|                        .END 
+PAGE -   5  DRAWLINE  FILE:  SYMBOLTABLE DUMP
+
+
+AB - Absolute     LB - Label     UD - Undefined     MC - Macro
+RF - Ref          DF - Def       PR - Proc          FC - Func
+PB - Public       PV - Private   CS - Consts
+
+
+DRAWLINE PR ----|  L59FA    LB 0022|  L5A08    LB 0030|  L5A17    LB 003F|  L5A2C    LB 0054|  L5A40    LB 0068|  L5A92    LB 00BA
+L5AE4    DF 010C|  L5B33    DF 015B|  
+PAGE -   6  DRAWLINE  FILE:   
+
+
+Current minimum space is 9657 words
+
+Assembly complete:       176 lines
+     0   Errors flagged on this Assembly
+PAGE -   0
+Current memory available:   10286
+2 blocks for procedure code  9810 words left
+PAGE -   1  CLRPICT   FILE:   
+
+
+0000|                        .PROC CLRPICT,4 ;   P01001A,4 ; 4 PARAMETERS 
+Current memory available:    9761
+0000|                       ; 
+0000|                        .REF L5AE4, L5B33 
+0000|                       ;  REFERENCE HI RES SCREEN MEMORY POINTERS (LEFT EDGE) START WITH LINE 5. 
+0000|                       ; 
+0000|                       ; 
+0000|                       ;  CLEAR "PICTURE" AREA OF SCREEN (82 X 79 PIXELS) 
+0000|                       ; 
+0000|                       ;      -OR- 
+0000|                       ; 
+0000|                       ;  SET VALID RECTANGLE COORDINATES 
+0000|                       ; 
+0000|                       ; 
+0000| 68                     PLA       ; POP RETURN 
+0001| 85 00                  STA 00 
+0003| 68                     PLA 
+0004| 85 01                  STA 01 
+0006|                       ; 
+0006| 68                     PLA 
+0007| 85 06                  STA 06    ; 06 := PARAM 4 
+0009| 68                     PLA 
+000A| A5 06                  LDA 06 
+000C| C9 64                  CMP #064  ; PARAMETER 4 = 100? 
+000E| F0**                   BEQ L5BF5 ;   YES, L5BF5    (CLEAR PICTURE AREA) 
+0010| C9 65                  CMP #065  ; PARAMETER 4 = 101? 
+0012| F0**                   BEQ L5BC3 ;   YES, L5BC3    (FOR WIZARDRY I IT IS NEVER 101) 
+0014|                       ; 
+0014|                       ;            $7F9, $779, $6F9, $679 ARE SLOT #1 RAM SCRATCHPAD!? 
+0014|                       ; 
+0014|                       ; 
+0014|                       ;            SET UP VALID RECTANGLE DRAWING REGION (BOUNDARIES) 
+0014|                       ; 
+0014|                       ; 
+0014| 8D F907                STA 007F9 ; $7F9 = PARAM 4  Y UPPER BOUNDARY (ALWAYS 79) 
+0017| 68                     PLA 
+0018| 8D 7907                STA 00779 ; $779 = PARAM 3  X UPPER BOUNDARY 
+001B| 68                     PLA 
+001C| 68                     PLA 
+001D| 8D F906                STA 006F9 ; $6F9 = PARAM 2  Y LOWER BOUNDARY (ALWAYS 0) 
+0020| 68                     PLA 
+0021| 68                     PLA 
+0022| 8D 7906                STA 00679 ; $679 = PARAM 1  X LOWER BOUNDARY 
+0025| 68                     PLA 
+0026|                       ; 
+0026| A5 01                  LDA 01    ; PUSH RETURN 
+0028| 48                     PHA 
+0029| A5 00                  LDA 00 
+002B| 48                     PHA 
+002C| 60                     RTS 
+002D|                       ; 
+002D|                       ; 
+002D|                       ; 
+002D|                        
+0012* 19
+PAGE -   2  CLRPICT   FILE:   
+
+
+002D|                       L5BC3 ;      PARAM 4 SET TO 101  (NEVER EXECUTED) 
+002D| 68                     PLA 
+002E| 85 06                  STA 06 
+0030| 68                     PLA 
+0031| 85 07                  STA 07 
+0033| 68                     PLA 
+0034| 68                     PLA 
+0035| 68                     PLA 
+0036| 68                     PLA 
+0037| A5 01                  LDA 01 
+0039| 48                     PHA 
+003A| A5 00                  LDA 00 
+003C| 48                     PHA 
+003D| 18                     CLC 
+003E| D8                     CLD 
+003F| A9 4E                  LDA #04E 
+0041| 85 04                  STA 04 
+0043|                       L5BD9 
+0043| 20 ****                JSR L5C0E 
+0046| C6 04                  DEC 04 
+0048| C9 40                  CMP #040 
+004A| D0F7                   BNE L5BD9 
+004C|                       L5BE2 
+004C| 20 ****                JSR L5C34 
+004F| C6 04                  DEC 04 
+0051| C9 0D                  CMP #0D 
+0053| D0F7                   BNE L5BE2 
+0055|                       L5BEB 
+0055| 20 ****                JSR L5C0E 
+0058| C6 04                  DEC 04 
+005A| D0F9                   BNE L5BEB 
+005C| 4C ****                JMP L5C0E 
+005F|                       ; 
+005F|                       ; 
+005F|                       ; CLEAR PICTURE DISPLAY AREA 
+005F|                       ; 
+005F|                       ; 79 LINES X 82 COLUMNS OF PIXELS ON THE HI RES SCREEN. 
+005F|                       ; 
+005F|                       ;   START WITH LINE 5 (ZERO BASED) AND END WITH LINE 83 (ZERO BASED). 
+005F|                       ;   START WITH COLUMN 4 (ZERO BASED) AND END WITH COLUMN 85 (ZERO BASED). 
+005F|                       ; 
+000E* 4F
+005F|                       L5BF5     ;  PARAM 4 = 100. 
+005F| 68                     PLA      ;  THROW AWAY ALL PARAMETERS. 
+0060| 68                     PLA 
+0061| 68                     PLA 
+0062| 68                     PLA 
+0063| 68                     PLA 
+0064| 68                     PLA 
+0065| A5 01                  LDA 01   ; PUSH RETURN ADDRESS 
+0067| 48                     PHA 
+0068| A5 00                  LDA 00 
+006A| 48                     PHA 
+006B|                       ; 
+006B| 18                     CLC 
+PAGE -   3  CLRPICT   FILE:   
+
+
+006C| D8                     CLD 
+006D| A9 4E                  LDA #04E ; EXECUTE L5C0E (CLEAR LINE) 79 TIMES 
+006F| 85 04                  STA 04 
+0071|                       L5C07 
+0071| 20 ****                JSR L5C0E 
+0074| C6 04                  DEC 04 
+0076| D0F9                   BNE L5C07 
+0078|                       ; 
+0078|                       ;              CLEAR 82 HORIZONTAL PIXELS (MAINTAIN FIRST 4 PIXELS ON LINE) 
+0078|                       ; 
+0072* 7800
+005D* 7800
+0056* 7800
+0044* 7800
+0078|                       L5C0E 
+0078| A6 04                  LDX 04      ; INDEX INTO HI-RES LINE PTRS.  LINES 5 TO 83. (DECIMAL, BASE 0) 
+007A| BD 0000                LDA L5AE4,X ; START AT BOTTOM OF SCREEN AND WORK UPWARDS 
+007D| 85 02                  STA 02 
+007F| BD 0000                LDA L5B33,X 
+0082| 85 03                  STA 03      ; $02.03 HAVE ADDRESS OF LEFT EDGE OF HI-RES SCREEN 
+0084|                       ; 
+0084| A2 0B                  LDX #0B     ; CLEAR 11 FULL BYTES (7 X 11 = 77 SCREEN PIXELS) 
+0086| A0 00                  LDY #00 
+0088| A9 0F                  LDA #0F     ; MAINTAIN FIRST 4 LEFTMOST PIXELS ON THIS LINE, 
+008A| 31 02                  AND @2,Y    ; BUT CLEAR THE OTHER 3 PIXELS IN THIS BYTE 
+008C| 91 02                  STA @2,Y 
+008E| C8                     INY 
+008F| A9 00                  LDA #00     ; CLEAR 7 DISPLAYABLE PIXELS FOR EACH BYTE OF HI RES MEMORY 
+0091|                       ; 
+0091|                       L5C27 
+0091| 91 02                  STA @2,Y 
+0093| C8                     INY 
+0094| CA                     DEX 
+0095| D0FA                   BNE L5C27   ; CLEAR 11 FULL BYTES (7 X 11 = 77 SCREEN PIXELS) 
+0097|                       ; 
+0097| A9 FC                  LDA #0FC    ; IN NEXT BYTE, CLEAR FIRST 2 LEFTMOST PIXELS BUT MAINTAIN 
+0099| 31 02                  AND @2,Y    ; OTHER 5 DISPLAYABLE PIXELS. 
+009B| 91 02                  STA @2,Y    ;    3 + 77 + 2 = 82 PIXELS 
+009D| 60                     RTS 
+009E|                       ; 
+009E|                       ; 
+009E|                       ; 
+004D* 9E00
+009E|                       L5C34 ;       PART OF L5BC3 CODE.  NEVER EXECUTED. 
+009E| A6 04                  LDX 04 
+00A0| BD 0000                LDA L5AE4,X 
+00A3| 85 02                  STA 02 
+00A5| BD 0000                LDA L5B33,X 
+00A8| 85 03                  STA 03 
+00AA| A2 0B                  LDX #0B 
+00AC| A0 00                  LDY #00 
+00AE| A9 0F                  LDA #0F 
+00B0| 31 02                  AND @2,Y 
+00B2| 91 02                  STA @2,Y 
+00B4| C8                     INY 
+PAGE -   4  CLRPICT   FILE:   
+
+
+00B5|                       L5C4B 
+00B5| B1 06                  LDA @6,Y 
+00B7| 91 02                  STA @2,Y 
+00B9| C8                     INY 
+00BA| CA                     DEX 
+00BB| D0F8                   BNE L5C4B 
+00BD| A9 FC                  LDA #0FC 
+00BF| 31 02                  AND @2,Y 
+00C1| 91 02                  STA @2,Y 
+00C3| 18                     CLC 
+00C4| A5 06                  LDA 06 
+00C6| 69 0A                  ADC #0A 
+00C8| 85 06                  STA 06 
+00CA| A5 07                  LDA 07 
+00CC| 69 00                  ADC #00 
+00CE| 85 07                  STA 07 
+00D0| 60                     RTS 
+00D1|                        .END 
+PAGE -   5  CLRPICT   FILE:  SYMBOLTABLE DUMP
+
+
+AB - Absolute     LB - Label     UD - Undefined     MC - Macro
+RF - Ref          DF - Def       PR - Proc          FC - Func
+PB - Public       PV - Private   CS - Consts
+
+
+CLRPICT  PR ----|  L5AE4    RF ----|  L5B33    RF ----|  L5BC3    LB 002D|  L5BD9    LB 0043|  L5BE2    LB 004C|  L5BEB    LB 0055
+L5BF5    LB 005F|  L5C07    LB 0071|  L5C0E    LB 0078|  L5C27    LB 0091|  L5C34    LB 009E|  L5C4B    LB 00B5|  
+PAGE -   6  CLRPICT   FILE:   
+
+
+Current minimum space is 9630 words
+
+Assembly complete:       175 lines
+     0   Errors flagged on this Assembly
+PAGE -   0
+Current memory available:   10286
+2 blocks for procedure code  9810 words left
+PAGE -   1  KEYAVAIL  FILE:   
+
+
+0000|                        .FUNC KEYAVAIL,0 ; NO PARAMETERS   P010010 
+Current memory available:    9761
+0000|                       ; 
+0000|                       ;    SEE IF A KEY WAS PRESSED (BUT DO NOT RETRIEVE IT) AND IS 
+0000|                       ;    IN THE PASCAL INPUT BUFFER. 
+0000|                       ; 
+0000| 68                     PLA       ; PULL RETURN 
+0001| 85 00                  STA 00 
+0003| 68                     PLA 
+0004| 85 01                  STA 01 
+0006|                       ; 
+0006| 68                     PLA       ; PULL DUMMY SINCE THIS IS A FUNCTION 
+0007| 68                     PLA 
+0008| 68                     PLA 
+0009| 68                     PLA 
+000A|                       ; 
+000A| A9 00                  LDA #00 
+000C| 48                     PHA 
+000D|                       ; 
+000D| AD 83C0                LDA 0C083  ; SELECT RAMCARD RAM READ BANK 2 
+0010| 20 0ABF                JSR 0BF0A  ; CONCK (CHECK KEYBOARD) IN PASCAL SYSCOM AREA 
+0013| AD 83C0                LDA 0C083  ; SELECT RAMCARD RAM READ BANK 2 
+0016|                                   ; 
+0016|                                   ; SEE ATTACH.PDF FOR DESCRIPTION OF RPTR AND WPTR  
+0016| A9 00                  LDA #00    ; INIT STATUS TO NO CHARACTER AVAILABLE 
+0018| AE 18BF                LDX 0BF18  ; RPTR 
+001B| EC 19BF                CPX 0BF19  ; WPTR 
+001E| F0**                   BEQ L5CA8  ; 0 MEANS NO CHARACTER AVAILABLE FROM CIRCULAR BUFFER 
+0020| A9 01                  LDA #01    ; INDICATE A CHARACTER IS IN THE INPUT BUFFER 
+001E* 02
+0022|                       L5CA8 
+0022| 48                     PHA        ; RETURN STATUS 
+0023| AD 8BC0                LDA 0C08B  ; SELECT RAMCARD RAM READ BANK 1 
+0026|                       ; 
+0026| A5 01                  LDA 01     ; PUSH RETURN ADDRESS 
+0028| 48                     PHA 
+0029| A5 00                  LDA 00 
+002B| 48                     PHA 
+002C| 60                     RTS 
+002D|                        .END 
+PAGE -   2  KEYAVAIL  FILE:  SYMBOLTABLE DUMP
+
+
+AB - Absolute     LB - Label     UD - Undefined     MC - Macro
+RF - Ref          DF - Def       PR - Proc          FC - Func
+PB - Public       PV - Private   CS - Consts
+
+
+KEYAVAIL FC ----|  L5CA8    LB 0022|  
+PAGE -   3  KEYAVAIL  FILE:   
+
+
+Current minimum space is 9748 words
+
+Assembly complete:        38 lines
+     0   Errors flagged on this Assembly
+PAGE -   0
+Current memory available:   10286
+2 blocks for procedure code  9810 words left
+PAGE -   1  RANDOM    FILE:   
+
+
+0000|                        .FUNC RANDOM,0 ;     P01001C,0 ; NO PARAMETERS 
+Current memory available:    9761
+0000|                       ; 
+0000|                       ; 
+0000|                       ;           CALL:  RANDOM; 
+0000|                       ; 
+0000|                       ;           PURPOSE:  RETURN A RANDOM NUMBER FROM 0 TO 32,767. 
+0000|                       ; 
+0000|                       ;           NOTE:  USES $47A, $4FA, $57A, $5FB.  (SLOT #2 RAM) 
+0000|                       ;           NOTE2: MVCURSOR( 80, X), USED BY GETKEY(), CHANGES 
+0000|                       ;                  VALUES OF $47A, AND 
+0000|                       ;                            $47B, $47C, $47D (BUG?) 
+0000|                       ; 
+0000| 68                     PLA       ; PULL RETURN 
+0001| 85 00                  STA 00 
+0003| 68                     PLA 
+0004| 85 01                  STA 01 
+0006|                       ; 
+0006| 68                     PLA       ; PULL DUMMY SINCE THIS IS A FUNCTION 
+0007| 68                     PLA 
+0008| 68                     PLA 
+0009| 68                     PLA 
+000A|                       ; 
+000A| A0 07                  LDY #07   ; SHIFT SOME BITS 7 TIMES 
+000C|                       L5CCC 
+000C| 0E 7A04                ASL 0047A 
+000F| 08                     PHP 
+0010| 2E FA04                ROL 004FA 
+0013| 2E 7A05                ROL 0057A 
+0016| 2E FB05                ROL 005FB 
+0019| 30**                   BMI L5CE0 
+001B| 28                     PLP 
+001C| 10**                   BPL L5CE6 
+001E| 30**                   BMI L5CE3 
+0019* 05
+0020|                       L5CE0 
+0020| 28                     PLP 
+0021| 30**                   BMI L5CE6 
+001E* 03
+0023|                       L5CE3 
+0023| EE 7A04                INC 0047A 
+0021* 03
+001C* 08
+0026|                       L5CE6 
+0026| 88                     DEY 
+0027| D0E3                   BNE L5CCC     ; PERFORMED 7 SHIFTS YET?  NO, L5CCC. 
+0029|                       ;              ; YES 
+0029| AD 7A04                LDA 0047A     ; HIGH 16 BITS 
+002C| 4A                     LSR A         ; CLEAR HIGH BIT (ENSURES ONLY POSITIVE NUMBER RETURNED) 
+002D| 48                     PHA           ;  
+002E| AD 7A05                LDA 0057A     ; USE $57A AS PART OF RANDOM NUMBER LOW 16 BITS 
+0031| 48                     PHA 
+0032|                       ; 
+0032| A5 01                  LDA 01        ; PUSH RETURN 
+0034| 48                     PHA 
+PAGE -   2  RANDOM    FILE:   
+
+
+0035| A5 00                  LDA 00 
+0037| 48                     PHA 
+0038| 60                     RTS 
+0039|                        .END 
+PAGE -   3  RANDOM    FILE:  SYMBOLTABLE DUMP
+
+
+AB - Absolute     LB - Label     UD - Undefined     MC - Macro
+RF - Ref          DF - Def       PR - Proc          FC - Func
+PB - Public       PV - Private   CS - Consts
+
+
+L5CCC    LB 000C|  L5CE0    LB 0020|  L5CE3    LB 0023|  L5CE6    LB 0026|  RANDOM   FC ----|  
+PAGE -   4  RANDOM    FILE:   
+
+
+Current minimum space is 9714 words
+
+Assembly complete:        54 lines
+     0   Errors flagged on this Assembly
+

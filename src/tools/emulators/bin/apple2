@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+source "$(dirname -- "$0")/common.sh"
+prepare_disks appleII dsk
+exec python3 "$RETRO_TOOLS/serve_apple.py" "$@"
