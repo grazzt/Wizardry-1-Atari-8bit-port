@@ -2,6 +2,14 @@
 
 An unofficial Atari XL/XE port of **Wizardry: Proving Grounds of the Mad Overlord**, targeting the 64 KB Atari 65XE. A new 6502 runtime runs the original Apple II game's Pascal p-code, with the animated title in colour, colour monster pictures adapted from the PC Engine version, and music adapted from the NES version for Atari POKEY.
 
+## Screenshots
+
+| Animated title | Monster encounter |
+| --- | --- |
+| ![Wizardry title animation running on Atari800](src/port/atari/screenshots/title.png) | ![Colour rogue encounter with party commands and roster](src/port/atari/screenshots/encounter.png) |
+
+Watch [Wizardry 1 port to Atari 8bit](https://www.youtube.com/watch?v=1cHdtRZdmj8) on [grazzt519's YouTube channel](https://www.youtube.com/@grazzt519).
+
 ## Download and disk format
 
 Download **[wizardry.atr](wizardry.atr)**. Everything needed by the game is in this **one bootable ATR**: the runtime, title, game, scenario, pictures and music. No separate boot disk, scenario disk, save disk, DOS disk or asset downloads are required.
@@ -49,6 +57,25 @@ Development build, October 10, 2026. Tested in Atari800 against a reference impl
 - **M)ake scenario disk** and **U)pdate** require a second drive and are unsupported. Other utilities besides Recover remain untested. Start a new game by copying the master ATR.
 - Real Atari hardware and PAL operation have not been verified.
 - Each monster has its own picture, which can reveal its identity before the party identifies it.
+
+## Source code and development
+
+The [src/ folder](src/README.md) contains the Atari port's source code, development tools, tests and research documentation. Start with its [build instructions](src/README.md#build-from-source) to build the game yourself.
+
+| Path | Contents |
+| --- | --- |
+| [src/port/atari/](src/port/atari/README.md) | 6502 assembly runtime, build scripts, picture and music converters, emulator tests and screenshots |
+| [src/tools/](src/tools) | Pascal disk and p-code tools, host reference p-machine, scenario utilities, and toolchain/emulator setup |
+| [src/RESEARCH.md](src/RESEARCH.md) | Research findings, reference catalog and provenance |
+| [src/SPEC.md](src/SPEC.md) | Port design and fidelity requirements |
+
+Run the development commands from `src/` after cloning the repository:
+
+```sh
+cd src
+```
+
+Building and running the regression tests requires external Apple II disk files, listed in the [build prerequisites](src/README.md#build-from-source). Disk images, PDF books, the two C64 book transcriptions, NES music and downloaded PC Engine sprites are excluded from `src/`. The downloadable `wizardry.atr` at the repository root is the ready-to-play build.
 
 ## Credits
 
