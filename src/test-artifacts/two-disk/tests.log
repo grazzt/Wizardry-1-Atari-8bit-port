@@ -1,0 +1,58 @@
+test_all_data_messages_and_partial_cache_reads (tests.test_compression.AssembledCompressionTests.test_all_data_messages_and_partial_cache_reads) ... ok
+test_decoder_yields_preserve_output_and_registers (tests.test_compression.AssembledCompressionTests.test_decoder_yields_preserve_output_and_registers) ... ok
+test_every_picture_decodes_exactly (tests.test_compression.AssembledCompressionTests.test_every_picture_decodes_exactly) ... ok
+test_every_segment_exact_and_bounded (tests.test_compression.AssembledCompressionTests.test_every_segment_exact_and_bounded) ... ok
+test_failed_verification_cannot_accept_stale_directory (tests.test_compression.AssembledCompressionTests.test_failed_verification_cannot_accept_stale_directory) ... ok
+test_partial_write_and_saved_atr_import (tests.test_compression.AssembledCompressionTests.test_partial_write_and_saved_atr_import) ... ok
+test_positive_enemy_counter_is_writable (tests.test_compression.AssembledCompressionTests.test_positive_enemy_counter_is_writable) ... ok
+test_sio_failure_and_compressed_write_rejection (tests.test_compression.AssembledCompressionTests.test_sio_failure_and_compressed_write_rejection) ... ok
+test_writes_preserve_other_blocks_and_pictures (tests.test_compression.AssembledCompressionTests.test_writes_preserve_other_blocks_and_pictures) ... ok
+test_legacy_wzc2_import (tests.test_compression.CompressionTests.test_legacy_wzc2_import) ... ok
+test_roundtrips_and_partial_output (tests.test_compression.CompressionTests.test_roundtrips_and_partial_output) ... ok
+test_volume_reconstruction_and_capacity (tests.test_compression.CompressionTests.test_volume_reconstruction_and_capacity) ... ok
+test_writable_caches_include_all_maze_levels (tests.test_compression.CompressionTests.test_writable_caches_include_all_maze_levels) ... ok
+test_zx02_roundtrips_and_partial_output (tests.test_compression.CompressionTests.test_zx02_roundtrips_and_partial_output) ... ok
+test_create_save_on_disk2 (tests.test_disk2.Disk2Tests.test_create_save_on_disk2) ... ok
+test_recover_across_real_swap (tests.test_disk2.Disk2Tests.test_recover_across_real_swap) ... ok
+test_start_swap_and_castle (tests.test_disk2.Disk2Tests.test_start_swap_and_castle) ... ok
+test_wrong_disk_loops (tests.test_disk2.Disk2Tests.test_wrong_disk_loops) ... ok
+test_adventure_and_save (tests.test_disk2.PceDisk2Tests.test_adventure_and_save) ... ok
+test_create_save_on_disk2 (tests.test_disk2.PceDisk2Tests.test_create_save_on_disk2) ... ok
+test_recover_across_real_swap (tests.test_disk2.PceDisk2Tests.test_recover_across_real_swap) ... ok
+test_spells_and_inn (tests.test_disk2.PceDisk2Tests.test_spells_and_inn) ... ok
+test_start_swap_and_castle (tests.test_disk2.PceDisk2Tests.test_start_swap_and_castle) ... ok
+test_wrong_disk_loops (tests.test_disk2.PceDisk2Tests.test_wrong_disk_loops) ... ok
+test_party_rows_stay_visible_through_maze_code_and_data_loads (tests.test_disk_display.DiskDisplayTests.test_party_rows_stay_visible_through_maze_code_and_data_loads) ... ok
+test_party_rows_stay_visible_through_tavern_music_load (tests.test_disk_display.DiskDisplayTests.test_party_rows_stay_visible_through_tavern_music_load) ... ok
+test_adventure_and_save (tests.test_lockstep.AdventureTests.test_adventure_and_save) ... ok
+test_spells_and_inn (tests.test_lockstep.AdventureTests.test_spells_and_inn)
+3,005 keys; about a minute (the inn heals in real time on the Atari). ... ok
+test_character_creation_and_save (tests.test_lockstep.LockstepTests.test_character_creation_and_save) ... ok
+test_maze_and_battle (tests.test_lockstep.LockstepTests.test_maze_and_battle) ... ok
+test_recover_out_character (tests.test_lockstep.TitleTests.test_recover_out_character)
+U)TILITIES R)ECOVER: the utilities' disk swaps happen on the one disk. ... ok
+test_title_music (tests.test_lockstep.TitleTests.test_title_music)
+The NES title theme plays over the title; the castle theme follows in the game. ... ok
+test_title_options_and_chain (tests.test_lockstep.TitleTests.test_title_options_and_chain) ... ok
+test_all_music_images_exact_and_vectors_preserved (tests.test_music_disk2.CompressedMusicTests.test_all_music_images_exact_and_vectors_preserved) ... ok
+test_every_jingle_and_theme_resume (tests.test_music_disk2.CompressedMusicTests.test_every_jingle_and_theme_resume) ... ok
+test_every_theme_frame_loop_and_stop (tests.test_music_disk2.CompressedMusicTests.test_every_theme_frame_loop_and_stop) ... ok
+test_failed_jingles_are_not_requested (tests.test_music_disk2.CompressedMusicTests.test_failed_jingles_are_not_requested) ... ok
+test_failed_theme_can_retry (tests.test_music_disk2.CompressedMusicTests.test_failed_theme_can_retry) ... ok
+test_music_load_failure_preserves_game_ioresult (tests.test_music_disk2.CompressedMusicTests.test_music_load_failure_preserves_game_ioresult) ... ok
+test_player_does_not_touch_decoder_scratch (tests.test_music_disk2.CompressedMusicTests.test_player_does_not_touch_decoder_scratch) ... ok
+test_party_does_not_reform_when_removed_at_tavern (tests.test_party.AtariPartyTests.test_party_does_not_reform_when_removed_at_tavern) ... ok
+test_party_spells_maze_and_save_through_real_disk_swap (tests.test_party.AtariPartyTests.test_party_spells_maze_and_save_through_real_disk_swap) ... ok
+test_read_failure_preserves_ioresult_and_does_not_form_party (tests.test_party.NativePartyTests.test_read_failure_preserves_ioresult_and_does_not_form_party) ... ok
+test_reads_current_saved_stats_and_preserves_other_data (tests.test_party.NativePartyTests.test_reads_current_saved_stats_and_preserves_other_data) ... ok
+test_rejects_out_dead_disbanded_or_replaced_member_before_writing (tests.test_party.NativePartyTests.test_rejects_out_dead_disbanded_or_replaced_member_before_writing) ... ok
+test_write_failure_does_not_publish_partial_party (tests.test_party.NativePartyTests.test_write_failure_does_not_publish_partial_party) ... ok
+test_full_roster_fails_without_changing_source (tests.test_party.PartyTests.test_full_roster_fails_without_changing_source) ... ok
+test_game_reads_stats_spell_books_and_enters_maze (tests.test_party.PartyTests.test_game_reads_stats_spell_books_and_enters_maze) ... ok
+test_only_vacant_character_records_change (tests.test_party.PartyTests.test_only_vacant_character_records_change) ... ok
+test_preserves_existing_characters_and_uses_unique_names (tests.test_party.PartyTests.test_preserves_existing_characters_and_uses_unique_names) ... ok
+
+----------------------------------------------------------------------
+Ran 50 tests in 221.496s
+
+OK

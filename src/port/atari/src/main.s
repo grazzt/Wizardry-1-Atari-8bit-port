@@ -40,8 +40,13 @@ boot:   lda #<TABLE_SECTOR
         lda #OVL_SECTORS
         sta t0
         jsr load_sectors
+.ifdef SCENCMP
+        jsr comp_boot
+.endif
 .if MUSIC_PRESENT
+.ifndef DISK2
         jsr music_boot          ; the music, into the RAM under the OS ROM
+.endif
 .endif
         lda #<start
         sta DOSVEC
@@ -342,15 +347,20 @@ vmerror:
         jsr con_hex
 @hang:  jmp @hang
 
+        .segment "TABLES"
 errmsg: .byte "EXEC ERROR ", 0
 trace_i: .byte 0
 trace_x: .byte 0
 
+        .segment "CODE"
         .include "pcode.s"
         .include "calls.s"
         .include "csp.s"
         .include "console.s"
         .include "disk.s"
+        .include "zx02.s"
+        .include "compressed.s"
+        .segment "CODE"
         .include "natives.s"
         .segment "TABLES"
         .include "segtab.inc"
@@ -362,3 +372,5 @@ trace_x: .byte 0
         .include "picture.s"
         .include "musicgame.s"
         .include "music.s"
+        .segment "GAMEOVL"
+        .include "party.s"

@@ -64,16 +64,32 @@ start_program:
         sta t0
         jsr load_sectors
         jsr pic_init
+.ifdef DISK2
+.if MUSIC_PRESENT
+        jsr music_prepare       ; player code from disk 1, before the swap
+.endif
+.endif
 .if SPRITES_PRESENT
         lda #SPRITE_LIT         ; a softer white: the pictures' light colours share it
         sta COLOR1
 .endif
+.ifdef DISK2
+        jsr disk_change         ; prompt, verify, then set volbase and vol_ro
+.ifdef SCENCMP
+        lda #3
+        jsr comp_call           ; load the compressed volume map
+.endif
+.if MUSIC_PRESENT
+        jsr music_init_game     ; jingles from disk 2, then enable the VBI player
+.endif
+.else
         lda #<SCENVOL
         sta volbase
         lda #>SCENVOL
         sta volbase+1
         lda #0
         sta vol_ro
+.endif
         ldx #31
 @g:     lda game_block_lo,x
         sta seg_block_lo,x
@@ -137,7 +153,176 @@ disk_swap:
         sta volbase+1
         lda #0
         sta vol_ro
+.ifdef SCENCMP
+        sta map_valid           ; utilities may have inserted a different scenario disk
+.endif
         rts
+
+; --- Two-disk build: the "CHANGE TO DISK" prompt --------------------------------
+; In the two-disk build the scenario volume is a separate physical disk. At the
+; chain into the game the player must swap it in: this shows the prompt, waits
+; for a key, and verifies the inserted disk by reading its Pascal directory
+; (block 2) for SCENARIO.DATA, looping on the wrong disk. It runs at native
+; level between procedures: no p-machine state is touched and no RNG is stirred.
+; DISKPROMPT is 1 while it waits, so the tests know to swap the disk in the
+; emulator. The utilities' swaps (RDSCNTOC/EXITUTIL) need no prompt here: the
+; game itself shows "PLACE ... IN DRIVE 1, PRESS RETURN" and loops on FINDFILE
+; until the right disk is in drive 1.
+.ifdef DISK2
+bad_disk:     .byte 0
+        .segment "OVERLAY"
+prompt_ok:    .byte "CHANGE TO DISK 2", 0
+prompt_ok_len = * - prompt_ok
+prompt_bad:   .byte "WRONG DISK - CHANGE TO DISK 2", 0
+prompt_bad_len = * - prompt_bad
+prompt_ready: .byte "PRESS ANY KEY WHEN READY", 0
+prompt_ready_len = * - prompt_ready
+        .segment "TABLES"
+DIRBUF = SECBUF                 ; verification runs between programs
+
+; t1 = row, t2 = string, t0 = length: print centred on row t1.
+put_row:
+        lda t0
+        clc
+        adc #1
+        lsr a
+        sta nat0+6              ; (length+1)/2
+        lda #20
+        sec
+        sbc nat0+6
+        sta con_x
+        lda t1
+        sta con_y
+        lda t2
+        sta t3
+        lda t2+1
+        sta t3+1
+@pr:    ldy #0
+        lda (t3),y
+        jsr con_put
+        inc t3
+        bne @pc
+        inc t3+1
+@pc:    dec t0
+        bne @pr
+        rts
+
+; Z set if the volume at volbase lists SCENARIO.DATA. The directory's file
+; count is a word at block 2 offset 16; entries follow at 26 bytes each, the
+; 16-byte Pascal name (length at +6) at +7. One sector holds the count and
+; four entries, which covers every volume this build verifies (three files).
+.ifdef SCENCMP
+        .segment "GAMEOVL"     ; called after the game overlay is loaded
+.endif
+scen_name:    .byte 13, "SCENARIO.DATA"
+verify_scen:
+        lda #<SCENVOL
+        clc
+        adc #8                  ; block 2's first sector
+        sta sector
+        lda #>SCENVOL
+        adc #0
+        sta sector+1
+        lda #<DIRBUF
+        sta DBUFLO
+        lda #>DIRBUF
+        sta DBUFHI
+        lda #0
+        sta ioresult
+        lda #$52
+        jsr sio
+        lda ioresult
+        beq @v2
+        jmp @no
+@v2:    lda DIRBUF + 16         ; file count
+        bne @vc
+        jmp @no
+@vc:    cmp #5
+        bcs @no
+        lda DIRBUF + 17
+        bne @no
+        lda #<DIRBUF
+        sta t2
+        lda #>DIRBUF
+        sta t2+1
+        ldy #26 + 6              ; entry 1: the name's length byte
+@ve:    ldx #0
+        sty t0                   ; save the entry's name-field start
+@vn:    lda (t2),y
+        cmp scen_name,x
+        bne @next
+        inx
+        iny
+        cpx #14
+        bne @vn
+        sec
+        rts
+@next:  lda t0                   ; advance from the entry start, not the mismatch point
+        clc
+        adc #26
+        tay
+        cpy #26 * 4 + 6          ; past the last entry that fits in the sector
+        bcc @ve
+@no:    clc
+        rts
+
+; Show the message, wait for a key, verify the disk; loop on the wrong disk.
+; Sets volbase and vol_ro on success.
+        .segment "TABLES"
+disk_change:
+        lda #1
+        sta DISKPROMPT
+        lda #0
+        sta bad_disk
+@msg:   jsr con_textmode
+        jsr con_clear
+        lda #8
+        sta t1
+        lda bad_disk
+        beq @ok
+        lda #<prompt_bad
+        sta t2
+        lda #>prompt_bad
+        sta t2+1
+        lda #prompt_bad_len
+        sta t0
+        jmp @row
+@ok:    lda #<prompt_ok
+        sta t2
+        lda #>prompt_ok
+        sta t2+1
+        lda #prompt_ok_len
+        sta t0
+@row:   jsr put_row
+        lda #10
+        sta t1
+        lda #<prompt_ready
+        sta t2
+        lda #>prompt_ready
+        sta t2+1
+        lda #prompt_ready_len
+        sta t0
+        jsr put_row
+        jsr get_key
+        jsr verify_scen
+        bcc @wrong
+        lda #0
+        sta ioresult
+.ifdef SCENCMP
+        sta map_valid           ; reload the map from the verified game disk
+.endif
+        sta DISKPROMPT
+        lda #<SCENVOL
+        sta volbase
+        lda #>SCENVOL
+        sta volbase+1
+        lda #0
+        sta vol_ro
+        rts
+@wrong: lda #1
+        sta bad_disk
+        jmp @msg
+.endif
 
 ; Hooks into the game overlay's picture colour. They do nothing until a
 ; picture is coloured, and the overlay is never entered while SYSTEM.STARTUP

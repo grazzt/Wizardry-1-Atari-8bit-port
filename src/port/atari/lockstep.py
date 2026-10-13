@@ -4,6 +4,10 @@ The Atari runs in test mode: each key wait stirs the game's RNG exactly as
 many times as pvm did for that key, so random outcomes match too.
 """
 import difflib
+import json
+import struct
+import compress
+import zx02
 import shutil
 import sys
 import tempfile
@@ -14,24 +18,43 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parents[1] / 'tools'))
 
 from harness import Atari                         # noqa: E402
-from pvm.tests.test_pvm import machine            # noqa: E402
+from pvm.tests.test_pvm import machine, title_machine  # noqa: E402
 
-TESTMODE, TESTPOLLS, WAITING, ERROR_MARK, GFX_MODE = 0x05F0, 0x05F2, 0x05F4, 0x0585, 0x00B4
+TESTMODE, TESTPOLLS, WAITING, ERROR_MARK, GFX_MODE, DISKPROMPT = 0x05F0, 0x05F2, 0x05F4, 0x0585, 0x00B4, 0x05F5
 
 
 class Lockstep:
-    def __init__(self, atr=HERE / 'build/test.atr', seed=1, scenario=None, sound=False):
+    def __init__(self, atr=HERE / 'build/test.atr', seed=1, scenario=None, sound=False,
+                 title=False, sio_patch=None, disk2=None):
         """`scenario` is the Apple scenario image pvm uses; it must be the one
         the ATR was built from (default: the clean-roster disk)."""
         # The emulator writes saves back into the image, so work on a copy.
         self.workdir = tempfile.TemporaryDirectory()
-        self.atr = Path(self.workdir.name) / 'wizardry.atr'
+        self.atr = Path(self.workdir.name) / Path(atr).name
         shutil.copyfile(atr, self.atr)
-        self.atari = Atari(self.atr, sound=sound)
+        self.disk2 = None
+        if disk2 is not None:
+            self.disk2 = Path(self.workdir.name) / Path(disk2).name
+            shutil.copyfile(disk2, self.disk2)
+        stem = Path(atr).stem
+        manifest = HERE / 'build' / f'{stem}.layout.json'
+        self.layout = json.loads((manifest if manifest.exists() else HERE / 'build/layout.json').read_text())
+        label_file = HERE / 'build' / f'{stem}.labels.txt'
+        self.labels = {line.split()[2].lstrip('.'): int(line.split()[1], 16)
+                       for line in (label_file if label_file.exists() else HERE / 'build/labels.txt').read_text().splitlines()}
+        self.atari = Atari(self.atr, sound=sound, sio_patch=sio_patch)
+        self.atari.build_layout = self.layout
+        self.atari.build_labels = self.labels
         self.atari.frame(60)
         if not self.atari.peek(TESTMODE):
+            self.atari.run_until(lambda a: a.peek(TESTMODE), limit=20000)
+        if not self.atari.peek(TESTMODE):
             raise RuntimeError('build the test images with: build.py --test-images')
-        self.vm = machine(scenario, seed=seed) if scenario else machine(seed=seed)
+        make = title_machine if title else machine
+        if scenario is not None:
+            self.vm = make(scenario=scenario, seed=seed) if title else machine(scenario, seed=seed)
+        else:
+            self.vm = make(seed=seed)
         self.vm.send('')
         self.typed = 0
 
@@ -70,6 +93,13 @@ class Lockstep:
     def error(self):
         return self.atari.peek(ERROR_MARK) == 0xEE
 
+    @property
+    def at_prompt(self):
+        return self.atari.peek(DISKPROMPT) == 1
+
+    def swap_disk(self, path=None):
+        self.atari.mount_disk(path if path is not None else self.disk2)
+
 
 def expand7(byte):
     """Apple hi-res byte -> Atari mode F byte (see src/natives.s)."""
@@ -107,9 +137,10 @@ def labels():
 def redrawn_picture(atari):
     """True while the Atari shows one of its own pictures (pictures.py) in the box."""
     import json
-    if not json.loads((HERE / 'build/layout.json').read_text()).get('SPRITES'):
+    layout = getattr(atari, 'build_layout', None) or json.loads((HERE / 'build/layout.json').read_text())
+    if not layout.get('SPRITES'):
         return False
-    return bool(atari.peek(labels()['pic_on']))
+    return bool(atari.peek((getattr(atari, 'build_labels', None) or labels())['pic_on']))
 
 
 def picture_check(run, scenario):
@@ -121,7 +152,7 @@ def picture_check(run, scenario):
     import numpy as np
     import pictures
     from wizardry_scenario import Scenario
-    layout = json.loads((HERE / 'build/layout.json').read_text())
+    layout = run.layout
     data = Scenario(scenario)
     names, of_monster = pictures.assign(data, layout['PICTURES'])
     mem = run.vm.mem
@@ -136,9 +167,17 @@ def picture_check(run, scenario):
         index = len(names) + apple[0] - pictures.CHEST
     else:
         return f'Apple picture {apple[0]} outside a fight'
-    at = 16 + (layout['PICS_SECTOR'] - 1 + layout['PICTURE_STARTS'][index]) * 128
-    atr = run.atr.read_bytes()
-    want = pictures.decode(atr[at:at + 128 + 16 * pictures.LINES])
+    if layout.get('PICSCMP'):
+        at = 16 + (layout['sector'][index] - 1) * 128 + layout['skip'][index]
+        length = layout['PICTURE_LENS'][index]
+        record = run.disk2.read_bytes()[at:at + (length & 0x7FFF)]
+        if not length & 0x8000:
+            decoder = zx02.decode if layout.get('CODEC') == 'zx02' else compress.lzss_decode
+            record = decoder(record[2:], struct.unpack_from('<H', record)[0])
+    else:
+        at = 16 + (layout['PICS_SECTOR'] - 1 + layout['PICTURE_STARTS'][index]) * 128
+        record = run.atr.read_bytes()[at:at + 128 + 16 * pictures.LINES]
+    want = pictures.decode(record)
     palette = np.array([list(c) for c in run.atari.palette()], dtype=np.uint8)
     screen = palette[np.frombuffer(run.atari.screen(), dtype=np.uint8).reshape(240, 384)]
     got = screen[24 + pictures.TOP:24 + pictures.TOP + pictures.LINES,

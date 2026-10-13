@@ -342,8 +342,12 @@ def cache_key(scenario, mode):
     return h.hexdigest()
 
 
-def tables_include(of_monster, chest, gold, chest_sum, gold_sum, starts):
-    """ca65 tables for src/picture.s; `starts` are sector offsets from PICS_SECTOR."""
+def tables_include(of_monster, chest, gold, chest_sum, gold_sum, table):
+    """ca65 tables for src/picture.s. `table` from build.py: 'sector' the
+    records' first sectors (as PICS_SECTOR+offset expressions on one disk,
+    plain sector numbers on disk 2), 'skip' the byte offset within that
+    sector, 'len' (lo, hi) the compressed record's byte count with bit 15 set
+    for a raw record."""
     def rows(name, values):
         return [f'{name}:'] + ['        .byte ' + ', '.join(map(str, values[i:i + 24]))
                                for i in range(0, len(values), 24)]
@@ -351,8 +355,12 @@ def tables_include(of_monster, chest, gold, chest_sum, gold_sum, starts):
              f'MONSTERS = {len(of_monster)}', f'PIC_CHEST = {chest}', f'PIC_GOLD = {gold}',
              f'CHEST_SUM = {chest_sum}', f'GOLD_SUM = {gold_sum}']
     lines += rows('pic_of_monster', of_monster)
-    lines += rows('pic_sec_lo', [f'<(PICS_SECTOR+{s})' for s in starts])
-    lines += rows('pic_sec_hi', [f'>(PICS_SECTOR+{s})' for s in starts])
+    lines += rows('pic_sec_lo', [f'<({s})' for s in table['sector']])
+    lines += rows('pic_sec_hi', [f'>({s})' for s in table['sector']])
+    if 'skip' in table:
+        lines += rows('pic_skip', table['skip'])
+        lines += rows('pic_len_lo', [lo for lo, _ in table['len']])
+        lines += rows('pic_len_hi', [hi for _, hi in table['len']])
     return '\n'.join(lines) + '\n'
 
 

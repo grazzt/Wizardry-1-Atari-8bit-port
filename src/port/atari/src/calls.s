@@ -166,7 +166,11 @@ docall: ldx calllog_i             ; debugging: log (segment, procedure)
         bne @game
         jsr disk_swap           ; the start-up utilities' disk prompts
         jmp @swapped
-@game:  jsr music_cue           ; the game: each place's music
+@game:
+.if PARTY_PRESENT
+        jsr party_auto_form    ; once, before the first castle menu
+.endif
+        jsr music_cue           ; the game: each place's music
 @swapped:
         ldx cseg
         jsr load_segment

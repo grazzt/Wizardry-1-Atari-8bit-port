@@ -8,25 +8,53 @@
 ; In: t2 = address, cnt = byte count, t4 = first block. Sets ioresult.
 ; disk_read_code reads the running program's own volume (codebase), which
 ; stays put while the utilities swap disks in drive 1.
+;
+; With SCENCMP the scenario volume is mapped by compressed.s: raw Pascal
+; directory/code-header blocks stay in place, writable caches are relocated
+; raw blocks, and code/read-only data are independent ZX02 streams. Shared
+; decoder code is loaded under the OS ROM at boot, available to utilities
+; and the game. SIO always executes with ROM enabled into normal RAM.
 
+disk_read:
+        lda #$52
+        sta dcmd
+        lda #0
+        sta dcode
+        lda volbase
+        ldx volbase+1
+        jmp disk_enter
 disk_read_code:
         lda #$52
         sta dcmd
+        lda #$FF
+        sta dcode
         lda codebase
         ldx codebase+1
-        jmp disk_base
-disk_read:
-        lda #$52                ; 'R'
-        bne disk_rw
+        jmp disk_enter
 disk_write:
-        lda #$57                ; 'W'
-disk_rw:
+        lda #$57
         sta dcmd
+        lda #0
+        sta dcode
         lda volbase
         ldx volbase+1
-disk_base:
+disk_enter:
         sta dvol
         stx dvol+1
+.ifdef SCENCMP
+        cmp #<SCENVOL
+        bne disk_base
+        cpx #>SCENVOL
+        bne disk_base
+        lda #0
+        jmp comp_call           ; shared decoder in RAM under the OS ROM
+.else
+        jmp disk_base
+.endif
+
+; The raw sector walk: sector := dvol + 4 * t4, then cnt bytes through SIO,
+; a partial last sector through SECBUF (read-modify-write when writing).
+disk_base:
         lda t4                  ; sector := block*4 + the volume's first sector
         sta sector
         lda t4+1
@@ -63,6 +91,9 @@ disk_base:
         jsr sio
         ldy #0
 @pw:    lda (t2),y
+.ifdef SCENCMP
+        jsr comp_yield
+.endif
         sta SECBUF,y
         iny
         cpy cnt
@@ -74,6 +105,9 @@ disk_base:
         jsr sio
         ldy #0
 @pr:    lda SECBUF,y
+.ifdef SCENCMP
+        jsr comp_yield
+.endif
         sta (t2),y
         iny
         cpy cnt
@@ -100,8 +134,13 @@ disk_base:
         bcs @b
         dec cnt+1
 @b:     inc sector
+.ifdef SCENCMP
+        bne @again
+.else
         bne @loop
+.endif
         inc sector+1
+@again:
         jmp @loop
 
 ; One SIO sector transfer; command in A, buffer in DBUFLO/HI, sector in
@@ -128,7 +167,11 @@ sio:    sta DCOMND
         sta DAUX1
         lda sector+1
         sta DAUX2
+        .ifdef SCENCMP
+        jsr comp_sio
+.else
         jsr SIOV
+.endif
         bpl @ok
         lda #16
         sta ioresult
@@ -136,3 +179,4 @@ sio:    sta DCOMND
 
 dcmd:   .byte 0
 dvol:   .word 0
+dcode:  .byte 0

@@ -3,3 +3,4 @@ src/segtab.inc
 src/color_tables.inc
 src/music_cues.inc
 src/picture_tables.inc
+src/party_tables.inc

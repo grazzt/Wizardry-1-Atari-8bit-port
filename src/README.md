@@ -16,59 +16,21 @@ Watch [Wizardry 1 port to Atari 8bit](https://www.youtube.com/watch?v=1cHdtRZdmj
 
 These screenshots show a build with the optional PC Engine monster artwork. A build without those assets uses the original Apple II pictures.
 
-## Disk format
+## Two-disk release
 
-Build `port/atari/build/wizardry.atr` using the instructions below. The result is **one bootable ATR** containing the runtime, title, game and scenario, plus any optional pictures and music included at build time. No separate boot, scenario or save disk is needed to play. Generated ATRs are not included in this source tree.
+The current download is a **two-disk build with PCE monster pictures and gameplay music**. Disk 1 contains the program and title; Disk 2 contains the game, scenario, 95 picture records, 11 gameplay themes and four jingles. Both fit the 180 KB capacity budget. The title and options are silent; music begins at the castle. Loading preserves the display while compressed data is decoded.
 
-The image contains both original Apple II disk volumes and switches between them automatically. When the game asks for the boot or scenario disk, leave this ATR mounted and press **RETURN**.
+**It should now be playable on real 64 KB Atari XL/XE hardware with a compatible writable ATR-capable SIO device.** Physical Atari operation remains unverified. These images use 128-byte logical sectors (467 on Disk 1, 1,440 on Disk 2), so physical-floppy compatibility depends on your drive and conversion tools. Emulated boot, swaps and saves pass with Atari800's fast SIO patch disabled.
 
-The illustrated build with music and monster artwork is **486,544 bytes** (about 475 KiB): a 16-byte ATR header plus **3,801 sectors of 128 bytes**. Size varies with the optional assets. It is an oversized disk image, so it does **not** fit on a standard 90 KB or 130 KB Atari floppy. For real hardware, an ATR-capable disk device would need to support this sector count and writes; that setup has not been verified.
+See the [project README](../README.md) for the downloads, Windows Atari800 command, disk swaps, saves and Recover. Keep Disk 2 writable and play on a copy; it holds your characters and progress. The optional party pair starts with six powerful characters already formed, ready for **E)dge → M)aze → L)eave camp**. The older single-image build remains available too.
 
-## How to play
-
-1. Keep the built ATR as a master and make a copy for playing, such as `wizardry-play.atr`.
-2. In your Atari emulator, select **800XL or 65XE / XL-XE**, **64 KB RAM**, **BASIC disabled**, and **NTSC** (the tested video mode).
-3. Mount the play copy in **drive 1 / D1:** with **disk writes enabled**, then boot it.
-4. At the options screen after the title, press **S** to start.
-
-For Atari800, the equivalent command is:
-
-```sh
-atari800 -xl -ntsc -nobasic -no-kbdjoy0 -no-kbdjoy1 wizardry-play.atr
-```
-
-On Windows, use `atari800.exe` in place of `atari800`. In other emulators, including Altirra, use the same machine and disk settings. Disable keyboard-to-joystick mappings so that letter keys reach the game.
-
-Use the keyboard and the letter commands shown on each screen; **RETURN** confirms prompts. Create characters in the Training Grounds, assemble a party at Gilgamesh's Tavern, equip them at Boltac's, and enter the maze from the Edge of Town.
-
-## Saving and returning to your party
-
-**Your characters and progress are saved inside the ATR you play on.** Keep it writable, retain that same file between sessions, and back it up while the emulator is closed. If your emulator buffers disk changes, save or flush them before closing it. Replacing your play copy with a fresh build replaces your saved game too.
-
-Return to town before ending a session. The original game does not provide a save-and-resume checkpoint inside the maze.
-
-If you reset or close the emulator while exploring, characters may be marked **OUT**. To recover that interrupted expedition:
-
-1. Boot to the options screen and choose **U)tilities**, then **R)ecover**.
-2. Press **RETURN**, then **RETURN** again at “PLACE SCENARIO IN DRIVE 1”. Leave the same ATR mounted.
-3. After recovery, press **RETURN**, choose **L)eave**, then **S)tart**.
-
-Recovered characters return to their state when they entered the maze, with no ten-year ageing penalty. Characters killed or deliberately disbanded in the maze require an in-game rescue; this utility does not retrieve them.
-
-## Current status
-
-Development build, October 10, 2026. Tested in Atari800 against a reference implementation through character creation, saving, town services, maze exploration and extended combat sessions, including byte-for-byte comparisons of saved scenario data.
-
-- A complete playthrough has not yet been verified. Deeper dungeon levels, trapped chests, actual level gains, resurrection and item identification still need testing.
-- **M)ake scenario disk** and **U)pdate** require a second drive and are unsupported. Other utilities besides Recover remain untested. Start a new game by copying the master ATR.
-- Real Atari hardware and PAL operation have not been verified.
-- Each monster has its own picture, which can reveal its identity before the party identifies it.
+The [validation log](test-artifacts/two-disk/tests.log) records all 50 Atari tests passing. A full playthrough and PAL operation remain unverified. Utilities other than Recover remain untested; Make scenario disk and Update need another drive and are unsupported.
 
 ## Build from source
 
 Start in the GitHub repository's root and enter `src/` as shown below. Run subsequent build and test commands from `src/` unless a command explicitly changes directories. The setup scripts target Linux/WSL. Use Python 3.10 or newer, `git`, `curl`, GCC, Make and `unzip`.
 
-Disk images are **not included**. Before building, supply these files locally:
+External build-input disk images are **not included** in this source tree. Ready-to-play ATRs are available at the repository root. Before building, supply these files locally:
 
 - `appleII/images/wizardry_i/wizardry_i_boot.dsk`
 - `appleII/images/wizardry_i/snafaru_restored_scenario.dsk`
@@ -81,16 +43,16 @@ python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install -r requirements.txt
 tools/toolchain/setup.sh
-python3 port/atari/build.py
+python3 port/atari/build.py --disk2
 ```
 
-The build uses ca65/ld65 from the local toolchain and the Apple II disks supplied locally as described above. It works without the optional music and replacement artwork. The Python dependencies are NumPy and Pillow, used by the picture converter.
+The build uses ca65/ld65 from the local toolchain and the Apple II disks supplied locally as described above. It works without the optional music and replacement artwork. The Python dependencies are NumPy and Pillow, used by the picture converter. The first compressed build compiles the vendored [ZX02 compressor](tools/zx02/README.md) with `cc`.
 
 For the illustrated monster pictures, fetch the optional assets before building:
 
 ```bash
 python3 port/atari/pictures.py --fetch
-python3 port/atari/build.py
+python3 port/atari/build.py --disk2 --pictures monster
 ```
 
 For music, supply the NES version's NSF at `nes/snafaru/wiz1.nsf` before building. Downloaded artwork, NES music, converted caches and build outputs are ignored by Git. See the [picture and music documentation](port/atari/README.md#pictures) for details and credits.
@@ -98,10 +60,20 @@ For music, supply the NES version's NSF at `nes/snafaru/wiz1.nsf` before buildin
 To rebuild while preserving a party saved on an earlier ATR:
 
 ```bash
-python3 port/atari/build.py --scenario /path/to/wizardry-play.atr
+python3 port/atari/build.py --disk2 --pictures monster --scenario /path/to/saved_disk2.atr
 ```
 
-The new disk is written to `port/atari/build/wizardry.atr`; back up the old play disk first.
+The new pair is written to `port/atari/build/wizardry_disk1.atr` and `wizardry_disk2.atr`; back up the old play disk first. An older single-image ATR can also be imported with `--scenario`.
+
+For the preformed level-50 party:
+
+```bash
+python3 port/atari/build.py --disk2 --pictures monster --party --out wizardry_party.atr
+```
+
+This writes `wizardry_party_disk1.atr` and `wizardry_party_disk2.atr` in the build directory. Existing occupied roster slots are preserved. All six seeded characters must still be alive and in town for automatic formation at startup; it uses their saved stats. See [party details](port/atari/README.md#two-disk-build-with-pce-pictures).
+
+Omit `--disk2` to produce the older single-image format, including title music when the NSF is installed.
 
 ## Tools and tests
 
@@ -117,14 +89,18 @@ For Atari emulator tests, install the [emulator tools](tools/emulators/README.md
 ```bash
 tools/emulators/setup.sh
 python3 port/atari/build.py --test-images
+python3 port/atari/build.py --disk2 --test-images
+python3 port/atari/build.py --disk2 --pictures monster --testmode --out test_pce.atr
+python3 port/atari/build.py --disk2 --pictures monster --testmode --no-title --scenario appleII/images/wizardry_i/wizardry_i_scenario.dsk --out played_pce.atr
+python3 port/atari/build.py --disk2 --party --pictures monster --testmode --no-title --out test_party.atr
 python3 -m unittest discover -s port/atari/tests -t port/atari
 ```
 
-The tests compare the Atari runtime against the host p-machine, including screens and saved scenario bytes. Demo recording additionally requires FFmpeg; see [the Atari testing notes](port/atari/README.md#testing).
+The complete 50-test run needs the optional sprites and NSF as well as the disk fixtures. Tests for absent fixture builds are skipped. The tests compare the Atari runtime against the host p-machine, including screens and saved scenario bytes. Demo recording additionally requires FFmpeg; see [the Atari testing notes](port/atari/README.md#testing).
 
 ## Source directory guide
 
-All paths below are inside the repository’s `src/` directory. For example, the built disk is `src/port/atari/build/wizardry.atr` when addressed from the repository root.
+All paths below are inside the repository’s `src/` directory. For example, the built disks are under `src/port/atari/build/` when addressed from the repository root.
 
 | Path | Contents |
 | --- | --- |
@@ -132,6 +108,7 @@ All paths below are inside the repository’s `src/` directory. For example, the
 | [tools/ucsd](tools/ucsd/README.md) | Apple Pascal disk reader, code-file parser, p-code and 6502 analysis |
 | [tools/pvm](tools/pvm/README.md) | Host reference p-machine and regression tests |
 | [tools/wizardry_scenario.py](tools/wizardry_scenario.py) | Scenario tables, roster inspection and record comparisons |
+| [tools/zx02](tools/zx02/README.md) | Vendored lossless compressor and upstream licences |
 | [tools/nes/nsf.py](tools/nes/nsf.py) | NSF playback and music analysis utility |
 | [tools/toolchain](tools/toolchain/README.md) | Reproducible local cc65 and CiderPress II setup |
 | [tools/emulators](tools/emulators/README.md) | Emulator setup, launchers and optional MCP configuration |
@@ -141,10 +118,10 @@ All paths below are inside the repository’s `src/` directory. For example, the
 | [RESEARCH.md](RESEARCH.md) | Research catalog, findings and reference-library instructions |
 | [test-artifacts/emulators](test-artifacts/emulators) | Reference emulator screenshots and recorded protocol checks |
 
-Disk images, PDF books and the two C64 book transcriptions are omitted. The book transcriptions remain catalogued for provenance but are not fetched by the reference helper. Large reference PDFs are optional local downloads. Restore them with `python3 tools/fetch_refs.py`; source URLs and checksums are recorded in each library's `SOURCES.json` and `SHA256SUMS`. They are optional for building the game. Local tool installations, working save disks and personal session settings are excluded.
+External disk fixtures, PDF books and the two C64 book transcriptions are omitted from this source tree. The book transcriptions remain catalogued for provenance but are not fetched by the reference helper. Large reference PDFs are optional local downloads. Restore them with `python3 tools/fetch_refs.py`; source URLs and checksums are recorded in each library's `SOURCES.json` and `SHA256SUMS`. They are optional for building the game. Local tool installations, working save disks and personal session settings are excluded.
 
 ## Credits
 
-Original Wizardry by Andrew Greenberg and Robert Woodhead / Sir-Tech. Pascal and assembly reconstruction by Thomas William Ewers; restored scenario by Snafaru. Music from the NES version by Kentaro Haneda. Monster artwork uses Jun Suemi's designs as depicted in the PC Engine version.
+Original Wizardry by Andrew Greenberg and Robert Woodhead / Sir-Tech. Pascal and assembly reconstruction by Thomas William Ewers; restored scenario by Snafaru. Music from the NES version by Kentaro Haneda. Monster artwork uses Jun Suemi's designs as depicted in the PC Engine version. ZX02 compression by Daniel Serpell; upstream licences are included in `tools/zx02/`.
 
 Wizardry and the original game, music and artwork belong to their respective rights holders. This is an unofficial fan port.

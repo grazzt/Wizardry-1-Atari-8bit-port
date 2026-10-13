@@ -21,11 +21,13 @@ class Input(ctypes.Structure):
 class Atari:
     _instance = None    # libatari800 is a singleton; reuse the loaded library
 
-    def __init__(self, disk, xex=None, extra_args=(), sound=False):
+    def __init__(self, disk, xex=None, extra_args=(), sound=False, sio_patch=None):
         if Atari._instance is None:
             Atari._lib = ctypes.CDLL(str(LIBRARY))
             Atari._lib.libatari800_get_main_memory_ptr.restype = ctypes.POINTER(ctypes.c_ubyte * 0x10000)
             Atari._lib.libatari800_error_message.restype = ctypes.c_char_p
+            Atari._lib.libatari800_mount_disk.restype = ctypes.c_int
+            Atari._lib.libatari800_set_sio_patch_enabled.restype = ctypes.c_int
         Atari._instance = self
         lib = self._lib
         args = ['atari800', '-config', str(Path(__file__).parent / 'build/harness.cfg'),
@@ -37,6 +39,9 @@ class Atari:
         argv = (ctypes.c_char_p * len(args))(*[a.encode() for a in args])
         if not lib.libatari800_init(len(args), argv):
             raise RuntimeError('libatari800_init failed')
+        # libatari800 retains this global across init calls. Restore the
+        # usual fast setting unless this instance explicitly requests real SIO.
+        self.sio_patch(True if sio_patch is None else sio_patch)
         self.input = Input()
         self.frames = 0
         self.audio = bytearray() if sound else None
@@ -113,12 +118,20 @@ class Atari:
         return self.memory[addr] | self.memory[addr + 1] << 8
 
     def type(self, text, hold=3, gap=3):
-        """Press and release each key ('\\r' is RETURN, '\\x1b' ESC)."""
+        """Press and release each key ('\r' is RETURN, '\x1b' ESC)."""
         for ch in text:
             self.input.keychar = 10 if ch == '\r' else ord(ch)
             self.frame(hold)
             self.input.keychar = 0
             self.frame(gap)
+
+    def mount_disk(self, path, read_only=False):
+        """Swap the image in drive 1 at runtime (a real disk change)."""
+        self._lib.libatari800_mount_disk(1, str(path).encode(), int(read_only))
+
+    def sio_patch(self, enabled):
+        """Fast disk access: the emulator's SIO patch, on or off."""
+        self._lib.libatari800_set_sio_patch_enabled(int(enabled))
 
     def run_until(self, predicate, limit=3000, step=5):
         """Run frames until predicate(self) is true; return frames used or None."""

@@ -2,10 +2,7 @@
 
 This is a p-machine written in 6502 assembly that runs the unmodified Apple `WIZARDRY.CODE` on a 64 KB Atari XL/XE. The target is the 65XE; Atari800 runs it as an 800XL, which is the same machine for our purposes. The Apple runtime it replaces, and the reference it is tested against, are described in [`tools/pvm`](../../tools/pvm/README.md).
 
-The source package lives under the repository’s `src/` directory. Start these commands from the repository root; after `cd src`, all build and asset paths below are relative to that directory. Supply the external disks described in the [source package README](../../README.md#build-from-source) first.
-
 ```bash
-cd src
 python3 port/atari/pictures.py --fetch      # once: the redrawn monster pictures' sprites (see Pictures)
 python3 port/atari/build.py                 # -> port/atari/build/wizardry.atr (bootable)
 cp port/atari/build/wizardry.atr /tmp/play.atr     # the game saves to the disk; play on a copy
@@ -15,6 +12,8 @@ python3 port/atari/build.py --scenario /tmp/play.atr   # new build, keeping the 
 
 python3 port/atari/build.py --test-images  # test.atr, played.atr, title.atr for the tests
 python3 -m unittest discover -s port/atari/tests -t port/atari
+
+python3 port/atari/build.py --disk2    # -> build/wizardry_disk1.atr + build/wizardry_disk2.atr
 ```
 
 On other emulators, turn off any keyboard-joystick emulation: Atari800's defaults map W/A/S/D and the numeric keypad to joysticks, and those keys then never reach the game. On Windows use `atari800.exe -xl -nobasic -no-kbdjoy0 -no-kbdjoy1 wizardry.atr`, or simply open `wizardry.atr` in Altirra or Atari800 with an XL/XE, 64 KB, BASIC off configuration. The disk must be writable: the game saves to it.
@@ -26,9 +25,86 @@ The training grounds roster (`*ROSTER`) marks a character **OUT** in two cases:
 - **The emulator was closed, or the machine reset, while the party was in the maze.** The game has no save in the maze: entering it writes each member as "in the maze", and only coming back to town clears that. To bring them back, choose U)tilities on the options screen after the title, then R)ecover, RETURN, and RETURN again at "PLACE SCENARIO IN DRIVE 1" (the port swaps the disk itself). Each character comes back as they were when they entered the maze, with no ageing penalty ("NO 10 YEAR PENALTY"). Then RETURN, L)eave, and S)tart. Builds before 2026-10-09's fix loop forever at that prompt: rebuild with `--scenario your-old.atr` to move your characters onto a fixed disk.
 - **The party died, or was D)isbanded in camp.** Those characters stay where they fell, and Recover does not touch them. A new party goes to the same spot and uses I)nspect to find them and pick them up. The dead then need the temple. Disbanding also ages each character.
 
+### Two-disk build with PCE pictures
+
+```bash
+python3 port/atari/build.py --disk2 --pictures monster
+# build/wizardry_disk1.atr + build/wizardry_disk2.atr
+```
+
+For a quick start with powerful characters, add `--party`:
+
+```bash
+python3 port/atari/build.py --disk2 --pictures monster --party --out wizardry_party.atr
+# build/wizardry_party_disk1.atr + build/wizardry_party_disk2.atr
+```
+
+This adds VANGUARD (Lord), RONIN (Samurai), SHADOW (Thief), DAWN (Priest),
+SAGE (Bishop), and MERLIN (Mage) to vacant roster slots. Each starts at level
+50 with 999/999 HP, all six attributes at 18, 1,000,000 gold, all 50 spells,
+and nine mage and priest casts at every spell level. They have no equipment
+or passwords and share good alignment. The flag also works on single-image
+builds and with `--scenario` imports. Existing occupied characters are kept;
+if fewer than six slots are vacant, the build stops before writing images.
+Names receive a numeric suffix if an occupied character already uses them.
+
+The castle opens with all six characters already in the current party.
+E)dge of town → M)aze enters the maze camp, and L)eave starts exploring;
+no tavern recruitment is needed. Formation runs once at startup, loads the
+current saved records, and writes the same OUT flags as tavern recruitment.
+It does not reset saved stats or resurrect unavailable characters: all six
+must still match their seeded names, be alive and be in town. If a previous
+session ended in the maze, use the normal Recover utility first. Removing
+members during play does not cause them to be added back automatically.
+Names and roster slots are recorded in the build's `PARTY` layout metadata,
+with `PARTY_AUTOFORM: 1`. Leave off `--party` for the normal startup.
+
+The two-disk build keeps the existing PCE picture quality and fits the 1,440 × 128-byte sector budget per disk. With the supplied scenario and sprites:
+
+- **Disk 1 “Program”**: the runtime, shared decoder, music player and trimmed boot volume (`SYSTEM.STARTUP`, `WT`, `SYSTEM.PASCAL`). 467 sectors, 59,792 bytes including the ATR header (471 sectors / 60,304 bytes with `--party`). It can be write-protected.
+- **Disk 2 “Scenario”**: the game, scenario, messages, all **95 picture records** (93 monsters plus chest and gold), and **11 gameplay themes plus four jingles**. The ATR is padded to 1,440 sectors, 184,336 bytes including its header; content uses 173,978 bytes, leaving **10,342 bytes spare**. **This is the save disk; keep it writable and play on a copy.**
+
+`--disk2` includes gameplay music when the NSF is installed; music begins after the swap to Disk 2. The title and options remain silent. `--no-music` omits the music. PCE pictures are selected by default when the sprites are installed; `--pictures monster` requires them explicitly. `--pictures class` selects shared monster-class pictures. `--pictures apple --no-music` retains the simpler, uncompressed 1,120-sector scenario disk and original Apple drawings. The ordinary single-image build still supports pictures and title music.
+
+**Compression and saves.** ZX02 compresses code segments, immutable scenario blocks, messages, picture records and music independently. Picture pixels and music register frames remain identical to the single-image build. The Pascal directory stays readable at its original sectors; a four-sector `WZC3` map translates virtual blocks to packed disk locations. Every cache the game can change stays raw: character records, Boltac inventory, all ten maze levels, and caches containing enemies with positive uniqueness counters. Writes go to their mapped sectors without expanding the disk or touching adjacent compressed streams. The decoder and scratch buffers use RAM under the OS ROM; ROM and interrupts are restored for each real SIO transfer. The startup utilities use the same decoder as the game. The builder compiles the vendored [ZX02 compressor](../../tools/zx02/README.md) with `cc` on its first compressed build.
+
+The two-disk RAM layout uses `$C000` for the block map, `$C200` for streamed input, `$C280`–`$C8FF` for shared block/picture output and `$C900`–`$CFFF` for the decoder. Jingles occupy `$D800`–`$E50F`, the player starts at `$E600`, and themes use `$E800`–`$FFF9`. Decoder and VBI scratch addresses are separate, so music can continue during picture rendering and resume after SIO.
+
+**Display during loading.** ROM-RAM decoding and copying run during vertical
+blanking. Longer operations pause with the OS ROM and display interrupts
+restored, preserving the text font and picture colors throughout disk access.
+This trades some loading speed for a stable screen. The fix resides on Disk 1;
+an existing WZC3 Disk 2 can be kept to preserve saves.
+
+**Carrying characters forward.** Rebuild from a saved Disk 2 or an older single-image ATR:
+
+```bash
+python3 port/atari/build.py --disk2 --pictures monster --scenario /tmp/saved_disk2.atr
+```
+
+The builder reconstructs the compressed Pascal volume before importing it, including older `WZC2`/LZSS disks. `layout.json` records the latest build; each ATR also has its own `.layout.json` and `.labels.txt` (for example, `wizardry_disk1.layout.json`) so regression tests can identify the matching runtime.
+
+**Change-disk moments.** Normal play asks for Disk 2 once, after S)TART. `CHANGE TO DISK 2 / PRESS ANY KEY WHEN READY` verifies the directory; the wrong disk loops with `WRONG DISK - CHANGE TO DISK 2`. Utilities use the game's `PLACE SCENARIO IN DRIVE 1` and `PLACE BOOT DISK IN DRIVE 1` prompts and verification loops. Recover works across Disk 1 → Disk 2 → Disk 1.
+
+**Geometry and hardware.** These ATRs retain the port's 128-byte SIO sector format. Capacity alone does not prove compatibility with a physical 40×18×256 floppy: confirm your drive and ATR-writing tool support this logical geometry before writing a real disk. Boot, swaps, graphics and saves are tested with Atari800's fast SIO patch disabled; physical-drive testing is still outstanding. Logical sectors remain sequential; physical interleave is future work.
+
+**Regression images and tests:**
+
+```bash
+python3 port/atari/build.py --test-images
+python3 port/atari/build.py --disk2 --test-images
+python3 port/atari/build.py --disk2 --pictures monster --testmode --out test_pce.atr
+python3 port/atari/build.py --disk2 --pictures monster --testmode --no-title \
+  --scenario appleII/images/wizardry_i/wizardry_i_scenario.dsk --out played_pce.atr
+python3 port/atari/build.py --disk2 --party --pictures monster --testmode --no-title --out test_party.atr
+python3 -m unittest discover -s port/atari/tests -t port/atari
+```
+
+Compression tests reconstruct all 280 virtual blocks, check the assembled 6502 decoder against every segment/block/picture, and write every mutable cache while checking the rest of the disk. Two-disk emulator tests cover wrong-disk retry, Recover, character creation, and both adventure scripts (including 3,005 keys through spells and the inn), with pixel checks and byte-identical saves against `pvm`. The title tests synchronise RNG state after the animation to remove its timing offset.
+
 Needs the toolchain (`tools/toolchain/setup.sh`) for ca65/ld65, and `libatari800` (`tools/emulators/setup.sh`) for the tests.
 
-## Status (2026-10-10)
+## Status (2026-10-13)
 
 - **The castle.** It boots, finds `SCENARIO.DATA` with the game's own directory search, loads the table of contents and character set, and shows the castle.
 - **The original start-up runs, with the title in colour.** `SYSTEM.STARTUP` shows "PREPARE YOURSELF / FOR THE ULTIMATE / IN FANTASY GAMES", the animated title (the wizard, the smoke from the cauldron, the scrolling *Wizardry* logo with its colour flips), and the copyright and options screen ("VERSION 2.1 OF 22-JAN-82"). S)tart chains to the game. The options screen and the screens after chaining match `pvm`. U)tilities R)ecover works and matches `pvm`, including the save. The other utilities are untested; M)ake scenario disk and U)pdate need a second drive, which the port does not have.
@@ -127,6 +203,7 @@ The Apple version has no music. This port borrows the NES version's (1987, Game 
 - **Conversion** ([`music.py`](music.py)). The triangle bass, down to 55 Hz, goes to POKEY channels 1+2 joined as 16 bits at 1.79 MHz. The two pulse voices go to channels 3 and 4 at 64 kHz, mostly within 5–9 cents of pitch (up to about 25 cents on the highest notes). Volumes carry over directly. The pulse duty cycle and the triangle's softer shape do not.
 - **Storage.** Each register stream is cut into 6-frame blocks, 8 blocks to a pattern, with an order list. Repeated music then costs only order-list bytes. A song image is a header (pattern count, loop pattern, and table addresses for each stream) and its tables, placed at a fixed address. The themes take 2.4–6.1 KB each, 50 KB in all on the disk, and the four jingles 3.3 KB (`$C200`–`$CF0F`).
 - **Playback** ([`src/music.s`](src/music.s), [`src/musicgame.s`](src/musicgame.s)). The boot routine puts the player and jingles under the OS ROM at `$C000`, and the title theme in the song slot at `$D800`. Each vertical blank, the immediate VBI hook switches the ROM out, plays one frame and switches it back. That is safe because nothing is displayed in vertical blank, no display-list interrupt can occur, and IRQs are masked meanwhile. While SIO is busy, the music waits.
+- **Two-disk playback.** The player is copied from Disk 1 before the swap. Disk 2 holds the 11 themes used by gameplay and all four jingles in ZX02 streams, totalling 23,496 bytes. The jingles load once after disk verification; each place's theme loads when entered. The title theme is omitted. See the [two-disk RAM layout](#two-disk-build-with-pce-pictures) above.
 
   In the game, every procedure call checks the cue table: a per-segment index keeps this to a few cycles for segments without cues. A theme is read from disk a sector at a time and copied into the slot, with interrupts off for each 128-byte copy. The IORESULT the game sees is kept. With Atari800's default fast disk access this is instant; on a real drive a theme takes 1–3 s to load. A jingle plays from memory at once, over the theme, which then starts again from the top.
 - **Controls.** `build.py --no-music` leaves it out; without `nes/` it is left out anyway. Converting the songs takes about 40 s, so `build/music.cache` keeps the result. The harness can record the emulator's sound (`Atari(..., sound=True)`, `save_audio`). The tests check the title theme, the castle theme after start-up, and the dungeon, fight and cemetery themes in the maze test. A lockstep run of the 3,005-key session loaded every place's theme and both battle jingles, 25 times each, with the screens still matching `pvm`.

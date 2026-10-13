@@ -244,17 +244,17 @@ def scene_title(out):
 
 
 def scene_create(out):
-    """Create MAGE, an elf mage, at the training grounds."""
+    """Create MARK, an elf mage, at the training grounds."""
     s = Session(HERE / 'build/test.atr', None, out)
     s.rec.on = True
     s.wait(50)
-    for keys, hold in (('\r', 40), ('\r', 50), ('E', 90), ('T', 60), ('MAGE\r', 70), ('Y', 80),
+    for keys, hold in (('\r', 40), ('\r', 50), ('E', 90), ('T', 60), ('MARK\r', 70), ('Y', 80),
                        ('\r', 60), ('\r', 40), ('B', 90), ('A', 70)):
         s.press(keys, hold, typing=9)
     points = int(re.search(r'POINTS\s+(\d+)', s.vm.console.text()).group(1))
     s.press('\r', 90)                                   # on to I.Q.
     s.press('+' * points, 25, typing=10)
-    for keys, hold in (('\x1b', 70), ('B', 80), ('Y', 90), ('MAGE\r', 60), ('\r', 30), ('I', 70)):
+    for keys, hold in (('\x1b', 70), ('B', 80), ('Y', 90), ('MARK\r', 60), ('\r', 30), ('I', 70)):
         s.press(keys, hold, typing=9)
     s.wait(200)
     return s.close()

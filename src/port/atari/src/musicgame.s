@@ -39,9 +39,22 @@ music_cue:
 
 ; Play song A (NSF numbering): a jingle at once, or the theme, loaded first.
 music_song:
+.ifdef DISK2
+        pha
+        lda ml_player_ready
+        bne @ready
+        pla
+        rts
+@ready: pla
+.endif
         cmp #15                 ; ENCOUNTER and after: jingles
         bcc @theme
         tax
+.ifdef DISK2
+        lda jingle_bits-15,x
+        and ml_jingles
+        beq @r
+.endif
         lda song_jlo-1,x
         sta mus_jaddr
         lda song_jhi-1,x
@@ -55,6 +68,17 @@ music_song:
         tax
         lda #0
         sta mus_main            ; the VBI stops the slot's song
+.ifdef DISK2
+        jsr music_load_cmp
+        bcs @loaded
+        lda #0
+        sta cur_song           ; permit the next cue to retry after an SIO failure
+        rts
+@loaded:
+        lda #1
+        sta mus_rew
+        sta mus_main
+.else
         lda song_secs-1,x
         beq @r
         sta ml_count
@@ -106,7 +130,105 @@ music_song:
         lda #1
         sta mus_rew
         sta mus_main
+.endif
 @r:     rts
+
+.ifdef DISK2
+; Copy the linked player from the program disk into its relocated ROM-RAM.
+; The common copy helper runs in normal RAM and uses real OS SIO.
+music_prepare:
+        lda ioresult
+        pha
+        lda #0
+        sta ioresult
+        lda #<MUSA_SECTOR
+        sta sector
+        lda #>MUSA_SECTOR
+        sta sector+1
+        lda #<MUSIC_PLAYER
+        sta t1
+        lda #>MUSIC_PLAYER
+        sta t1+1
+        lda #MUSA_SECTORS
+        sta t0
+        jsr comp_copy
+        lda ioresult
+        bne @bad
+        lda #1
+        sta ml_player_ready
+@bad:   pla
+        sta ioresult
+        rts
+
+music_init_game:
+        lda ml_player_ready
+        beq @done
+        lda #0
+        sta ml_jingles
+        lda #15
+        sta ml_init_song
+@load:  ldx ml_init_song
+        jsr music_load_cmp
+        bcc @next
+        ldx ml_init_song
+        lda jingle_bits-15,x
+        ora ml_jingles
+        sta ml_jingles
+@next:  inc ml_init_song
+        lda ml_init_song
+        cmp #19
+        bne @load
+        jmp music_hook
+@done:  rts
+ml_player_ready: .byte 0
+ml_jingles:     .byte 0
+jingle_bits:    .byte 1, 2, 4, 8
+ml_init_song: .byte 0
+ml_failed:    .byte 0
+
+; X = song. Decode from disk 2 straight into the theme slot or jingle area.
+; Preserve the game's IORESULT; carry set on a successful music load.
+music_load_cmp:
+        lda ioresult
+        pha
+        lda #0
+        sta ioresult
+        lda song_sec_lo-1,x
+        sta sector
+        lda song_sec_hi-1,x
+        sta sector+1
+        lda song_cmp_ctl-1,x
+        sta lz_token+1
+        lda song_len_lo-1,x
+        sta lz_left
+        lda song_len_hi-1,x
+        sta lz_left+1
+        cpx #15
+        bcs @jingle
+        lda #<MUSIC_SLOT
+        sta lz_dst
+        lda #>MUSIC_SLOT
+        sta lz_dst+1
+        jmp @decode
+@jingle:
+        lda song_jlo-1,x
+        sta lz_dst
+        lda song_jhi-1,x
+        sta lz_dst+1
+@decode:
+        lda #4
+        jsr comp_call
+        lda ioresult
+        sta ml_failed
+        pla
+        sta ioresult
+        lda ml_failed
+        bne @bad
+        sec
+        rts
+@bad:   clc
+        rts
+.endif
 
         .include "music_cues.inc"
 .else

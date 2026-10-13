@@ -10,17 +10,26 @@
 ; the font from RAM), no display-list interrupt can occur then, and IRQs are
 ; masked meanwhile. While SIO is busy (CRITIC) the music waits: serial
 ; transfers need their IRQs and use POKEY channels 3 and 4.
+; DISK2 omits the title song and relocates jingles to $D800, the player to
+; $E600 and the theme slot to $E800. Themes use the shared ZX02 decoder.
 
 PORTB       = $D301
 VVBLKI      = $0222
 CRITIC      = $42
 AUDF1       = $D200
 AUDCTL      = $D208
+.ifdef DISK2
+MUSIC_PLAYER = $E600
+MUSIC_SLOT = $E800
+mz = $ED                       ; independent of decoder and picture scratch
+mt = $EF
+.else
 MUSIC_PLAYER = $C000            ; player, then the jingles from $C200
 MUSIC_SLOT  = $D800             ; the current song
 MUSIC_LOAD  = $4000             ; where the boot routine reads them first
 mz          = $FA               ; 2: song descriptor (VBI only)
 mt          = $FC               ; 2: table (VBI only)
+.endif
 
         .segment "TABLES"
 
@@ -32,6 +41,7 @@ mus_jaddr:  .word 0
 music_next: .word 0             ; the OS's immediate VBI
 
 .if MUSIC_PRESENT
+.ifndef DISK2
 ; Boot: copy X pages from MUSIC_LOAD to page A, under the ROM.
 music_copy:
         sta t1+1
@@ -90,7 +100,11 @@ music_read:                     ; Y sectors from sector X:A to MUSIC_LOAD
         sta DBUFHI
         jmp load_sectors
 
-; Boot: hook the immediate VBI.
+.endif
+.ifdef DISK2
+        .segment "GAMEOVL"
+.endif
+; Hook the immediate VBI.
 music_hook:
         lda VVBLKI
         sta music_next
@@ -120,12 +134,15 @@ music_vbi:
 @out:   jmp (music_next)
 .endif
 
+        .segment "TABLES"
 ; The title song, from the top (program 0).
 music_start:
+.ifndef DISK2
         lda #1
         sta mus_rew
         lda #MUSIC_PRESENT
         sta mus_main
+.endif
         rts
 
 ; Silence (program 1 starts; its places load their themes).
@@ -214,6 +231,7 @@ music_play:
         rts
 @stop:  lda #0
         sta mus_main
+        rts                     ; keep the final frame; silence starts next VBI
 mus_quiet:
         lda #0
         ldx #7

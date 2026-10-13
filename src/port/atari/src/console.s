@@ -113,6 +113,9 @@ con_clear:
         rts
 
 ; con_ptr := start of row con_y
+.ifdef SCENCMP
+        .segment "TABLES"      ; called after boot has loaded the high area
+.endif
 con_row:
         ldx con_y
         lda rowtab_lo,x
@@ -122,6 +125,7 @@ con_row:
         rts
 
 ; Output one character (ASCII in A). Preserves nothing.
+        .segment "CODE"
 con_put:
         cmp #32
         bcc @ctrl

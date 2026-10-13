@@ -66,7 +66,6 @@ COLPF3      = $D019
 GRACTL      = $D01D
 DMACTL      = $D400
 PMBASE      = $D407
-VCOUNT      = $D40B
 GPRIOR      = $026F
 
 pz_ptr      = $E0               ; 2: shadow or player memory
@@ -207,7 +206,11 @@ pic_done:
 ; count, the strip colours and each band's interrupt flag ($80: it changes a
 ; colour), then sectors of 8 lines (11 bitmap bytes and the 5 strips' player
 ; bytes each).
+; With PICSCMP the record is stored LZSS-compressed on disk 2 (build.py
+; packs the records byte after byte): stream it through the decoder into
+; PICOUT under the OS ROM. @read copies decoded sectors into SECBUF.
 pic_load:
+        stx pz_line             ; the picture's index, through the clearing
         lda pic_sec_lo,x
         sta sector
         lda pic_sec_hi,x
@@ -224,6 +227,20 @@ pic_load:
         inx
         cpx #PIC_SCAN + PIC_LINES
         bne @clr
+.ifdef PICSCMP
+        ldx pz_line
+        lda pic_skip,x
+        sta lz_ix
+        lda pic_len_lo,x
+        sta lz_left
+        lda pic_len_hi,x
+        and #$7F
+        sta lz_left+1
+        lda pic_len_hi,x
+        sta lz_token+1          ; bit 7: raw record
+        lda #1
+        jsr comp_call           ; stream and decode into PICOUT
+.endif
         jsr @read
         lda SECBUF
         sta pz_line
@@ -304,6 +321,10 @@ pic_load:
         lda #1
         sta pic_on
         jmp pm_vis
+.ifdef PICSCMP
+@read:  lda #2
+        jmp comp_call           ; next 128 decoded bytes into SECBUF
+.else
 @read:  lda #<SECBUF
         sta DBUFLO
         lda #>SECBUF
@@ -314,6 +335,7 @@ pic_load:
         bne @rr
         inc sector+1
 @rr:    rts
+.endif
 
 .else
 ; --- recording the Apple picture ----------------------------------------------------

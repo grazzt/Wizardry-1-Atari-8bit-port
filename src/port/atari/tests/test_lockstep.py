@@ -31,7 +31,7 @@ def atr_to_dsk(atr_bytes):
     boot sectors, tables and boot volume); rebuild a DOS-order 140K image."""
     import json
     from ucsd.disk import _DOS_ORDER
-    volstart = json.loads((HERE / 'build/layout.json').read_text())['SCENVOL']
+    volstart = json.loads((HERE / 'build/test.layout.json').read_text())['SCENVOL']
     data = atr_bytes[16 + (volstart - 1) * 128:]
     image = bytearray(143360)
     for block in range(280):
@@ -47,7 +47,7 @@ def with_scenario_data(atr_bytes, disk):
     """An ATR whose scenario volume holds `disk`'s SCENARIO.DATA (the rest of
     the volume, with the patched WIZARDRY.CODE, is kept)."""
     import json
-    volstart = json.loads((HERE / 'build/layout.json').read_text())['SCENVOL']
+    volstart = json.loads((HERE / 'build/test.layout.json').read_text())['SCENVOL']
     entry = disk.entry('SCENARIO.DATA')
     data = bytearray(atr_bytes)
     for block in range(entry.first_block, entry.next_block):
@@ -59,7 +59,7 @@ def with_scenario_data(atr_bytes, disk):
 def redrawn_pictures():
     """True if the test images were built with the redrawn pictures (pictures.py)."""
     import json
-    return bool(json.loads((HERE / 'build/layout.json').read_text()).get('SPRITES'))
+    return bool(json.loads((HERE / 'build/test.layout.json').read_text()).get('SPRITES'))
 
 
 @unittest.skipUnless(LIBRARY.exists() and BUILD.exists(), 'needs libatari800 and build.py --test-images')
@@ -111,8 +111,7 @@ class LockstepTests(unittest.TestCase):
 
     def assertSong(self, song, where):
         """The theme loaded for the place (NSF numbering), if the build has music."""
-        labels = {line.split()[2].lstrip('.'): int(line.split()[1], 16)
-                  for line in (HERE / 'build/labels.txt').read_text().splitlines()}
+        labels = self.run.labels
         if 'cur_song' in labels:
             self.assertEqual(self.run.atari.peek(labels['cur_song']), song, where)
 
@@ -199,7 +198,7 @@ class TitleTests(unittest.TestCase):
         atr = Path(work.name) / 'title.atr'
         shutil.copyfile(HERE / 'build/title.atr', atr)
         labels = {line.split()[2].lstrip('.'): int(line.split()[1], 16)
-                  for line in (HERE / 'build/labels.txt').read_text().splitlines()}
+                  for line in (HERE / 'build/title.labels.txt').read_text().splitlines()}
         # (libatari800 is loaded once per process, so its sound output depends
         # on the first test; the player's state is checked instead. The VBI
         # player clears mus_rew when it starts a song.)
