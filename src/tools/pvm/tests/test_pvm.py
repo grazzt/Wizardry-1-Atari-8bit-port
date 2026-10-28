@@ -8,10 +8,14 @@ import random
 import tempfile
 import unittest
 
+from ucsd import pcode
 from ucsd.codefile import CodeFile
 from ucsd.disk import PascalDisk
 from pvm.console import Console
-from pvm.machine import DiskUnit, PMachine
+from unittest import mock
+
+from pvm import patches
+from pvm.machine import DiskUnit, PMachine, VMError, s16
 
 PROJECT = Path(__file__).resolve().parents[3]
 IMAGES = PROJECT / 'appleII/images/wizardry_i'
@@ -160,6 +164,68 @@ class GameTests(unittest.TestCase):
             vm.send(START + CREATE_ALICE)
             return hashlib.sha256(bytes(vm.mem)).hexdigest(), vm.instructions
         self.assertEqual(run(), run())
+
+
+def calculat(tries, aveamt, minadd, patched=True, rng=0):
+    """Call REWARDS.27 (CALCULAT) directly: push TRIES, AVEAMT, MINADD and the two result words.
+    `patched=False` runs the code without the CALCULAT patch."""
+    code, keep = CODE, patches.PATCHES['WIZARDRY.CODE']
+    if not patched:
+        code, keep = CodeFile(BOOT.read('WIZARDRY.CODE')), keep[:1]
+    with mock.patch.dict(patches.PATCHES, {'WIZARDRY.CODE': keep}):
+        vm = PMachine(code, {4: DiskUnit(PascalDisk.open(IMAGES / 'snafaru_restored_scenario.dsk')),
+                             5: DiskUnit(BOOT)}, Console())
+    for addr in (0x047A, 0x04FA, 0x057A, 0x05FB):             # the game's RNG state
+        vm.mem[addr] = (rng * 37 + addr) & 0xFF
+    top = vm.frame
+    for value in (tries, aveamt, minadd, 0, 0):
+        vm.push(value)
+    vm.call(19, 27)
+    for _ in range(10_000):
+        if vm.frame is top:
+            return s16(vm.pop())
+        vm.step()
+    raise AssertionError('CALCULAT did not return')
+
+
+class CalculatTests(unittest.TestCase):
+    """The divide-by-zero patch for the fixed item drops (Werdna's Amulet)."""
+
+    def test_unpatched_zero_range_is_error_6(self):
+        with self.assertRaises(VMError) as raised:
+            calculat(1, 0, 1, patched=False)
+        self.assertEqual(raised.exception.code, 6)
+
+    def test_zero_range_is_a_fixed_drop(self):
+        # ITEMREWD adds MININDX to CALCULAT(1, RANGE, 1): a fixed drop must come out as MININDX.
+        for tries, minadd in ((1, 1), (1, 7), (3, 1), (0, 5)):
+            self.assertEqual(calculat(tries, 0, minadd), 0)
+        self.assertEqual(calculat(1, -3, 1), 0)
+
+    def test_no_tries_returns_minadd(self):
+        self.assertEqual(calculat(0, 6, 5), 5)
+
+    def test_patched_procedure_decodes_whole(self):
+        seg = CODE.segment(19)
+        proc = seg.procedure(27)
+        starts, pc = set(), proc.enter
+        while pc <= proc.exit:
+            ins = pcode.decode(seg.code, pc, proc.jtab)
+            starts.add(pc)
+            pc = ins.end
+        self.assertEqual(pc, proc.exit + 2)                    # RNP 1 is the last instruction
+        for pc in sorted(starts):
+            for target in pcode.decode(seg.code, pc, proc.jtab).targets:
+                self.assertIn(target, starts)
+
+    def test_positive_range_rolls_as_before(self):
+        rolls = set()
+        for rng in range(12):
+            for tries, aveamt, minadd in ((1, 6, 1), (3, 6, 0), (2, 100, 5), (1, 15, 1)):
+                expected = calculat(tries, aveamt, minadd, patched=False, rng=rng)
+                self.assertEqual(calculat(tries, aveamt, minadd, rng=rng), expected)
+                rolls.add(expected)
+        self.assertGreater(len(rolls), 4)                     # the RNG state really varies
 
 
 if __name__ == '__main__':

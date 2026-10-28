@@ -26,6 +26,9 @@ class PartyTests(unittest.TestCase):
         saved = original.image
         seeded, members = party.seed(original)
         before, after = Scenario(original), Scenario(seeded)
+        roster = list(after.roster())
+        for member in members:
+            self.assertFalse(roster[member['slot']][2])
         allowed = set()
         for member in members:
             at = before.record_offset('ZCHAR', member['slot'])
@@ -134,6 +137,20 @@ class AtariPartyTests(unittest.TestCase):
         expected = PascalDisk(bytes(run.vm.units[4].image)).read('SCENARIO.DATA')
         actual = scenario_from_disk2(run.disk2.read_bytes()).read('SCENARIO.DATA')
         self.assertEqual(actual, expected)
+
+    def test_werdna_fight_gives_the_amulet_without_error(self):
+        """Regression for the CALCULAT divide by zero (fixed drops have RANGE 0): replay the
+        whole route to Werdna on pvm and the Atari, comparing screens after every key."""
+        from lockstep import diff
+        keys = json.loads((HERE / 'tests/werdna_keys.json').read_text())['keys']
+        run = self.formed_run()
+        seen = []
+        for index, key in enumerate(keys):
+            ref, screen = run.step(key)
+            seen.append(screen)
+            self.assertFalse(run.error, f'error {[hex(run.atari.peek(0x580 + n)) for n in range(6)]} at key {index}')
+            self.assertEqual(ref, screen, f'key {index}:\n{diff(ref, screen)}')
+        self.assertTrue(any('MERLIN HUMAN' in s and '1)?AMULET' in s for s in seen))   # item 94, unidentified
 
     def test_party_does_not_reform_when_removed_at_tavern(self):
         run = self.formed_run()
