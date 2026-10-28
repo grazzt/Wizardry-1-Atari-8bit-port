@@ -1,10 +1,13 @@
-Packaged-source rebuild verification (2026-10-13)
+Packaged-source rebuild verification (2026-10-28, after the CALCULAT divide-by-zero fix)
 Commands:
 python3 src/port/atari/build.py --disk2 --pictures monster
 python3 src/port/atari/build.py --disk2 --pictures monster --party --out wizardry_party.atr
 
 wizardry_disk1.atr: byte-identical; sha256 85ebd6fe160f3ffc113ea2272a9075e2cdd2f4c5a150a1f58333fd11383172c1
-wizardry_disk2.atr: byte-identical; sha256 518c11f76349caed11a359548e21b07ef8e024de43ef6fedd7b5c8507485dfaf
+wizardry_disk2.atr: byte-identical; sha256 e8c7659c1d47a11a8fbec26960d9028076477706080af6b937a3898b0fb7fc2e
 wizardry_party_disk1.atr: byte-identical; sha256 b3385c613b4ed907074d487a2b085d6b8de71f2430f38d70300c3e3e2b1ea539
-wizardry_party_disk2.atr: byte-identical; sha256 3825d1ac7fd1d7d7196237d0673d900060a9b2746722424a96ba1cea9c927c0b
-ATR headers, capacity budget and README file links verified.
+wizardry_party_disk2.atr: byte-identical; sha256 b3731e0cc8c7cfec95908e84a3832baacf0610d2a490d1abeb809e4d0aca39b3
+ATR headers and capacity budget verified (Disk 2 spare: 10342 bytes).
+Disk 1 and Party Disk 1 are unchanged from the 2026-10-13 release; only the two Disk 2 images carry the patched WIZARDRY.CODE.
+Without the fix, the same build reproduces the 2026-10-13 checksums exactly.
+Production smoke: the party pair boots, swaps disks over real SIO and reaches the maze camp with the party formed.

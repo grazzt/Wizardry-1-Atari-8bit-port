@@ -12,6 +12,8 @@ Watch [Wizardry 1 port to Atari 8bit](https://www.youtube.com/watch?v=1cHdtRZdmj
 
 ## Download: two disks with PCE pictures and music
 
+**Update 2026-10-28:** Disk 2 and Party Disk 2 are rebuilt with a fix for the game ending in `EXEC ERROR` (a divide by zero) after beating Werdna; he now drops his Amulet. Disk 1 and Party Disk 1 are unchanged. The old single-image `wizardry.atr` was not rebuilt and still has the bug.
+
 Download both images:
 
 - **[Disk 1 — Program](wizardry_disk1.atr)**: runtime, title, options and utilities. 59,792 bytes; it can be write-protected.
